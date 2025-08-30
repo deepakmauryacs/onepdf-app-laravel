@@ -12,6 +12,7 @@ Route::get('/terms', [HomeController::class, 'terms']);
 Route::get('/privacy', [HomeController::class, 'privacy']);
 Route::get('/login', [HomeController::class, 'login']);
 Route::get('/registration', [HomeController::class, 'registration']);
+Route::post('/registration', [HomeController::class, 'register']);
 
 Route::prefix('vendor')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
