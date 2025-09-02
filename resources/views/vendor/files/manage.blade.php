@@ -15,6 +15,16 @@
   .card{border:0;border-radius:var(--radius);box-shadow:var(--shadow)}
   .card-header{background:#fff;border-bottom:1px solid var(--line);padding:14px 16px}
 
+  /* ===== top-band / breadcrumb (same as other pages) ===== */
+  .top-band{
+    background: radial-gradient(1200px 220px at 50% -140px, rgba(59,130,246,.18) 0%, rgba(59,130,246,0) 60%),
+                linear-gradient(180deg,#f6f7fb 0%,#f6f7fb 60%,transparent 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .crumb{ display:flex; align-items:center; gap:.5rem; font-size:.95rem; color:#64748b; }
+  .crumb a{ color:#0f172a; text-decoration:none; }
+  .crumb i{ opacity:.6; }
+
   .files-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .files-left{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:260px}
   .files-left .folder{font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
@@ -45,8 +55,9 @@
   .small-link{color:#64748b;margin-top:2px}
   .small-link a{color:#0b5ed7;text-decoration:none}
 
-  /* ===== Modern centered pagination (black & white) ===== */
-  .pagination-wrap{display:flex;justify-content:center}
+  /* ===== Modern centered pagination (black & white) + summary ===== */
+  .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pager-summary{color:#64748b;font-size:.9rem}
   .pagination-modern{gap:8px}
   .pagination-modern .page-link{
     border:1px solid var(--line);
@@ -68,6 +79,19 @@
 @endpush
 
 @section('content')
+<!-- top-band breadcrumb -->
+<div class="top-band">
+  <div class="container py-3">
+    <div class="d-flex align-items-center justify-content-between">
+      <nav class="crumb">
+        <a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
+        <i class="bi bi-chevron-right"></i>
+        <span>Manage Files</span>
+      </nav>
+    </div>
+  </div>
+</div>
+
 <div class="container py-3">
   <div class="card">
     <div class="card-header">
@@ -103,6 +127,7 @@
 
   <!-- Centered pagination -->
   <nav class="mt-4 pagination-wrap" aria-label="Files pagination">
+    <div id="pagerSummary" class="pager-summary d-none"></div>
     <ul class="pagination pagination-modern justify-content-center" id="pager"></ul>
   </nav>
 </div>
@@ -121,6 +146,7 @@
   const tbody = document.querySelector('#filesTable tbody');
   const empty = document.getElementById('emptyState');
   const pager = document.getElementById('pager');
+  const pagerSummary = document.getElementById('pagerSummary');
   const searchInput = document.getElementById('searchInput');
   const fileCountEl = document.getElementById('fileCount');
   const checkAll = document.getElementById('checkAll');
@@ -153,17 +179,27 @@
     </tr>`;
   }
 
-  function renderRows(files){
+  function renderRows(files, total){
     tbody.innerHTML='';
     if(!files.length){ empty.classList.remove('d-none'); fileCountEl.textContent='0'; return; }
     empty.classList.add('d-none');
     tbody.innerHTML=files.map(rowTemplate).join('');
-    fileCountEl.textContent=files.length; // or use data.total if API returns it
+    fileCountEl.textContent = (total ?? files.length);
   }
 
-  // ---- Modern pagination renderer (centered, with ellipses) ----
-  function renderPager(current,last){
+  // Centered, modern pagination with ellipses + summary
+  function renderPager(current,last,total=null,perPage=null){
     pager.innerHTML='';
+    // summary (optional if API provides numbers)
+    if(total!=null && perPage!=null){
+      const start = (current-1)*perPage + 1;
+      const end = Math.min(total, current*perPage);
+      pagerSummary.classList.remove('d-none');
+      pagerSummary.textContent = `Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${total.toLocaleString()}`;
+    }else{
+      pagerSummary.classList.add('d-none');
+    }
+
     if(last<=1) return;
 
     const maxWindow = 5;
@@ -179,20 +215,13 @@
     };
     const dots = ()=> add(current, '…', true, false, 'ellipsis');
 
-    // First + Prev
     add(1, `<i class="bi bi-chevron-double-left"></i>`, current===1);
     add(current-1, `<i class="bi bi-chevron-left"></i>`, current===1);
 
-    // Left side
     if(start>1){ add(1,'1',false,current===1); if(start>2) dots(); }
-
-    // Window
     for(let i=start;i<=end;i++) add(i, String(i), false, i===current);
-
-    // Right side
     if(end<last){ if(end<last-1) dots(); add(last, String(last), false, current===last); }
 
-    // Next + Last
     add(current+1, `<i class="bi bi-chevron-right"></i>`, current===last);
     add(last, `<i class="bi bi-chevron-double-right"></i>`, current===last);
   }
@@ -202,8 +231,8 @@
     const params=new URLSearchParams({page:p, search:q});
     const res=await fetch(routes.list+'?'+params.toString());
     const data=await res.json();
-    renderRows(data.files||[]);
-    renderPager(data.current_page||1, data.last_page||1);
+    renderRows(data.files||[], data.total ?? undefined);
+    renderPager(data.current_page||1, data.last_page||1, data.total ?? null, data.per_page ?? null);
   }
 
   document.getElementById('searchInput').addEventListener('input',()=>{ q=searchInput.value; load(1); });

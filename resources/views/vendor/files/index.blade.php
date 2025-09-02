@@ -8,6 +8,16 @@
   :root{ --surface:#ffffff; --muted:#6b7280; --line:#e5e7eb; --ring:#d9dde3; --text:#0f172a; --radius:12px; }
   *{ font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
 
+  /* ===== top-band / breadcrumb (same as Profile) ===== */
+  .top-band{
+    background: radial-gradient(1200px 220px at 50% -140px, rgba(59,130,246,.18) 0%, rgba(59,130,246,0) 60%),
+                linear-gradient(180deg,#f6f7fb 0%,#f6f7fb 60%,transparent 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .crumb{ display:flex; align-items:center; gap:.5rem; font-size:.95rem; color:#64748b; }
+  .crumb a{ color:#0f172a; text-decoration:none; }
+  .crumb i{ opacity:.6; }
+
   .upload-card{ border:1px solid var(--line); border-radius:12px; }
   .upload-drop{ border:2px dashed #d1d5db; border-radius:12px; background:#f8fafc; padding:36px; transition:all .2s; }
   .upload-drop.is-dragover{ border-color:#8b5cf6; background:#f5f3ff; }
@@ -79,6 +89,19 @@
 @endpush
 
 @section('content')
+  <!-- top-band breadcrumb -->
+  <div class="top-band">
+    <div class="container py-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <nav class="crumb">
+          <a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
+          <i class="bi bi-chevron-right"></i>
+          <span>Upload Files</span>
+        </nav>
+      </div>
+    </div>
+  </div>
+
   <div class="container py-3">
 
     {{-- Toast --}}

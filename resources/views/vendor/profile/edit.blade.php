@@ -29,12 +29,41 @@
   .form-control{ border-radius:12px; border:1px solid var(--ring); background:#fff; }
   .form-control:focus{ border-color:#9db7f9; box-shadow:0 0 0 .2rem rgba(59,130,246,.15); }
 
-  .input-group-text{
-    background:#f7f8fb; border:1px solid var(--ring);
+  .input-group-text{ background:#f7f8fb; border:1px solid var(--ring); }
+
+  /* ---------- FIX RIGHT-SIDE RADIUS ---------- */
+  .input-group{ --br:12px; }
+  .input-group .input-icon-start{
+    border-right:0;
+    border-top-left-radius:var(--br);
+    border-bottom-left-radius:var(--br);
   }
-  .input-group .form-control{ border-left:0; }
-  .input-group .input-icon-start{ border-right:0; border-top-left-radius:12px; border-bottom-left-radius:12px; }
-  .input-group .input-icon-end{ border-left:0; border-top-right-radius:12px; border-bottom-right-radius:12px; }
+  .input-group .input-icon-end{
+    border-left:0;
+    border-top-right-radius:var(--br);
+    border-bottom-right-radius:var(--br);
+  }
+
+  /* Only drop the left radius when there is a start icon */
+  .input-group .input-icon-start + .form-control{
+    border-left:0;
+    border-top-left-radius:0;
+    border-bottom-left-radius:0;
+  }
+
+  /* Restore RIGHT radius by default (Bootstrap removes it because end-icon exists in DOM) */
+  .input-group .form-control{
+    border-top-right-radius:var(--br) !important;
+    border-bottom-right-radius:var(--br) !important;
+  }
+
+  /* When we actually show the end icon (error), flatten the right side */
+  .input-group.has-end .form-control{
+    border-right:0 !important;
+    border-top-right-radius:0 !important;
+    border-bottom-right-radius:0 !important;
+  }
+  .form-control:focus + .input-icon-end{ border-color:#9db7f9; }
 
   /* invalid styles */
   .is-invalid{ border-color:#dc2626 !important; box-shadow:none !important; }
@@ -93,7 +122,7 @@
 
       <div class="section-line"></div>
 
-      {{-- Toast container --}}
+      {{-- Toast --}}
       <div class="position-fixed top-0 end-0 p-3" style="z-index:1080">
         <div id="app-toast" class="toast border-0 shadow text-white" role="alert" aria-live="assertive" aria-atomic="true">
           <div class="toast-header">
@@ -230,11 +259,18 @@
     const fb=form.querySelector(`.invalid-feedback[data-for="${name}"]`);
     const startIcon=form.querySelector(`.input-icon-start[data-for="${name}"]`);
     const endIcon=form.querySelector(`.end-icon[data-for="${name}"]`);
+    const group=input?.closest('.input-group');
+
     if(!input) return;
     input.classList.add('is-invalid');
     if(fb) fb.textContent=msg;
     if(startIcon) startIcon.classList.add('is-invalid');
-    if(endIcon){ endIcon.classList.remove('d-none'); endIcon.classList.add('is-invalid'); }
+
+    if(endIcon){
+      endIcon.classList.remove('d-none');
+      endIcon.classList.add('is-invalid');
+      group && group.classList.add('has-end'); // activate right-side flatten
+    }
   }
 
   function clearError(name){
@@ -242,11 +278,18 @@
     const fb=form.querySelector(`.invalid-feedback[data-for="${name}"]`);
     const startIcon=form.querySelector(`.input-icon-start[data-for="${name}"]`);
     const endIcon=form.querySelector(`.end-icon[data-for="${name}"]`);
+    const group=input?.closest('.input-group');
+
     if(!input) return;
     input.classList.remove('is-invalid');
     if(fb) fb.textContent='';
     if(startIcon) startIcon.classList.remove('is-invalid');
-    if(endIcon){ endIcon.classList.add('d-none'); endIcon.classList.remove('is-invalid'); }
+
+    if(endIcon){
+      endIcon.classList.add('d-none');
+      endIcon.classList.remove('is-invalid');
+      group && group.classList.remove('has-end'); // restore rounded right side
+    }
   }
 
   fields.forEach(name=>{
