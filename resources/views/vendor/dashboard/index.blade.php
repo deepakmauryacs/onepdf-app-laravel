@@ -28,16 +28,16 @@
       <div class="files-toolbar">
         <div class="files-title">
           <i class="bi bi-folder2-open"></i> Files
-          <span class="count">3</span>
+          <span class="count">{{ $total }}</span>
         </div>
         <div class="files-search">
           <i class="bi bi-search"></i>
-          <input type="text" class="form-control" placeholder="Search files...">
+          <input type="text" class="form-control" placeholder="Search files..." id="searchInput">
         </div>
-        <button class="btn btn-del">
-          <span class="btn-del-text"><i class="bi bi-trash me-1"></i> Delete selected</span>
-          <span class="btn-del-icon"><i class="bi bi-trash"></i></span>
-        </button>
+        <a href="{{ route('vendor.files.index') }}" class="btn btn-del">
+          <span class="btn-del-text"><i class="bi bi-upload me-1"></i> Upload new</span>
+          <span class="btn-del-icon"><i class="bi bi-upload"></i></span>
+        </a>
       </div>
     </div>
 
@@ -53,81 +53,76 @@
             <th style="width:280px;">Actions</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
+        <tbody id="filesTbody">
+@php
+if (!function_exists('human_size')) {
+    function human_size($bytes) {
+        $units = ['B','KB','MB','GB','TB'];
+        for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+        return round($bytes, $i ? 2 : 0) . ' ' . $units[$i];
+    }
+}
+@endphp
+@forelse ($files as $file)
+          <tr data-name="{{ strtolower($file['filename']) }}">
             <td><input class="form-check-input" type="checkbox" /></td>
             <td>
               <div class="col-file">
-                <span class="file-chip"><i class="bi bi-filetype-pdf"></i></span>
-                <div class="file-name"><a href="#">E-Book_Selling_Platform_Documentation.pdf</a></div>
+                <span class="file-chip"><i class="bi bi-file-earmark"></i></span>
+                <div class="file-name"><a href="{{ $file['url'] ?: '#' }}" target="_blank">{{ $file['filename'] }}</a></div>
               </div>
             </td>
-            <td>85.71 KB</td>
+            <td>{{ human_size($file['size']) }}</td>
             <td>
-              <div>2025-08-30</div>
-              <small class="text-muted">05:58:08</small>
+              @php($parts = explode(' ', $file['modified'] ?? ''))
+              <div>{{ $parts[0] ?? '' }}</div>
+              <small class="text-muted">{{ $parts[1] ?? '' }}</small>
             </td>
-            <td><span class="status-pill">Secure</span></td>
+            <td><span class="status-pill">{{ $file['url'] ? 'Secure' : '—' }}</span></td>
             <td class="text-nowrap">
+              @if($file['url'])
               <div class="d-flex gap-2 mb-2">
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-link-45deg me-1"></i>Generate</button>
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-clipboard me-1"></i>Copy</button>
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-code-slash me-1"></i>Embed</button>
-                <button class="btn-icon"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-ghost flex-fill copy-btn" data-url="{{ $file['url'] }}"><i class="bi bi-clipboard me-1"></i>Copy</button>
+                <a href="{{ $file['url'] }}" target="_blank" class="btn btn-ghost flex-fill"><i class="bi bi-box-arrow-up-right me-1"></i>Open</a>
               </div>
-              <div class="small text-break text-muted">https://pdflink.com/view?doc=0f41da405d</div>
+              <div class="small text-break text-muted">{{ $file['url'] }}</div>
+              @else
+              <a href="{{ route('vendor.files.manage') }}" class="btn btn-ghost flex-fill"><i class="bi bi-link-45deg me-1"></i>Generate</a>
+              @endif
             </td>
           </tr>
-
+@empty
           <tr>
-            <td><input class="form-check-input" type="checkbox" /></td>
-            <td>
-              <div class="col-file">
-                <span class="file-chip"><i class="bi bi-file-earmark-text"></i></span>
-                <div class="file-name"><a href="#">Quarterly_Report_Q2.docx</a></div>
-              </div>
-            </td>
-            <td>212 KB</td>
-            <td>
-              <div>2025-08-18</div>
-              <small class="text-muted">11:12:44</small>
-            </td>
-            <td><span class="status-pill">Secure</span></td>
-            <td class="text-nowrap">
-              <div class="d-flex gap-2">
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-link-45deg me-1"></i>Generate</button>
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-clipboard me-1"></i>Copy</button>
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-code-slash me-1"></i>Embed</button>
-                <button class="btn-icon"><i class="bi bi-trash"></i></button>
-              </div>
-            </td>
+            <td colspan="6" class="text-center text-muted">No files found.</td>
           </tr>
-
-          <tr>
-            <td><input class="form-check-input" type="checkbox" /></td>
-            <td>
-              <div class="col-file">
-                <span class="file-chip"><i class="bi bi-filetype-csv"></i></span>
-                <div class="file-name"><a href="#">customers_export_2025-08.csv</a></div>
-              </div>
-            </td>
-            <td>1.8 MB</td>
-            <td>
-              <div>2025-08-01</div>
-              <small class="text-muted">09:05:03</small>
-            </td>
-            <td><span class="status-pill">Secure</span></td>
-            <td class="text-nowrap">
-              <div class="d-flex gap-2">
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-link-45deg me-1"></i>Generate</button>
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-clipboard me-1"></i>Copy</button>
-                <button class="btn btn-ghost flex-fill"><i class="bi bi-code-slash me-1"></i>Embed</button>
-                <button class="btn-icon"><i class="bi bi-trash"></i></button>
-              </div>
-            </td>
-          </tr>
+@endforelse
         </tbody>
       </table>
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+document.getElementById('searchInput').addEventListener('input', function(){
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#filesTbody tr').forEach(function(tr){
+    const name = tr.dataset.name || '';
+    tr.style.display = name.includes(q) ? '' : 'none';
+  });
+});
+
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.copy-btn');
+  if(!btn) return;
+  navigator.clipboard.writeText(btn.dataset.url).then(function(){
+    btn.innerHTML = '<i class="bi bi-check2 me-1"></i>Copied';
+    setTimeout(function(){
+      btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy';
+    }, 2000);
+  });
+});
+</script>
+@endpush
