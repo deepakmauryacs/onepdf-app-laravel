@@ -1,3 +1,3 @@
 <footer class="footer">
-  Copyright © Your Website {{ date('Y') }}
+  Copyright © onelinkpdf.com {{ date('Y') }}
 </footer>
