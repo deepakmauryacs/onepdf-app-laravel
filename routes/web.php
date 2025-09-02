@@ -13,6 +13,7 @@ use App\Http\Controllers\PartnershipsController;
 use App\Http\Controllers\Vendor\DocumentController; // files + public viewer
 use App\Http\Controllers\Vendor\AnalyticsController;
 use App\Http\Controllers\Vendor\PlanController;
+use App\Http\Controllers\Vendor\HelpRequestController;
 
 /* ------------------------- Guest (auth) ------------------------- */
 Route::middleware('guest')->group(function () {
@@ -64,6 +65,11 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('analytics',            [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
     Route::get('plan',                 [PlanController::class, 'index'])->name('vendor.plan.index');
     Route::post('plan/update',         [PlanController::class, 'update'])->name('vendor.plan.update');
+
+    // Help Requests
+    Route::get('help/manage',       [HelpRequestController::class, 'manage'])->name('vendor.help.manage');
+    Route::get('help/manage/list',  [HelpRequestController::class, 'manageList'])->name('vendor.help.manage.list');
+    Route::post('help/store',       [HelpRequestController::class, 'store'])->name('vendor.help.store');
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */
