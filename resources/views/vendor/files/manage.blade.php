@@ -140,6 +140,7 @@
     list: @json(route('vendor.files.manage.list')),
     generate: @json(route('vendor.files.generate')),
     delete: @json(route('vendor.files.delete')),
+    detailBase: @json(url('vendor/files/manage')),
   };
 
   let page = 1, q = '';
@@ -158,10 +159,10 @@
   function toast(msg){ const n=document.createElement('div'); n.textContent=msg; Object.assign(n.style,{position:'fixed',right:'16px',bottom:'16px',background:'#111',color:'#fff',padding:'10px 14px',borderRadius:'10px',zIndex:1060}); document.body.appendChild(n); setTimeout(()=>n.remove(),1600); }
 
   function rowTemplate(f){
-    const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure'; const url=f.public_url||'';
+    const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure'; const url=f.public_url||''; const detail=routes.detailBase+'/'+id;
     return `<tr data-id="${id}">
       <td><input class="form-check-input row-check" type="checkbox"/></td>
-      <td><div class="col-file"><span class="file-chip"><i class="bi ${iconByExt(filename)}"></i></span><div class="file-name"><a href="${url||'#'}" target="_blank">${escapeHtml(filename)}</a></div></div></td>
+      <td><div class="col-file"><span class="file-chip"><i class="bi ${iconByExt(filename)}"></i></span><div class="file-name"><a href="${detail}">${escapeHtml(filename)}</a></div></div></td>
       <td>${size}</td>
       <td><div>${escapeHtml(modified)}</div><small class="text-muted">${escapeHtml(timePart)}</small></td>
       <td><span class="status-pill">${escapeHtml(status)}</span></td>

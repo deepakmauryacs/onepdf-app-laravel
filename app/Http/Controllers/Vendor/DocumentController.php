@@ -74,6 +74,36 @@ class DocumentController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $doc = Document::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->with('link')
+            ->firstOrFail();
+
+        $url = $doc->link ? URL::to('/view').'?doc='.$doc->link->slug : null;
+
+        return view('vendor.files.show', [
+            'doc' => $doc,
+            'url' => $url,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate(['filename' => 'required|string|max:255']);
+
+        $doc = Document::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        $safe = preg_replace('/[^A-Za-z0-9.\-_]/', '_', $request->input('filename'));
+        $doc->filename = $safe;
+        $doc->save();
+
+        return redirect()->back()->with('status', 'Filename updated');
+    }
+
     public function upload(Request $request)
     {
         $request->validate([
