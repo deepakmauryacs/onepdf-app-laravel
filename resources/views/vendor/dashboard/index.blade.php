@@ -28,17 +28,24 @@
       <li><a href="#"><i class="bi bi-house-door me-1"></i>Home</a></li>
       <li>Dashboard</li>
     </ol>
-    <div class="d-flex gap-2">
-      <div class="dropdown">
-        <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-clock-history me-1"></i> Previous Year</button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Last 7 days</a></li>
-          <li><a class="dropdown-item" href="#">Last 30 days</a></li>
-          <li><a class="dropdown-item" href="#">This Year</a></li>
-        </ul>
+      <div class="d-flex gap-2">
+        <div class="dropdown">
+          @php
+            $label = [
+              7  => 'Last 7 days',
+              15 => 'Last 15 days',
+              30 => 'Last 30 days',
+            ][$days] ?? 'Last 7 days';
+          @endphp
+          <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-clock-history me-1"></i> {{ $label }}</button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 7]) }}">Last 7 days</a></li>
+            <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 15]) }}">Last 15 days</a></li>
+            <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 30]) }}">Last 30 days</a></li>
+          </ul>
+        </div>
+        <a href="{{ route('vendor.files.index') }}" class="btn btn-dark"><i class="bi bi-graph-up-arrow me-1"></i> View All Time</a>
       </div>
-      <a href="{{ route('vendor.files.index') }}" class="btn btn-dark"><i class="bi bi-graph-up-arrow me-1"></i> View All Time</a>
-    </div>
   </div>
 
   <!-- Files table card -->
