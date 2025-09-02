@@ -36,22 +36,15 @@
   /* ---------- SAME BUTTON UI AS PREVIOUS LIST PAGE ---------- */
   .actions-cell{ display:flex; flex-direction:column; gap:6px; }
   .actions{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; white-space:nowrap; }
-
   .btn-ghost,.btn-icon{
     display:inline-flex; align-items:center; justify-content:center;
     height:40px; line-height:1; border-radius:12px; font-weight:600;
   }
-  .btn-ghost{
-    background:#fff; border:1px solid var(--line); padding:0 14px; color:var(--text);
-  }
+  .btn-ghost{ background:#fff; border:1px solid var(--line); padding:0 14px; color:var(--text); }
   .btn-ghost .bi{ margin-right:8px; }
   .btn-ghost:hover{ background:#f7f9fc; }
   .btn-ghost:disabled{ opacity:.45; cursor:not-allowed; }
-
-  .btn-icon{
-    width:40px; padding:0;
-    border:1px solid #ffd7d7; background:#fff5f5; color:#b42318;
-  }
+  .btn-icon{ width:40px; padding:0; border:1px solid #ffd7d7; background:#fff5f5; color:#b42318; }
   .btn-icon:hover{ background:#ffe8e8; }
 
   /* --- Colored toast --- */
@@ -61,6 +54,27 @@
   .toast-warning { background:#d97706 !important; color:#fff !important; }
   .toast .toast-header{ background:transparent !important; color:inherit !important; border-bottom:0 !important; }
   .toast .btn-close{ filter: invert(1); }
+
+  /* ===== Modern centered pagination (black & white) ===== */
+  .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pager-summary{color:#64748b;font-size:.9rem}
+  .pagination-modern{gap:8px}
+  .pagination-modern .page-link{
+    border:1px solid var(--line);
+    background:#fff;
+    color:#111;
+    border-radius:12px;
+    min-width:42px;height:42px;
+    padding:0 12px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    box-shadow:0 2px 6px rgba(0,0,0,.04);
+  }
+  .pagination-modern .page-item.active .page-link{background:#111;border-color:#111;color:#fff}
+  .pagination-modern .page-item:not(.active):not(.disabled) .page-link:hover{background:#f2f4f7}
+  .pagination-modern .page-item.disabled .page-link{opacity:.45;cursor:not-allowed}
+  .pagination-modern .ellipsis > .page-link{pointer-events:none}
+  .pagination-modern .page-link .bi{margin:0;font-size:16px}
 </style>
 @endpush
 
@@ -138,15 +152,17 @@
           </thead>
           <tbody></tbody>
         </table>
-      <div id="emptyState" class="empty d-none">
-        <div class="mb-2"><i class="bi bi-inbox"></i></div>
-        No files yet. Upload some to see them here.
-      </div>
+        <div id="emptyState" class="empty d-none">
+          <div class="mb-2"><i class="bi bi-inbox"></i></div>
+          No files yet. Upload some to see them here.
+        </div>
       </div>
     </div>
 
-    <nav class="mt-3" aria-label="Files pagination">
-      <ul id="pager" class="pagination justify-content-center mb-0"></ul>
+    <!-- Centered pagination -->
+    <nav class="mt-3 pagination-wrap" aria-label="Files pagination">
+      <div id="pagerSummary" class="pager-summary d-none"></div>
+      <ul id="pager" class="pagination pagination-modern justify-content-center mb-0"></ul>
     </nav>
 
   </div>
@@ -237,6 +253,7 @@
   const bulkBtn = document.getElementById('bulkDelete');
   const checkAll = document.getElementById('checkAll');
   const pager = document.getElementById('pager');
+  const pagerSummary = document.getElementById('pagerSummary');
   let page = 1;
 
   // Helpers
@@ -354,23 +371,51 @@
     syncBulkBtn();
   }
 
-  function renderPager(current, last){
+  // Modern pagination (center + ellipses + first/prev/next/last)
+  function renderPager(current, last, total=null, perPage=null){
     pager.innerHTML='';
+
+    // summary
+    if(total!=null && perPage!=null){
+      const start = (current-1)*perPage + 1;
+      const end = Math.min(total, current*perPage);
+      pagerSummary.classList.remove('d-none');
+      pagerSummary.textContent = `Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${total.toLocaleString()}`;
+    } else {
+      pagerSummary.classList.add('d-none');
+    }
+
     if(last<=1) return;
-    const create = (p,label,disabled=false,active=false)=>{
+
+    const maxWindow = 5;
+    let start = Math.max(1, current - Math.floor(maxWindow/2));
+    let end   = Math.min(last, start + maxWindow - 1);
+    if(end - start + 1 < maxWindow) start = Math.max(1, end - maxWindow + 1);
+
+    const add = (p, html, disabled=false, active=false, extra='')=>{
       const li=document.createElement('li');
-      li.className='page-item'+(disabled?' disabled':'')+(active?' active':'');
-      const a=document.createElement('a');
-      a.className='page-link';
-      a.href='#';
-      a.dataset.page=p;
-      a.textContent=label;
-      li.appendChild(a);
+      li.className=`page-item ${extra}${disabled?' disabled':''}${active?' active':''}`.trim();
+      li.innerHTML=`<a class="page-link" href="#" data-page="${p}">${html}</a>`;
       pager.appendChild(li);
     };
-    create(current-1,'Previous',current===1);
-    for(let i=1;i<=last;i++) create(i,String(i),false,i===current);
-    create(current+1,'Next',current===last);
+    const dots = ()=> add(current, '…', true, false, 'ellipsis');
+
+    // First + Prev
+    add(1, `<i class="bi bi-chevron-double-left"></i>`, current===1);
+    add(current-1, `<i class="bi bi-chevron-left"></i>`, current===1);
+
+    // Left side
+    if(start>1){ add(1,'1',false,current===1); if(start>2) dots(); }
+
+    // Window
+    for(let i=start;i<=end;i++) add(i, String(i), false, i===current);
+
+    // Right side
+    if(end<last){ if(end<last-1) dots(); add(last, String(last), false, current===last); }
+
+    // Next + Last
+    add(current+1, `<i class="bi bi-chevron-right"></i>`, current===last);
+    add(last, `<i class="bi bi-chevron-double-right"></i>`, current===last);
   }
 
   async function loadFiles(p=1){
@@ -379,7 +424,7 @@
       const res = await fetch(routes.list+'?page='+p);
       const data = await res.json();
       renderRows(data.files||[], data.total||0);
-      renderPager(data.current_page||1, data.last_page||1);
+      renderPager(data.current_page||1, data.last_page||1, data.total ?? null, data.per_page ?? null);
       checkAll.checked=false;
     } catch {
       toast('Failed to load files.','error');
@@ -396,6 +441,7 @@
     checkAll.checked=false; syncBulkBtn();
   });
 
+  // Pager clicks
   pager.addEventListener('click', function(e){
     const a = e.target.closest('a[data-page]');
     if(!a) return;
@@ -418,7 +464,7 @@
       }catch{ toast('Delete failed.','error'); }
     }
 
-    // generate link (open permissions modal)
+    // generate link
     if(btn.classList.contains('generate')){
       const modalEl = document.getElementById('permModal');
       modalEl.dataset.id = btn.dataset.id;
@@ -434,7 +480,7 @@
       navigator.clipboard.writeText(url).then(()=> toast('Link copied to clipboard.','success'));
     }
 
-    // embed (copy iframe code like previous page)
+    // embed
     if(btn.classList.contains('embed')){
       const url = btn.dataset.url || '';
       if(!url) return;
