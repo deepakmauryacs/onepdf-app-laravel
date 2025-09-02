@@ -41,7 +41,7 @@
       </a>
     </div>
 
-    <a class="nav-link " href="">
+    <a class="nav-link " href="{{ route('vendor.help.manage') }}">
       <i class="bi bi-life-preserver"></i> <span>Help</span>
     </a>
   </nav>
