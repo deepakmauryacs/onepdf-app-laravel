@@ -26,17 +26,31 @@
   .btn-danger-soft{background:#ffecec;border:1px solid #ffd0d0;color:#b42318;border-radius:10px}
 
   table.table{margin:0}
+  .table td, .table th{vertical-align:middle}
   thead th{color:#475569;font-weight:600;border-bottom:1px solid var(--line);background:#fff}
-  tbody td{vertical-align:middle;border-color:var(--line)}
+  tbody td{border-color:var(--line)}
   .col-file{display:flex;align-items:center;gap:12px}
   .file-chip{display:inline-flex;width:36px;height:36px;border-radius:10px;background:#f3f6fb;color:#0b5ed7;
     align-items:center;justify-content:center;font-size:18px}
   .file-name a{color:#0f172a;text-decoration:none;font-weight:600}
   .status-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;
     background:#eff8ff;color:#0b5ed7;border:1px solid #d7e6ff;height:34px;padding:0 14px;font-weight:600}
-  .btn-ghost{border:1px solid var(--line);background:#fff;border-radius:10px;height:36px;padding:0 10px;font-weight:600}
-  .btn-icon{border:1px solid #ffe1e1;background:#fff0f0;color:#b42318;border-radius:10px;height:36px;width:36px}
-  .small-link{color:#64748b}
+
+  /* --- ACTIONS: same height/shape + centered vertically --- */
+  .actions-cell{display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap}
+  .btn-ghost,.btn-icon{
+    display:inline-flex;align-items:center;justify-content:center;
+    height:40px; border-radius:12px; line-height:1; font-weight:600;
+  }
+  .btn-ghost{border:1px solid var(--line);background:#fff;padding:0 14px}
+  .btn-ghost .bi{margin-right:8px}
+  .btn-ghost:hover{background:#f7f9fc}
+
+  .btn-icon{width:40px;padding:0;border:1px solid #ffd7d7;background:#fff5f5;color:#b42318}
+  .btn-icon:hover{background:#ffe8e8}
+
+  .small-link{color:#64748b;margin-top:2px}
   .small-link a{color:#0b5ed7;text-decoration:none}
 </style>
 @endpush
@@ -109,12 +123,17 @@
       <td>${size}</td>
       <td><div>${escapeHtml(modified)}</div><small class="text-muted">${escapeHtml(timePart)}</small></td>
       <td><span class="status-pill">${escapeHtml(status)}</span></td>
-      <td><div class="d-flex gap-2">
-        <button class="btn btn-ghost btn-generate"><i class="bi bi-link-45deg me-1"></i>Generate</button>
-        <button class="btn btn-ghost btn-copy"><i class="bi bi-clipboard me-1"></i>Copy</button>
-        <button class="btn btn-ghost btn-embed"><i class="bi bi-code-slash me-1"></i>Embed</button>
-        <button class="btn-icon btn-delete"><i class="bi bi-trash"></i></button>
-      </div><div class="small small-link mt-2 text-break">${url?`<a href="${url}" target="_blank">${escapeHtml(url)}</a>`:'—'}</div></td>
+      <td>
+        <div class="actions-cell">
+          <div class="actions">
+            <button class="btn btn-ghost btn-generate"><i class="bi bi-link-45deg"></i>Generate</button>
+            <button class="btn btn-ghost btn-copy"><i class="bi bi-clipboard"></i>Copy</button>
+            <button class="btn btn-ghost btn-embed"><i class="bi bi-code-slash"></i>Embed</button>
+            <button class="btn-icon btn-delete" title="Delete"><i class="bi bi-trash"></i></button>
+          </div>
+          <div class="small small-link text-break">${url?`<a href="${url}" target="_blank">${escapeHtml(url)}</a>`:'—'}</div>
+        </div>
+      </td>
     </tr>`;
   }
 

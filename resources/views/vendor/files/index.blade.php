@@ -33,21 +33,28 @@
   .mf-search-icon{ position:absolute; left:10px; top:50%; transform:translateY(-50%); pointer-events:none; color:#6b7280; font-size:14px; }
   .badge-secure{ background:#16a34a; color:#fff; border-radius:999px; padding:.2rem .5rem; font-weight:600; }
 
-  /* -------------------- Neutral (Black & White) Buttons -------------------- */
-  .btn-neutral{
-    --nbg:#fff; --nbg-h:#f3f4f6; --nbg-a:#e5e7eb;
-    --ntext:#0f172a; --nmuted:#9ca3af;
-    --nborder:#d1d5db; --nborder-h:#cfd4dc;
-    background:var(--nbg); color:var(--ntext); border:1px solid var(--nborder);
-    border-radius:10px; padding:.35rem .7rem; line-height:1; display:inline-flex; align-items:center; gap:.35rem;
-  }
-  .btn-neutral:hover{ background:var(--nbg-h); color:var(--ntext); border-color:var(--nborder-h); }
-  .btn-neutral:active{ background:var(--nbg-a); color:var(--ntext); }
-  .btn-neutral:disabled{ background:var(--nbg); color:var(--nmuted); border-color:#e5e7eb; opacity:1; }
-  .btn-neutral.btn-sm{ padding:.3rem .6rem; border-radius:10px; }
-  .btn-neutral i{ color:inherit; }
+  /* ---------- SAME BUTTON UI AS PREVIOUS LIST PAGE ---------- */
+  .actions-cell{ display:flex; flex-direction:column; gap:6px; }
+  .actions{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; white-space:nowrap; }
 
-  /* --- Colored toast: keep these colors visible --- */
+  .btn-ghost,.btn-icon{
+    display:inline-flex; align-items:center; justify-content:center;
+    height:40px; line-height:1; border-radius:12px; font-weight:600;
+  }
+  .btn-ghost{
+    background:#fff; border:1px solid var(--line); padding:0 14px; color:var(--text);
+  }
+  .btn-ghost .bi{ margin-right:8px; }
+  .btn-ghost:hover{ background:#f7f9fc; }
+  .btn-ghost:disabled{ opacity:.45; cursor:not-allowed; }
+
+  .btn-icon{
+    width:40px; padding:0;
+    border:1px solid #ffd7d7; background:#fff5f5; color:#b42318;
+  }
+  .btn-icon:hover{ background:#ffe8e8; }
+
+  /* --- Colored toast --- */
   .toast-success { background:#16a34a !important; color:#fff !important; }
   .toast-error   { background:#dc2626 !important; color:#fff !important; }
   .toast-info    { background:#2563eb !important; color:#fff !important; }
@@ -110,7 +117,7 @@
               <i class="bi bi-search mf-search-icon"></i>
               <input id="searchInput" type="text" class="form-control mf-search-input" placeholder="Search files..." autocomplete="off">
             </div>
-            <button id="bulkDelete" class="btn btn-neutral" disabled>
+            <button id="bulkDelete" class="btn btn-ghost" disabled>
               <i class="bi bi-trash"></i> Delete selected
             </button>
           </div>
@@ -126,7 +133,7 @@
             <th style="width:120px;">Size</th>
             <th style="width:160px;">Modified</th>
             <th style="width:110px;">Status</th>
-            <th style="width:260px;">Actions</th>
+            <th style="width:300px;">Actions</th>
           </tr>
           </thead>
           <tbody></tbody>
@@ -177,8 +184,8 @@
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" id="createLink"><i class="bi bi-magic me-1"></i>Create link</button>
+          <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-ghost" id="createLink"><i class="bi bi-magic me-1"></i>Create link</button>
         </div>
       </div>
     </div>
@@ -233,16 +240,16 @@
     while(n>=1024 && i<u.length-1){ n/=1024; i++; }
     return (i? n.toFixed(2):n) + ' ' + u[i];
   }
-  function extBadge(name){
-    const ext=(name.split('.').pop()||'').toUpperCase();
-    return `<div class="file-badge">${ext||'FILE'}</div>`;
-  }
   function iconFor(name){
     const ext=(name.split('.').pop()||'').toLowerCase();
     if(ext==='pdf') return `<div class="file-icon text-danger" title="PDF"><i class="bi bi-file-earmark-pdf"></i></div>`;
     if(['png','jpg','jpeg','gif','webp','bmp','svg'].includes(ext))
       return `<div class="file-icon" title="Image"><i class="bi bi-file-image"></i></div>`;
     return `<div class="file-icon" title="File"><i class="bi bi-file-earmark"></i></div>`;
+  }
+  function extBadge(name){
+    const ext=(name.split('.').pop()||'').toUpperCase();
+    return `<div class="file-badge">${ext||'FILE'}</div>`;
   }
 
   function makeUploadRow(file){
@@ -326,13 +333,15 @@
         <td>${f.modified || ''}</td>
         <td><span class="badge-secure">Secure</span></td>
         <td>
-          <div class="d-flex align-items-center" style="gap:8px;">
-            <button class="btn btn-neutral btn-sm generate" data-id="${f.id}"><i class="bi bi-link-45deg"></i> Generate</button>
-            <button class="btn btn-neutral btn-sm copy" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-clipboard"></i> Copy</button>
-            <button class="btn btn-neutral btn-sm embed" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-code-slash"></i> Embed</button>
-            <button class="btn btn-neutral btn-sm delete" data-id="${f.id}"><i class="bi bi-trash"></i></button>
+          <div class="actions-cell">
+            <div class="actions">
+              <button class="btn btn-ghost btn-sm-none generate" data-id="${f.id}"><i class="bi bi-link-45deg"></i>Generate</button>
+              <button class="btn btn-ghost btn-sm-none copy" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-clipboard"></i>Copy</button>
+              <button class="btn btn-ghost btn-sm-none embed" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-code-slash"></i>Embed</button>
+              <button class="btn btn-icon delete" data-id="${f.id}" title="Delete"><i class="bi bi-trash"></i></button>
+            </div>
+            <div class="small text-muted mt-1 link-holder">${f.url?`<a href="${f.url}" target="_blank">${f.url}</a>`:''}</div>
           </div>
-          <div class="small text-muted mt-1 link-holder">${f.url?`<code>${f.url}</code>`:''}</div>
         </td>`;
       tbody.appendChild(tr);
     }
@@ -390,10 +399,12 @@
       navigator.clipboard.writeText(url).then(()=> toast('Link copied to clipboard.','success'));
     }
 
-    // embed
+    // embed (copy iframe code like previous page)
     if(btn.classList.contains('embed')){
       const url = btn.dataset.url || '';
-      if(url) window.open(url, '_blank');
+      if(!url) return;
+      const code = `<iframe src="${url}" width="100%" height="600" frameborder="0" allowfullscreen></iframe>`;
+      navigator.clipboard.writeText(code).then(()=> toast('Embed code copied.','success'));
     }
   });
 
@@ -410,22 +421,21 @@
   });
   tbody.addEventListener('change', (e)=>{ if(e.target.classList.contains('row-check')) syncBulkBtn(); });
 
-  // permissions -> create link (NOW sends permissions JSON)
+  // permissions -> create link
   document.getElementById('createLink').addEventListener('click', async ()=>{
     const modalEl = document.getElementById('permModal');
     const id = modalEl.dataset.id;
 
-    // collect permissions from modal
     const perms = {
       download : !!document.getElementById('permDownload')?.checked,
-      print    : !!document.getElementById('permSearch')?.checked,   // checkbox id kept as permSearch
+      print    : !!document.getElementById('permSearch')?.checked,
       analytics: !!document.getElementById('permAnalytics')?.checked,
     };
 
     const fd = new FormData();
     fd.append('id', id);
     fd.append('_token', csrf);
-    fd.append('permissions', JSON.stringify(perms)); // <-- send as JSON string
+    fd.append('permissions', JSON.stringify(perms));
 
     const modal = bootstrap.Modal.getInstance('#permModal'); 
     modal.hide();
@@ -439,10 +449,10 @@
       const r=await fetch(routes.gen,{method:'POST',body:fd}); 
       const data=await r.json();
       if(data.url){
-        holder.innerHTML = `<code>${data.url}</code>`;
+        holder.innerHTML = `<a href="${data.url}" target="_blank">${data.url}</a>`;
         const copyBtn = btn.parentElement.querySelector('.copy');
-        copyBtn.disabled=false; 
-        copyBtn.dataset.url=data.url;
+        const embedBtn= btn.parentElement.querySelector('.embed');
+        [copyBtn, embedBtn].forEach(b=>{ b.disabled=false; b.dataset.url=data.url; });
         toast('Link generated with permissions.','success');
       }else{
         holder.innerHTML = '<span class="text-danger">No URL returned</span>';
@@ -452,7 +462,7 @@
       toast('Failed to generate link.','error');
     }finally{
       btn.disabled=false; 
-      btn.innerHTML = '<i class="bi bi-link-45deg"></i> Generate';
+      btn.innerHTML = '<i class="bi bi-link-45deg"></i>Generate';
     }
   });
 
