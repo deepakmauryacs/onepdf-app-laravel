@@ -99,7 +99,7 @@
 
       <h5 class="mb-3" style="font-weight:700;color:#111827;">Change Password</h5>
 
-      <form id="password-form" method="POST" action="{{ route('password.update') }}">
+      <form id="password-form" method="POST" action="{{ route('password.update') }}" novalidate>
         @csrf
         @method('PUT')
 
@@ -107,7 +107,7 @@
           <div class="col-12">
             <label class="form-label">Current Password</label>
             <div class="input-group-password">
-              <input type="password" name="current_password" id="current_password" class="form-control" required>
+              <input type="password" name="current_password" id="current_password" class="form-control">
               <i class="bi bi-eye toggle-password" data-target="current_password"></i>
             </div>
           </div>
@@ -115,7 +115,7 @@
           <div class="col-12">
             <label class="form-label">New Password</label>
             <div class="input-group-password">
-              <input type="password" name="password" id="password" class="form-control" required>
+              <input type="password" name="password" id="password" class="form-control">
               <i class="bi bi-eye toggle-password" data-target="password"></i>
             </div>
           </div>
@@ -123,7 +123,7 @@
           <div class="col-12">
             <label class="form-label">Confirm Password</label>
             <div class="input-group-password">
-              <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+              <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
               <i class="bi bi-eye toggle-password" data-target="password_confirmation"></i>
             </div>
           </div>
