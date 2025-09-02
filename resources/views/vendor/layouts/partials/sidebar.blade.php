@@ -14,7 +14,7 @@
     <a class="nav-link " href="{{ route('dashboard') }}">
       <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
     </a>
-    <a class="nav-link " href="">
+    <a class="nav-link " href="{{ route('vendor.files.index') }}">
       <i class="bi bi-cloud-arrow-up"></i> <span>Upload Files</span>
     </a>
     <a class="nav-link " href="">
