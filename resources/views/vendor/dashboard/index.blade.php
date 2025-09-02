@@ -44,7 +44,7 @@
             <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 30]) }}">Last 30 days</a></li>
           </ul>
         </div>
-        <a href="{{ route('vendor.files.index') }}" class="btn btn-dark"><i class="bi bi-graph-up-arrow me-1"></i> View All Time</a>
+        <a href="{{ route('vendor.files.index') }}" class="btn btn-dark"><i class="bi bi-card-list me-1"></i> View All Time</a>
       </div>
   </div>
 
