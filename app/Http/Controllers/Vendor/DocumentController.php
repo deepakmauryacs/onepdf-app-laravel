@@ -24,6 +24,7 @@ class DocumentController extends Controller
     {
         $user = Auth::user();
         $docs = Document::where('user_id', $user->id)
+            ->with('link')
             ->latest()
             ->get()
             ->map(fn($d) => [
@@ -31,7 +32,7 @@ class DocumentController extends Controller
                 'filename' => $d->filename,
                 'size'     => (int) $d->size,
                 'modified' => optional($d->updated_at)->format('Y-m-d H:i'),
-                'url'      => $d->public_url ?? null,
+                'url'      => $d->link ? URL::to('/view').'?doc='.$d->link->slug : null,
             ]);
 
         return response()->json(['files' => $docs]);
