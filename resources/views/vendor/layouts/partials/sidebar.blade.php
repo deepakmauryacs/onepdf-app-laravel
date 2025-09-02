@@ -20,7 +20,7 @@
     <a class="nav-link " href="{{ route('vendor.files.manage') }}">
       <i class="bi bi-folder2-open"></i> <span>Manage Files</span>
     </a>
-    <a class="nav-link " href="">
+    <a class="nav-link " href="{{ route('vendor.analytics.index') }}">
       <i class="bi bi-bar-chart"></i> <span>Analytics</span>
     </a>
     <a class="nav-link " href="">

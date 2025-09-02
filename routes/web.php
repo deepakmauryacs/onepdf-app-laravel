@@ -11,6 +11,7 @@ use App\Http\Controllers\Vendor\PasswordController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PartnershipsController;
 use App\Http\Controllers\Vendor\DocumentController; // files + public viewer
+use App\Http\Controllers\Vendor\AnalyticsController;
 
 /* ------------------------- Guest (auth) ------------------------- */
 Route::middleware('guest')->group(function () {
@@ -58,6 +59,8 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::post('files/upload',        [DocumentController::class, 'upload'])->name('vendor.files.upload');
     Route::post('files/delete',        [DocumentController::class, 'destroy'])->name('vendor.files.delete');
     Route::post('files/generate-link', [DocumentController::class, 'generateLink'])->name('vendor.files.generate');
+
+    Route::get('analytics',            [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */
