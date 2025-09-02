@@ -138,12 +138,16 @@
           </thead>
           <tbody></tbody>
         </table>
-        <div id="emptyState" class="empty d-none">
-          <div class="mb-2"><i class="bi bi-inbox"></i></div>
-          No files yet. Upload some to see them here.
-        </div>
+      <div id="emptyState" class="empty d-none">
+        <div class="mb-2"><i class="bi bi-inbox"></i></div>
+        No files yet. Upload some to see them here.
+      </div>
       </div>
     </div>
+
+    <nav class="mt-3" aria-label="Files pagination">
+      <ul id="pager" class="pagination justify-content-center mb-0"></ul>
+    </nav>
 
   </div>
 
@@ -232,6 +236,8 @@
   const emptyState = document.getElementById('emptyState');
   const bulkBtn = document.getElementById('bulkDelete');
   const checkAll = document.getElementById('checkAll');
+  const pager = document.getElementById('pager');
+  let page = 1;
 
   // Helpers
   function humanSize(bytes){
@@ -295,7 +301,7 @@
         ui.bar.style.width='100%'; ui.pct.textContent='100%'; ui.done.classList.remove('d-none');
         setTimeout(()=>{ ui.row.remove(); if(!uploadList.children.length) uploadingBox.classList.add('d-none'); }, 700);
         toast('File uploaded successfully.','success');
-        loadFiles();
+        loadFiles(page);
       }).catch(e=>{
         toast(e.message || 'Upload failed','error');
       });
@@ -315,12 +321,12 @@
   input.addEventListener('change',function(){ uploadFiles(this.files); this.value=''; });
 
   // List + render
-  function renderRows(files){
+  function renderRows(files, total){
     tbody.innerHTML='';
     if(!files || !files.length){
       emptyState.classList.remove('d-none'); countBadge.textContent='0'; return;
     }
-    emptyState.classList.add('d-none'); countBadge.textContent=files.length;
+    emptyState.classList.add('d-none'); countBadge.textContent=total;
 
     for (const f of files){
       const tr=document.createElement('tr');
@@ -348,11 +354,32 @@
     syncBulkBtn();
   }
 
-  async function loadFiles(){
+  function renderPager(current, last){
+    pager.innerHTML='';
+    if(last<=1) return;
+    const create = (p,label,disabled=false,active=false)=>{
+      const li=document.createElement('li');
+      li.className='page-item'+(disabled?' disabled':'')+(active?' active':'');
+      const a=document.createElement('a');
+      a.className='page-link';
+      a.href='#';
+      a.dataset.page=p;
+      a.textContent=label;
+      li.appendChild(a);
+      pager.appendChild(li);
+    };
+    create(current-1,'Previous',current===1);
+    for(let i=1;i<=last;i++) create(i,String(i),false,i===current);
+    create(current+1,'Next',current===last);
+  }
+
+  async function loadFiles(p=1){
+    page=p;
     try {
-      const res = await fetch(routes.list);
+      const res = await fetch(routes.list+'?page='+p);
       const data = await res.json();
-      renderRows(data.files||[]);
+      renderRows(data.files||[], data.total||0);
+      renderPager(data.current_page||1, data.last_page||1);
       checkAll.checked=false;
     } catch {
       toast('Failed to load files.','error');
@@ -369,6 +396,14 @@
     checkAll.checked=false; syncBulkBtn();
   });
 
+  pager.addEventListener('click', function(e){
+    const a = e.target.closest('a[data-page]');
+    if(!a) return;
+    e.preventDefault();
+    const p = parseInt(a.dataset.page,10);
+    if(p>0) loadFiles(p);
+  });
+
   // Row actions
   tbody.addEventListener('click', async (e)=>{
     const btn = e.target.closest('button'); if(!btn) return;
@@ -379,7 +414,7 @@
       const fd = new FormData(); fd.append('id', btn.dataset.id); fd.append('_token', csrf);
       try{
         const r=await fetch(routes.del,{method:'POST',body:fd}); if(!r.ok) throw 0;
-        await r.json(); toast('File deleted.','success'); loadFiles();
+        await r.json(); toast('File deleted.','success'); loadFiles(page);
       }catch{ toast('Delete failed.','error'); }
     }
 

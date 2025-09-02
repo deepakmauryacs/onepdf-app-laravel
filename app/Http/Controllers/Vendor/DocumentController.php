@@ -31,16 +31,22 @@ class DocumentController extends Controller
         $docs = Document::where('user_id', $user->id)
             ->with('link')
             ->latest()
-            ->get()
-            ->map(fn($d) => [
-                'id'       => $d->id,
-                'filename' => $d->filename,
-                'size'     => (int) $d->size,
-                'modified' => optional($d->updated_at)->format('Y-m-d H:i'),
-                'url'      => $d->link ? URL::to('/view').'?doc='.$d->link->slug : null,
-            ]);
+            ->paginate(10);
 
-        return response()->json(['files' => $docs]);
+        $files = $docs->getCollection()->map(fn($d) => [
+            'id'       => $d->id,
+            'filename' => $d->filename,
+            'size'     => (int) $d->size,
+            'modified' => optional($d->updated_at)->format('Y-m-d H:i'),
+            'url'      => $d->link ? URL::to('/view').'?doc='.$d->link->slug : null,
+        ]);
+
+        return response()->json([
+            'files'        => $files,
+            'current_page' => $docs->currentPage(),
+            'last_page'    => $docs->lastPage(),
+            'total'        => $docs->total(),
+        ]);
     }
 
     public function manageList(Request $request)
