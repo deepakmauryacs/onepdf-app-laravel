@@ -38,6 +38,18 @@ class HomeController extends Controller
         return view('how-it-works');
     }
 
+    public function contact()
+    {
+        return view('contact');
+    }
+
+    public function partnerships()
+    {
+        return view('partnerships');
+    }
+
+    
+
     /**
      * Display the terms and conditions page.
      */

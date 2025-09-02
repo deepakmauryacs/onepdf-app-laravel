@@ -1,0 +1,1384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Basic -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PDFOneLink — Secure PDF Sharing & Analytics in One Link</title>
+  <meta name="description" content="Upload PDFs, share with a single secure link, control permissions, and track opens with analytics. Embed anywhere. Try PDFOneLink for free.">
+  <link rel="canonical" href="https://pdfonelink.com/">
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PDFOneLink — Secure PDF Sharing & Analytics in One Link">
+  <meta property="og:description" content="Upload, share, protect and track PDFs in one powerful link.">
+  <meta property="og:url" content="https://pdfonelink.com/">
+  <meta property="og:image" content="https://pdfonelink.com/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PDFOneLink — Secure PDF Sharing & Analytics in One Link">
+  <meta name="twitter:description" content="Upload, share, protect and track PDFs in one powerful link.">
+  <meta name="twitter:image" content="https://pdfonelink.com/og-image.jpg">
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+  <link rel="manifest" href="favicon_io/site.webmanifest">
+  <link rel="shortcut icon" href="favicon_io/favicon.ico">
+
+  <!-- Google Fonts - DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Styles -->
+  <style>
+    :root {
+      --brand: #2563eb; /* blue-600 */
+      --brand-light: #3b82f6; /* blue-500 */
+      --brand-dark: #1d4ed8; /* blue-700 */
+      --accent: #22d3ee; /* cyan-400 */
+      --text: #0f172a; /* slate-900 */
+      --text-light: #334155; /* slate-700 */
+      --muted: #64748b; /* slate-500 */
+      --light: #f8fafc; /* slate-50 */
+      --lighter: #f1f5f9; /* slate-100 */
+      --bg: #0b1220; /* dark */
+      --border: #e2e8f0; /* slate-200 */
+      --success: #10b981; /* emerald-500 */
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --header-bg: #111827; /* gray-900 */
+      --header-border: #374151; /* gray-700 */
+    }
+    
+    body {
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    
+    h1, h2, h3, h4, h5, h6, .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    
+    .btn-brand {
+      background: var(--brand);
+      color: #fff;
+      font-weight: 600;
+      padding: 0.625rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-brand:hover {
+      background: var(--brand-dark);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .btn-ghost {
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      padding: 0.625rem 1.5rem;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-ghost:hover {
+      background: var(--lighter);
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+
+    /* Hero */
+    .hero {
+      background: radial-gradient(1200px 400px at 20% -10%, rgba(34, 211, 238, 0.15), transparent 60%),
+                  radial-gradient(1000px 500px at 110% 10%, rgba(37, 99, 235, 0.10), transparent 60%),
+                  linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      padding: 6rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .hero .badge {
+      background: rgba(34, 211, 238, 0.15);
+      color: #0e7490;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      margin-bottom: 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      backdrop-filter: blur(4px);
+    }
+    
+    .code-card {
+      background: var(--bg);
+      color: #e2e8f0;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .code-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .code-card .toolbar {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.75rem 1rem;
+    }
+    
+    pre {
+      margin: 0;
+      padding: 1.25rem;
+      font-size: 0.875rem;
+      overflow: auto;
+      font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
+      line-height: 1.5;
+    }
+
+    /* Sections */
+    .section {
+      padding: 5rem 0;
+    }
+    
+    .section-title {
+      font-weight: 800;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    
+    .section-title.centered {
+      text-align: center;
+    }
+    
+    .section-title.centered::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--brand);
+      margin: 1rem auto;
+      border-radius: 2px;
+    }
+    
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 1.125rem;
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+    
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--brand);
+      font-size: 1.5rem;
+    }
+    
+    .feature-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      height: 100%;
+      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--brand-light);
+    }
+    
+    .check {
+      color: var(--success);
+    }
+    
+    .muted {
+      color: var(--muted);
+    }
+
+    /* Pricing */
+    .pricing-section {
+      background: var(--lighter);
+    }
+    
+    .plan {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      height: 100%;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .plan:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .plan.featured {
+      border-color: var(--brand);
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .plan.featured::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -12px;
+      right: 2rem;
+      background: var(--brand);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 1rem;
+      border-radius: 50px;
+    }
+    
+    .plan-title {
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .plan-price {
+      font-weight: 800;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+    }
+    
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem 0;
+    }
+    
+    .plan-features li {
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .plan-features li i {
+      margin-right: 0.75rem;
+    }
+
+    /* FAQ */
+    .faq-item {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+    
+    .faq-item:hover {
+      border-color: var(--brand-light);
+    }
+    
+    .faq-question {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .faq-question i {
+      margin-right: 0.75rem;
+      color: var(--brand);
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, #e0f2fe 0%, #eef2ff 100%);
+      border-radius: var(--radius);
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 200%;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%232563eb' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+
+    /* ENHANCED: Header Styles */
+    .navbar {
+      background: linear-gradient(90deg, var(--header-bg) 0%, #0f172a 100%) !important;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.5rem 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-brand {
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: white !important;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .navbar-brand i {
+      color: var(--brand-light);
+      font-size: 1.8rem;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      color: #d1d5db !important;
+      transition: all 0.2s ease;
+      padding: 0.5rem 1rem !important;
+      border-radius: 6px;
+      position: relative;
+    }
+    
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--brand-light);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 70%;
+    }
+    
+    .nav-link:hover {
+      color: white !important;
+    }
+    
+    .navbar-toggler {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #d1d5db;
+      padding: 0.4rem 0.6rem;
+    }
+    
+    .navbar-toggler:focus {
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+    }
+    
+    .navbar .btn-ghost {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--brand-light);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .navbar .btn-brand {
+      background: var(--brand);
+      border-color: var(--brand);
+      transition: all 0.3s ease;
+    }
+    
+    .navbar .btn-brand:hover {
+      background: var(--brand-dark);
+      border-color: var(--brand-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    /* ENHANCED: Footer Styles */
+    .footer {
+      background: linear-gradient(to bottom, var(--header-bg) 0%, #0b1220 100%);
+      color: #d1d5db;
+      padding: 5rem 0 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--brand-light) 50%, transparent 100%);
+    }
+    
+    .footer a {
+      color: #9ca3af;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .footer a::before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--brand-light);
+      transition: width 0.3s ease;
+    }
+    
+    .footer a:hover {
+      color: white;
+      text-decoration: none;
+    }
+    
+    .footer a:hover::before {
+      width: 100%;
+    }
+    
+    .footer h5, .footer h6 {
+      color: white;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .footer h5::after, .footer h6::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background: var(--brand-light);
+      border-radius: 2px;
+    }
+    
+    .footer ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .footer ul li {
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .footer ul li::before {
+      content: '→';
+      color: var(--brand-light);
+      margin-right: 0.75rem;
+      font-weight: bold;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+    
+    .footer ul li:hover::before {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem;
+      margin-top: 3rem;
+      color: #9ca3af;
+      font-size: 0.875rem;
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .footer .form-control {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .footer .form-control:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--brand-light);
+      color: white;
+      box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+    }
+    
+    .footer .form-control::placeholder {
+      color: #9ca3af;
+    }
+    
+    .footer .btn-brand {
+      background: var(--brand);
+      border-color: var(--brand);
+      transition: all 0.3s ease;
+    }
+    
+    .footer .btn-brand:hover {
+      background: var(--brand-dark);
+      border-color: var(--brand-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      color: #d1d5db;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      background: var(--brand);
+      color: white;
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      color: #9ca3af;
+      margin: 0;
+    }
+    
+    .legal-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .legal-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .legal-links a:hover {
+      color: white;
+    }
+    
+    .legal-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: var(--brand-light);
+      transition: width 0.3s ease;
+    }
+    
+    .legal-links a:hover::after {
+      width: 100%;
+    }
+    
+    .divider {
+      color: #4b5563;
+    }
+
+    /* Utilities */
+    .rounded-4 {
+      border-radius: var(--radius) !important;
+    }
+    
+    .py-6 {
+      padding-top: 5rem !important;
+      padding-bottom: 5rem !important;
+    }
+    
+    .py-7 {
+      padding-top: 6rem !important;
+      padding-bottom: 6rem !important;
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+
+    /* How it works */
+    .step-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 2rem;
+      height: 100%;
+      text-align: center;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .step-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow);
+    }
+    
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: var(--brand);
+      color: white;
+      border-radius: 50%;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    /* NEW: Demo Section Styles */
+    .demo-section {
+      background: linear-gradient(to bottom, #f8fafc, #ffffff);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .demo-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .demo-container {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .demo-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .demo-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+    }
+    
+    .demo-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .demo-browser {
+      padding: 0;
+      border-radius: 0 0 var(--radius) var(--radius);
+      overflow: hidden;
+    }
+    
+    .demo-browser iframe {
+      width: 100%;
+      height: 400px;
+      border: none;
+    }
+    
+    .demo-controls {
+      padding: 1.5rem;
+      background: var(--lighter);
+      border-top: 1px solid var(--border);
+    }
+    
+    .token-input {
+      font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+    
+    .demo-feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .demo-feature {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .demo-feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--brand);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 4rem 0;
+        text-align: center;
+      }
+      
+      .section {
+        padding: 3rem 0;
+      }
+      
+      .display-5 {
+        font-size: 2.5rem;
+      }
+      
+      .demo-feature-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .navbar .btn {
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: center;
+      }
+      
+      .navbar-collapse {
+        padding: 1rem 0;
+        background: var(--header-bg);
+        border-radius: 8px;
+        margin-top: 0.5rem;
+        padding: 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      }
+      
+      .footer ul li::before {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+      }
+      
+      .legal-links {
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <!-- JSON-LD: SoftwareApplication -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"PDFOneLink",
+    "applicationCategory":"BusinessApplication",
+    "operatingSystem":"Web",
+    "url":"https://pdfonelink.com/",
+    "description":"Secure PDF upload, sharing, permission control, and analytics — all in one link.",
+    "offers":{
+      "@type":"AggregateOffer",
+      "lowPrice":"0",
+      "highPrice":"29",
+      "priceCurrency":"USD"
+    }
+  }
+  </script>
+
+  <!-- JSON-LD: FAQPage -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"Can I track who opened my PDF?","acceptedAnswer":{"@type":"Answer","text":"Yes. PDFOneLink captures open events, approximate location, device, referrer, and time spent per page."}},
+      {"@type":"Question","name":"Can I disable download or print?","acceptedAnswer":{"@type":"Answer","text":"Yes. You can set view-only, disable download/print, add watermarks and expiry to protect your PDFs."}},
+      {"@type":"Question","name":"Can I embed the viewer on my website?","acceptedAnswer":{"@type":"Answer","text":"Yes. One iframe snippet lets you embed a secure viewer anywhere."}},
+      {"@type":"Question","name":"Do links expire?","acceptedAnswer":{"@type":"Answer","text":"You can set expiry, revoke access anytime, or issue time-limited tokens."}}
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-file-earmark-pdf"></i>PDFOneLink
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+          <li class="nav-item"><a class="nav-link active" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#how">How it works</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+          <li class="nav-item ms-lg-3"><a class="btn btn-ghost btn-sm" href="/login">Log in</a></li>
+          <li class="nav-item ms-2"><a class="btn btn-brand btn-sm" href="/register">Start free</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container position-relative">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <span class="badge"><i class="bi bi-shield-lock me-1"></i> Secure by default</span>
+          <h1 class="display-5 fw-bold mb-4">Share & track PDFs with <span class="text-primary">one secure link</span></h1>
+          <p class="lead text-muted mb-4">
+            Upload PDFs, control permissions (view-only, watermark, expiry), and get real-time analytics on opens, location, device, and time-on-page. Embed anywhere with a simple iframe.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="/register" class="btn btn-brand btn-lg"><i class="bi bi-rocket-takeoff me-2"></i>Start free</a>
+            <a href="#demo" class="btn btn-ghost btn-lg"><i class="bi bi-play-circle me-2"></i>See demo</a>
+          </div>
+          <div class="d-flex flex-wrap gap-4 text-muted small">
+            <span><i class="bi bi-check2-circle me-1 check"></i>No-code embed</span>
+            <span><i class="bi bi-check2-circle me-1 check"></i>Disable download/print</span>
+            <span><i class="bi bi-check2-circle me-1 check"></i>Analytics & webhooks</span>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="code-card">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 toolbar">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge text-bg-secondary">Embed Snippet</span>
+              </div>
+              <button class="btn btn-sm btn-outline-light" id="copySnippet"><i class="bi bi-clipboard"></i> Copy</button>
+            </div>
+<pre><code id="snippet">&lt;iframe
+  src="https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN"
+  width="100%" height="600"
+  style="border:none;border-radius:12px;"
+  allow="clipboard-write"&gt;&lt;/iframe&gt;</code></pre>
+          </div>
+          <div class="text-center text-muted small mt-3">Replace <code>YOUR_DOC_TOKEN</code> with your secure link.</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section id="features" class="section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="section-title centered">Everything you need to share PDFs safely</h2>
+        <p class="section-subtitle">Security, control, and visibility — without plugins or complex setup.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-cloud-upload"></i></div>
+            <h5>Upload & organize</h5>
+            <p class="text-muted mb-0">Fast uploads, foldering, and versioning to keep your documents tidy.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-link-45deg"></i></div>
+            <h5>Share via one link</h5>
+            <p class="text-muted mb-0">Generate time-limited links with domain/IP lock or password protection.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
+            <h5>Permission control</h5>
+            <p class="text-muted mb-0">View-only mode, disable download/print, add dynamic watermarks.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <h5>PDF analytics</h5>
+            <p class="text-muted mb-0">Track opens, location, device, page-by-page time, and search terms.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-code-slash"></i></div>
+            <h5>Embed anywhere</h5>
+            <p class="text-muted mb-0">Drop-in iframe works with any website, CMS, or app.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-patch-check"></i></div>
+            <h5>APIs & webhooks</h5>
+            <p class="text-muted mb-0">Automate uploads, permissions, and analytics export to your stack.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how" class="section bg-light">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="section-title centered">How it works</h2>
+        <p class="section-subtitle">Set up in minutes — no code required.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="feature-icon mx-auto mb-3" style="background:#ecfeff;color:#155e75;"><i class="bi bi-person-plus"></i></div>
+            <h6>Create your account</h6>
+            <p class="text-muted mb-0 small">Sign up and verify email. Add your brand logo & domain rules.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="feature-icon mx-auto mb-3" style="background:#fef9c3;color:#854d0e;"><i class="bi bi-file-earmark-arrow-up"></i></div>
+            <h6>Upload PDFs</h6>
+            <p class="text-muted mb-0 small">Drag & drop. We process for search, thumbnails, and OCR (optional).</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="feature-icon mx-auto mb-3" style="background:#dcfce7;color:#166534;"><i class="bi bi-sliders2-vertical"></i></div>
+            <h6>Set permissions</h6>
+            <p class="text-muted mb-0 small">Choose view-only, disable download/print, add watermarks & expiry.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="feature-icon mx-auto mb-3" style="background:#fae8ff;color:#6b21a8;"><i class="bi bi-graph-up"></i></div>
+            <h6>Share & track</h6>
+            <p class="text-muted mb-0 small">Share one link. See opens, location, device, and page engagement.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW: Demo Section -->
+  <section id="demo" class="section demo-section">
+    <div class="container demo-container">
+      <div class="text-center mb-5">
+        <h2 class="section-title centered">Live Embed Demo</h2>
+        <p class="section-subtitle">See how PDFOneLink works with this interactive demo</p>
+      </div>
+      
+      <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+          <div class="demo-card">
+            <div class="demo-header">
+              <div class="d-flex align-items-center">
+                <div class="me-3">
+                  <span class="bg-danger rounded-circle d-inline-block" style="width: 12px; height: 12px;"></span>
+                  <span class="bg-warning rounded-circle d-inline-block mx-2" style="width: 12px; height: 12px;"></span>
+                  <span class="bg-success rounded-circle d-inline-block" style="width: 12px; height: 12px;"></span>
+                </div>
+                <div class="text-muted small">https://pdfonelink.com/view?doc=DEMO_TOKEN</div>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-gear"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Refresh</a></li>
+                  <li><a class="dropdown-item" href="#">Open in new tab</a></li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="demo-browser">
+              <iframe src="https://pdfonelink.com/view?doc=DEMO_TOKEN" title="PDFOneLink Demo Viewer" allow="clipboard-write"></iframe>
+            </div>
+            
+            <div class="demo-controls">
+              <div class="input-group">
+                <span class="input-group-text">Token</span>
+                <input type="text" class="form-control token-input" value="DEMO_TOKEN" readonly>
+                <button class="btn btn-outline-secondary" type="button" id="copyToken">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+              </div>
+              
+              <div class="demo-feature-grid mt-3">
+                <div class="demo-feature">
+                  <div class="demo-feature-icon">
+                    <i class="bi bi-eye"></i>
+                  </div>
+                  <div>
+                    <div class="fw-medium">View-only mode</div>
+                    <div class="text-muted small">Prevent downloads</div>
+                  </div>
+                </div>
+                
+                <div class="demo-feature">
+                  <div class="demo-feature-icon">
+                    <i class="bi bi-shield"></i>
+                  </div>
+                  <div>
+                    <div class="fw-medium">Secure access</div>
+                    <div class="text-muted small">Token-based security</div>
+                  </div>
+                </div>
+                
+                <div class="demo-feature">
+                  <div class="demo-feature-icon">
+                    <i class="bi bi-graph-up"></i>
+                  </div>
+                  <div>
+                    <div class="fw-medium">Real-time analytics</div>
+                    <div class="text-muted small">Track viewer engagement</div>
+                  </div>
+                </div>
+                
+                <div class="demo-feature">
+                  <div class="demo-feature-icon">
+                    <i class="bi bi-clock"></i>
+                  </div>
+                  <div>
+                    <div class="fw-medium">Expiry control</div>
+                    <div class="text-muted small">Set access duration</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <h3 class="section-title">Embed anywhere in seconds</h3>
+          <p class="text-muted mb-4">Our secure iframe embed works with any website, CMS, or application. Control access with expiring tokens, domain restrictions, and IP allowlisting.</p>
+          
+          <div class="d-flex flex-column gap-3">
+            <div class="d-flex align-items-start">
+              <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3 mt-1">
+                <i class="bi bi-code-slash text-primary"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">Copy & paste embedding</h6>
+                <p class="text-muted small mb-0">Just copy the iframe code and add it to your HTML</p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-start">
+              <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3 mt-1">
+                <i class="bi bi-sliders text-primary"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">Customize permissions</h6>
+                <p class="text-muted small mb-0">Control download, print, and access expiration</p>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-start">
+              <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3 mt-1">
+                <i class="bi bi-bar-chart text-primary"></i>
+              </div>
+              <div>
+                <h6 class="mb-1">Track engagement</h6>
+                <p class="text-muted small mb-0">See who viewed your PDF and for how long</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="d-flex gap-3 mt-4">
+            <a href="/register" class="btn btn-brand"><i class="bi bi-rocket-takeoff me-2"></i>Get started</a>
+            <a href="/docs" class="btn btn-ghost"><i class="bi bi-journal-text me-2"></i>View docs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="section pricing-section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="section-title centered">Simple, transparent pricing</h2>
+        <p class="section-subtitle">Start free. Upgrade when you're ready.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="plan">
+            <h5 class="plan-title">Free</h5>
+            <div class="plan-price">$0<span class="fs-6 text-muted">/mo</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check2 check"></i>500 MB storage</li>
+              <li><i class="bi bi-check2 check"></i>Basic analytics</li>
+              <li><i class="bi bi-check2 check"></i>Embed viewer</li>
+              <li><i class="bi bi-x text-muted"></i>Permission controls</li>
+              <li><i class="bi bi-x text-muted"></i>Custom branding</li>
+            </ul>
+            <a href="/register" class="btn btn-ghost w-100">Start free</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="plan featured">
+            <h5 class="plan-title">Pro</h5>
+            <div class="plan-price">$12<span class="fs-6 text-muted">/mo</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check2 check"></i>10 GB storage</li>
+              <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
+              <li><i class="bi bi-check2 check"></i>Disable download/print</li>
+              <li><i class="bi bi-check2 check"></i>Custom watermark</li>
+              <li><i class="bi bi-check2 check"></i>Link expiry & revocation</li>
+            </ul>
+            <a href="/register" class="btn btn-brand w-100">Choose Pro</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="plan">
+            <h5 class="plan-title">Business</h5>
+            <div class="plan-price">$29<span class="fs-6 text-muted">/mo</span></div>
+            <ul class="plan-features">
+              <li><i class="bi bi-check2 check"></i>Unlimited viewers</li>
+              <li><i class="bi bi-check2 check"></i>SSO, API & webhooks</li>
+              <li><i class="bi bi-check2 check"></i>OCR & full-text search</li>
+              <li><i class="bi bi-check2 check"></i>Domain/IP allowlists</li>
+              <li><i class="bi bi-check2 check"></i>Priority support</li>
+            </ul>
+            <a href="/contact" class="btn btn-ghost w-100">Talk to sales</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="section-title centered">Frequently asked questions</h2>
+        <p class="section-subtitle">Everything you need to know about PDFOneLink.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="faq-item">
+            <h6 class="faq-question"><i class="bi bi-shield-lock"></i>How secure are my documents?</h6>
+            <p class="text-muted mb-0">Your PDFs are served via signed tokens. You can set expiry, disable download/print, and watermark with viewer identity.</p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="faq-item">
+            <h6 class="faq-question"><i class="bi bi-graph-up"></i>What analytics do I get?</h6>
+            <p class="text-muted mb-0">Opens, location (approx.), device, referrer, time-on-page, and search terms — exportable via CSV/api.</p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="faq-item">
+            <h6 class="faq-question"><i class="bi bi-code-slash"></i>Can I embed the viewer?</h6>
+            <p class="text-muted mb-0">Yes, paste the iframe snippet anywhere. You can also lock by domain to prevent misuse.</p>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="faq-item">
+            <h6 class="faq-question"><i class="bi bi-people"></i>Do you support teams?</h6>
+            <p class="text-muted mb-0">Role-based access, organization workspaces, and audit logs are available on Business plans.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-section">
+        <h2 class="fw-bold mb-3">Start sharing secure, trackable PDFs today</h2>
+        <p class="text-muted mb-4">It only takes a minute to set up. No credit card required.</p>
+        <a href="/register" class="btn btn-brand btn-lg"><i class="bi bi-rocket-takeoff me-2"></i>Create your free account</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Enhanced Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-md-6 col-lg-4">
+          <h5 class="mb-4"><i class="bi bi-file-earmark-pdf me-2"></i>PDFOneLink</h5>
+          <p class="mb-4">Secure PDF upload, sharing, permissions, and analytics — all in one link.</p>
+          
+          <div class="social-links">
+            <a href="#"><i class="bi bi-twitter"></i></a>
+            <a href="#"><i class="bi bi-linkedin"></i></a>
+            <a href="#"><i class="bi bi-github"></i></a>
+            <a href="#"><i class="bi bi-facebook"></i></a>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="mb-4">Product</h6>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="/docs">Documentation</a></li>
+            <li><a href="/status">Status</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="mb-4">Company</h6>
+          <ul>
+            <li><a href="/about">About us</a></li>
+            <li><a href="/careers">Careers</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="mb-4">Contact Us</h6>
+          <ul>
+            <li><a href="/contact">Support</a></li>
+            <li><a href="/contact">Sales</a></li>
+            <li><a href="/contact">Partnerships</a></li>
+            <li><a href="/contact">General Inquiry</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3">
+          <h6 class="mb-4">Newsletter</h6>
+          <p class="small mb-3">Get the latest updates, tips, and guides.</p>
+          <form class="d-flex gap-2 mb-2" action="/subscribe" method="post">
+            <input type="email" class="form-control form-control-sm" name="email" placeholder="Email address" required>
+            <button class="btn btn-brand btn-sm" type="submit"><i class="bi bi-arrow-right"></i></button>
+          </form>
+          <div class="small text-secondary">No spam. Unsubscribe anytime.</div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="copyright">© <span id="y"></span> PDFOneLink. All rights reserved.</p>
+        <div class="legal-links">
+          <a href="/privacy">Privacy Policy</a>
+          <span class="divider">•</span>
+          <a href="/terms">Terms of Service</a>
+          <span class="divider">•</span>
+          <a href="/cookies">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Copy hero snippet
+    document.getElementById('copySnippet')?.addEventListener('click', async () => {
+      const code = document.getElementById('snippet').innerText;
+      try { await navigator.clipboard.writeText(code); } catch(e){}
+      const btn = document.getElementById('copySnippet');
+      const original = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-check2-circle me-1"></i>Copied';
+      setTimeout(()=> btn.innerHTML = original, 1600);
+    });
+    
+    // Copy token in demo section
+    document.getElementById('copyToken')?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText('DEMO_TOKEN'); } catch(e){}
+      const btn = document.getElementById('copyToken');
+      const original = btn.innerHTML;
+      btn.innerHTML = '<i class="bi bi-check2-circle"></i>';
+      setTimeout(()=> btn.innerHTML = original, 1600);
+    });
+    
+    // Year in footer
+    document.getElementById('y').textContent = new Date().getFullYear();
+    
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('shadow');
+      } else {
+        navbar.classList.remove('shadow');
+      }
+    });
+    
+    // Add active class to nav links on scroll
+    window.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-link');
+      
+      window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.clientHeight;
+          
+          if (pageYOffset >= sectionTop - 100) {
+            current = section.getAttribute('id');
+          }
+        });
+        
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href').includes(current)) {
+            link.classList.add('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

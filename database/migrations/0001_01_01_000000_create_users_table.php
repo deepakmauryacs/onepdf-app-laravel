@@ -13,10 +13,22 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+             // 🔹 New fields from your PHP version
+            $table->string('use_id', 32)->unique();   // generated 16-digit user ID
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('country');
+            $table->string('company');
+
+            // default Laravel fields
+            $table->string('name')->nullable(); // optional: keep if you still want "name"
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // extra
+            $table->boolean('agreed_terms')->default(false);
+
             $table->rememberToken();
             $table->timestamps();
         });
