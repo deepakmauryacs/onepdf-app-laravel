@@ -117,7 +117,6 @@ class DocumentController extends Controller
             $permArr = [];
         }
 
-<<<<<<< HEAD
         // Find or create Link row
         $link = Link::firstOrNew(['document_id' => $doc->id]);
 
@@ -187,15 +186,10 @@ class DocumentController extends Controller
             'pdfUrl'      => $pdfUrl,
             'downloadUrl' => $downloadUrl,
             'perms'       => $perms,
-=======
-        return response()->json([
-            'url' => route('document.view', ['doc' => $doc->share_token]),
->>>>>>> 20a300a35c851a0d3b5de1b7b0a96871a51a3126
         ]);
     }
 
     /**
-<<<<<<< HEAD
      * Serve the actual PDF bytes by slug. /get-pdf?code=SLUG[&download=1]
      */
     public function streamBySlug(Request $request)
@@ -237,19 +231,6 @@ class DocumentController extends Controller
     /**
      * Legacy public route (/s/{token}) if you still use Document.share_token.
      */
-=======
-     * Public access via query parameter (e.g. /view?doc=TOKEN)
-     */
-    public function view(Request $request)
-    {
-        $token = $request->query('doc');
-        abort_unless($token, 404);
-
-        return $this->public($token);
-    }
-
-    // public access by token (simple inline view)
->>>>>>> 20a300a35c851a0d3b5de1b7b0a96871a51a3126
     public function public(string $token)
     {
         $doc = Document::where('share_token', $token)->firstOrFail();
