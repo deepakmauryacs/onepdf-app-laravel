@@ -42,40 +42,47 @@ class DocumentController extends Controller
             'file.max'       => 'File exceeds 50MB limit',
         ]);
 
-        $user   = Auth::user();
-        // prefer users.use_id if present, else fallback to user id
-        $useId  = $user->use_id ?? $user->id;
+        $user  = auth()->user();
+        $useId = $user->use_id ?? $user->id;
 
-        $file   = $request->file('file');
-        $orig   = $file->getClientOriginalName();
-        $safe   = preg_replace('/[^A-Za-z0-9.\-_]/', '_', $orig);
-        $ext    = strtolower($file->getClientOriginalExtension());
+        $file  = $request->file('file');
 
-        // physical path under public/uploads/{use_id}
+        $orig  = $file->getClientOriginalName();
+        $safe  = preg_replace('/[^A-Za-z0-9.\-_]/', '_', $orig);
+        $ext   = strtolower($file->getClientOriginalExtension());
+
+        // ✅ capture size BEFORE move (temp file still exists)
+        $size  = (int) $file->getSize();
+
         $dirAbs = public_path('uploads/'.$useId);
         if (!is_dir($dirAbs)) {
             mkdir($dirAbs, 0777, true);
         }
 
         do {
-            $stored = Str::random(16).($ext ? ".{$ext}" : '');
+            $stored = \Illuminate\Support\Str::random(16).($ext ? ".{$ext}" : '');
             $abs    = $dirAbs.DIRECTORY_SEPARATOR.$stored;
         } while (file_exists($abs));
 
-        $file->move($dirAbs, $stored);
-        @chmod($abs, 0644);
+        // move returns a Symfony File object for the new path
+        $moved = $file->move($dirAbs, $stored);
+        @chmod($moved->getRealPath(), 0644);
 
         $relative = 'uploads/'.$useId.'/'.$stored;
 
-        $doc = Document::create([
+        // optional: if you prefer, you can re-read size from the moved file:
+        // $size = filesize($moved->getRealPath());
+
+        $doc = \App\Models\Document::create([
             'user_id'  => $user->id,
             'filename' => $safe,
             'filepath' => $relative,
-            'size'     => $file->getSize(),
+            'size'     => $size,
         ]);
 
         return response()->json(['success' => true, 'id' => $doc->id]);
     }
+
 
     public function destroy(Request $request)
     {

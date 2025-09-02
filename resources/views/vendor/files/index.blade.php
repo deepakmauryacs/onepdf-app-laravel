@@ -33,12 +33,27 @@
   .mf-search-icon{ position:absolute; left:10px; top:50%; transform:translateY(-50%); pointer-events:none; color:#6b7280; font-size:14px; }
   .badge-secure{ background:#16a34a; color:#fff; border-radius:999px; padding:.2rem .5rem; font-weight:600; }
 
-  /* Toast bg colors */
-  .toast-success{ background:#16a34a; color:#fff; }
-  .toast-error{ background:#dc2626; color:#fff; }
-  .toast-info{ background:#2563eb; color:#fff; }
-  .toast-warning{ background:#d97706; color:#fff; }
-  .toast .toast-header{ background:transparent; color:inherit; border-bottom:0; }
+  /* -------------------- Neutral (Black & White) Buttons -------------------- */
+  .btn-neutral{
+    --nbg:#fff; --nbg-h:#f3f4f6; --nbg-a:#e5e7eb;
+    --ntext:#0f172a; --nmuted:#9ca3af;
+    --nborder:#d1d5db; --nborder-h:#cfd4dc;
+    background:var(--nbg); color:var(--ntext); border:1px solid var(--nborder);
+    border-radius:10px; padding:.35rem .7rem; line-height:1; display:inline-flex; align-items:center; gap:.35rem;
+  }
+  .btn-neutral:hover{ background:var(--nbg-h); color:var(--ntext); border-color:var(--nborder-h); }
+  .btn-neutral:active{ background:var(--nbg-a); color:var(--ntext); }
+  .btn-neutral:disabled{ background:var(--nbg); color:var(--nmuted); border-color:#e5e7eb; opacity:1; }
+  .btn-neutral.btn-sm{ padding:.3rem .6rem; border-radius:10px; }
+  /* keep icons monochrome */
+  .btn-neutral i{ color:inherit; }
+
+  /* --- Colored toast: keep these colors visible --- */
+  .toast-success { background:#16a34a !important; color:#fff !important; }
+  .toast-error   { background:#dc2626 !important; color:#fff !important; }
+  .toast-info    { background:#2563eb !important; color:#fff !important; }
+  .toast-warning { background:#d97706 !important; color:#fff !important; }
+  .toast .toast-header{ background:transparent !important; color:inherit !important; border-bottom:0 !important; }
   .toast .btn-close{ filter: invert(1); }
 </style>
 @endpush
@@ -96,7 +111,8 @@
               <i class="bi bi-search mf-search-icon"></i>
               <input id="searchInput" type="text" class="form-control mf-search-input" placeholder="Search files..." autocomplete="off">
             </div>
-            <button id="bulkDelete" class="btn btn-outline-danger" disabled>
+            <!-- bulk button in neutral (B&W) -->
+            <button id="bulkDelete" class="btn btn-neutral" disabled>
               <i class="bi bi-trash"></i> Delete selected
             </button>
           </div>
@@ -130,14 +146,14 @@
   <div class="modal fade" id="permModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content border-0 rounded-4 shadow-lg">
-        <div class="modal-header bg-primary text-white">
+        <div class="modal-header">
           <h5 class="modal-title mb-0"><i class="bi bi-shield-lock me-2"></i>Link Permissions</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 
         <div class="modal-body">
           <div class="mb-3 text-muted">
-            <i class="bi bi-lightning-charge-fill text-warning me-1"></i>
+            <i class="bi bi-lightning-charge-fill me-1"></i>
             Choose what viewers can do before generating the link.
           </div>
 
@@ -313,10 +329,10 @@
         <td><span class="badge-secure">Secure</span></td>
         <td>
           <div class="d-flex align-items-center" style="gap:8px;">
-            <button class="btn btn-outline-primary btn-sm generate" data-id="${f.id}"><i class="bi bi-link-45deg"></i> Generate</button>
-            <button class="btn btn-outline-secondary btn-sm copy" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-clipboard"></i> Copy</button>
-            <button class="btn btn-outline-info btn-sm embed" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-code-slash"></i> Embed</button>
-            <button class="btn btn-outline-danger btn-sm delete" data-id="${f.id}"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-neutral btn-sm generate" data-id="${f.id}"><i class="bi bi-link-45deg"></i> Generate</button>
+            <button class="btn btn-neutral btn-sm copy" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-clipboard"></i> Copy</button>
+            <button class="btn btn-neutral btn-sm embed" ${f.url?'':'disabled'} data-url="${f.url||''}"><i class="bi bi-code-slash"></i> Embed</button>
+            <button class="btn btn-neutral btn-sm delete" data-id="${f.id}"><i class="bi bi-trash"></i></button>
           </div>
           <div class="small text-muted mt-1 link-holder">${f.url?`<code>${f.url}</code>`:''}</div>
         </td>`;
@@ -362,7 +378,6 @@
 
     // generate link
     if(btn.classList.contains('generate')){
-      // store target row
       document.getElementById('permModal').dataset.id = btn.dataset.id;
       const modal = new bootstrap.Modal('#permModal'); modal.show();
       document.getElementById('permModal')._genBtn = btn;
@@ -396,27 +411,11 @@
   });
   tbody.addEventListener('change', (e)=>{ if(e.target.classList.contains('row-check')) syncBulkBtn(); });
 
-  // bulk delete
-  bulkBtn.addEventListener('click', async ()=>{
-    const ids = [...tbody.querySelectorAll('.row-check:checked')].map(cb=>cb.dataset.id);
-    if(!ids.length || !confirm('Delete '+ids.length+' selected file(s)?')) return;
-
-    let done=0, failed=0;
-    for (const id of ids){
-      const fd=new FormData(); fd.append('id',id); fd.append('_token',csrf);
-      try{ const r=await fetch(routes.del,{method:'POST',body:fd}); if(!r.ok) throw 0; await r.json(); done++; }
-      catch{ failed++; }
-    }
-    loadFiles();
-    toast(`${done} deleted${failed?`, ${failed} failed`:''}.`, failed?'error':'success');
-  });
-
   // permissions -> create link
   document.getElementById('createLink').addEventListener('click', async ()=>{
     const modalEl = document.getElementById('permModal');
     const id = modalEl.dataset.id;
     const fd = new FormData(); fd.append('id', id); fd.append('_token', csrf);
-    // (you can also pass perms to server if you want to save)
     const modal = bootstrap.Modal.getInstance('#permModal'); modal.hide();
 
     const btn = modalEl._genBtn; const holder = modalEl._holder;
@@ -424,8 +423,15 @@
 
     try{
       const r=await fetch(routes.gen,{method:'POST',body:fd}); const data=await r.json();
-      if(data.url){ holder.innerHTML = `<code>${data.url}</code>`; btn.parentElement.querySelector('.copy').disabled=false; btn.parentElement.querySelector('.copy').dataset.url=data.url; toast('Link generated.','success'); }
-      else{ holder.innerHTML = '<span class="text-danger">No URL returned</span>'; toast('Failed to generate link.','error'); }
+      if(data.url){
+        holder.innerHTML = `<code>${data.url}</code>`;
+        const copyBtn = btn.parentElement.querySelector('.copy');
+        copyBtn.disabled=false; copyBtn.dataset.url=data.url;
+        toast('Link generated.','success');
+      }else{
+        holder.innerHTML = '<span class="text-danger">No URL returned</span>';
+        toast('Failed to generate link.','error');
+      }
     }catch{
       toast('Failed to generate link.','error');
     }finally{
