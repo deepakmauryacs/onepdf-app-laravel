@@ -29,7 +29,7 @@
     background:#f0f2f7;color:#111;align-items:center;justify-content:center;font-size:.85rem;font-weight:700}
   .search-wrap{position:relative;flex:1 1 420px}
   .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
-  .search-input{padding-left:36px;border-radius:999px;border:1px solid var(--line);height:42px}
+  .search-input{padding-left:36px;border-radius:12px;border:1px solid var(--line);height:42px}
 
   /* Table */
   .table td,.table th{vertical-align:middle}
@@ -41,8 +41,20 @@
   .status-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;
     background:#f8fafc;color:#0f172a;border:1px solid #e5e7eb;height:32px;padding:0 14px;font-weight:600}
 
-  /* Buttons */
-  .btn-primary{border-radius:12px}
+  /* === Buttons: BLACK & WHITE theme === */
+  .btn-primary{
+    background:#111 !important; border-color:#111 !important; color:#fff !important;
+    border-radius:12px; font-weight:700;
+  }
+  .btn-primary:hover{ background:#000 !important; border-color:#000 !important }
+  .btn-primary:focus{ box-shadow:0 0 0 .2rem rgba(0,0,0,.15) !important }
+
+  .btn-outline-primary{
+    color:#111 !important; border-color:#111 !important; background:#fff !important;
+    border-radius:12px; font-weight:600;
+  }
+  .btn-outline-primary:hover{ background:#f2f4f7 !important; color:#111 !important; border-color:#111 !important }
+  .btn-outline-primary:focus{ box-shadow:0 0 0 .2rem rgba(0,0,0,.08) !important }
 
   /* Pagination (modern, centered) */
   .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -148,44 +160,41 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-save" id="btnSaveReq">
-          Create
-        </button>
+        <button type="submit" class="btn btn-save" id="btnSaveReq">Create</button>
       </div>
     </form>
   </div>
-  </div>
+</div>
 
-  <!-- View Request Modal -->
-  <div class="modal fade help-modal" id="viewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title"><span class="title-ico"><i class="bi bi-eye"></i></span> View Help Request</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- View Request Modal -->
+<div class="modal fade help-modal" id="viewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><span class="title-ico"><i class="bi bi-eye"></i></span> View Help Request</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Subject</label>
+          <div id="viewSubject"></div>
         </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">Subject</label>
-            <div id="viewSubject"></div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Message</label>
-            <div id="viewMessage"></div>
-          </div>
-          <div class="mb-0">
-            <label class="form-label">Status</label>
-            <div id="viewStatus"></div>
-          </div>
+        <div class="mb-3">
+          <label class="form-label">Message</label>
+          <div id="viewMessage"></div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+        <div class="mb-0">
+          <label class="form-label">Status</label>
+          <div id="viewStatus"></div>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
-
-  @endsection
+</div>
+@endsection
 
 @push('scripts')
 <script>
@@ -202,59 +211,64 @@
   const pagerSummary = document.getElementById('pagerSummary');
   const countBadge = document.getElementById('countBadge');
 
-    const requestModal = new bootstrap.Modal('#requestModal');
-    const viewModal = new bootstrap.Modal('#viewModal');
+  const requestModal = new bootstrap.Modal('#requestModal');
+  const viewModal = new bootstrap.Modal('#viewModal');
 
-    function escapeHtml(s){return (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-    function escapeAttr(s){return escapeHtml(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+  function escapeHtml(s){return (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function escapeAttr(s){return escapeHtml(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
   function statusPill(s){
     const label = (s||'').toString().trim() || '—';
     return `<span class="status-pill">${escapeHtml(label)}</span>`;
   }
 
-    function rowTemplate(r){
-      const msg = (r.message || '').toString();
-      const shortMsg = msg.length > 15 ? msg.slice(0,15) + '...' : msg;
-      return `<tr>
-        <td><input class="form-check-input" type="checkbox" disabled></td>
-        <td>
-          <div class="col-subject">
-            <span class="file-chip"><i class="bi bi-chat-dots"></i></span>
-            <div class="text-truncate" title="${escapeHtml(r.subject)}">${escapeHtml(r.subject)}</div>
-          </div>
-        </td>
-        <td>${escapeHtml(shortMsg)} <i class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" title="${escapeAttr(msg)}"></i></td>
-        <td>${statusPill(r.status)}</td>
-        <td>${escapeHtml(r.created_at || '')}</td>
-        <td><button class="btn btn-sm btn-outline-primary view-btn" data-subject="${encodeURIComponent(r.subject || '')}" data-message="${encodeURIComponent(msg)}" data-status="${encodeURIComponent(r.status || '')}"><i class="bi bi-eye"></i></button></td>
-      </tr>`;
-    }
+  function rowTemplate(r){
+    const msg = (r.message || '').toString();
+    const shortMsg = msg.length > 15 ? msg.slice(0,15) + '...' : msg;
+    return `<tr>
+      <td><input class="form-check-input" type="checkbox" disabled></td>
+      <td>
+        <div class="col-subject">
+          <span class="file-chip"><i class="bi bi-chat-dots"></i></span>
+          <div class="text-truncate" title="${escapeHtml(r.subject)}">${escapeHtml(r.subject)}</div>
+        </div>
+      </td>
+      <td>${escapeHtml(shortMsg)} <i class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" title="${escapeAttr(msg)}"></i></td>
+      <td>${statusPill(r.status)}</td>
+      <td>${escapeHtml(r.created_at || '')}</td>
+      <td><button class="btn btn-sm btn-outline-primary view-btn"
+                  data-subject="${encodeURIComponent(r.subject || '')}"
+                  data-message="${encodeURIComponent(msg)}"
+                  data-status="${encodeURIComponent(r.status || '')}">
+            <i class="bi bi-eye"></i>
+          </button></td>
+    </tr>`;
+  }
 
-    function initRowHandlers(){
-      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
-      document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.getElementById('viewSubject').textContent = decodeURIComponent(btn.dataset.subject || '');
-          document.getElementById('viewMessage').textContent = decodeURIComponent(btn.dataset.message || '');
-          document.getElementById('viewStatus').textContent = decodeURIComponent(btn.dataset.status || '');
-          viewModal.show();
-        });
+  function initRowHandlers(){
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('viewSubject').textContent = decodeURIComponent(btn.dataset.subject || '');
+        document.getElementById('viewMessage').textContent = decodeURIComponent(btn.dataset.message || '');
+        document.getElementById('viewStatus').textContent = decodeURIComponent(btn.dataset.status || '');
+        viewModal.show();
       });
-    }
+    });
+  }
 
-    function renderRows(list,total){
-      tbody.innerHTML='';
-      if(!list || !list.length){
-        empty.classList.remove('d-none');
-        countBadge.textContent = '0';
-        return;
-      }
-      empty.classList.add('d-none');
-      tbody.innerHTML = list.map(rowTemplate).join('');
-      initRowHandlers();
-      countBadge.textContent = total ?? list.length;
+  function renderRows(list,total){
+    tbody.innerHTML='';
+    if(!list || !list.length){
+      empty.classList.remove('d-none');
+      countBadge.textContent = '0';
+      return;
     }
+    empty.classList.add('d-none');
+    tbody.innerHTML = list.map(rowTemplate).join('');
+    initRowHandlers();
+    countBadge.textContent = total ?? list.length;
+  }
 
   function renderPager(current,last,total=null,perPage=null){
     pager.innerHTML='';
@@ -268,7 +282,6 @@
     }
     if(last<=1) return;
 
-    // simple centered 1..N
     for(let i=1;i<=last;i++){
       const li=document.createElement('li');
       li.className='page-item'+(i===current?' active':'');
@@ -294,19 +307,16 @@
     load(parseInt(a.dataset.page,10));
   });
 
-  // Search bar
   document.getElementById('searchInput').addEventListener('input', e=>{
     q = e.target.value || '';
     load(1);
   });
 
-  // New request -> open modal
   document.getElementById('btnNew').addEventListener('click', ()=> {
     document.getElementById('helpForm').reset();
     requestModal.show();
   });
 
-  // Submit modal form
   document.getElementById('helpForm').addEventListener('submit', async e=>{
     e.preventDefault();
     const btn = document.getElementById('btnSaveReq');

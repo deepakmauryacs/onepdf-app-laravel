@@ -31,7 +31,7 @@
   .files-left .count{display:inline-flex;min-width:26px;height:26px;padding:0 8px;border-radius:999px;background:#f0f2f7;color:#111;align-items:center;justify-content:center;font-size:.85rem;font-weight:600}
   .search-wrap{position:relative;flex:1 1 420px}
   .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
-  .search-input{padding-left:36px;border-radius:999px;border:1px solid var(--line);height:42px}
+  .search-input{padding-left:36px;border-radius:12px;border:1px solid var(--line);height:42px}
   .btn-danger-soft{background:#ffecec;border:1px solid #ffd0d0;color:#b42318;border-radius:10px}
 
   table.table{margin:0}
