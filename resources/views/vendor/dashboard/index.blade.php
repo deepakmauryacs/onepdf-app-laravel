@@ -28,7 +28,7 @@
       <div class="files-toolbar">
         <div class="files-title">
           <i class="bi bi-folder2-open"></i> Files
-          <span class="count">{{ $total }}</span>
+          <span class="count">{{ $files->total() }}</span>
         </div>
         <div class="files-search">
           <i class="bi bi-search"></i>
@@ -101,9 +101,9 @@ if (!function_exists('human_size')) {
         </tbody>
       </table>
     </div>
-    @if($last_page > 1)
-    <div class="card-footer text-center">
-      <button class="btn btn-dark" id="loadMoreBtn">Load More</button>
+    @if($files->hasPages())
+    <div class="card-footer">
+      {{ $files->links() }}
     </div>
     @endif
   </div>
@@ -111,21 +111,6 @@ if (!function_exists('human_size')) {
 
 @push('scripts')
 <script>
-let currentPage = {{ $current_page ?? 1 }};
-const lastPage = {{ $last_page ?? 1 }};
-const listUrl = "{{ route('dashboard.list') }}";
-const manageUrl = "{{ route('vendor.files.manage') }}";
-
-function human_size(bytes) {
-  const units = ['B','KB','MB','GB','TB'];
-  let i = 0;
-  while (bytes >= 1024 && i < units.length - 1) {
-    bytes /= 1024;
-    i++;
-  }
-  return (i ? bytes.toFixed(2) : bytes) + ' ' + units[i];
-}
-
 document.getElementById('searchInput').addEventListener('input', function(){
   const q = this.value.toLowerCase();
   document.querySelectorAll('#filesTbody tr').forEach(function(tr){
@@ -144,56 +129,5 @@ document.addEventListener('click', function(e){
     }, 2000);
   });
 });
-
-function renderRow(file){
-  const parts = (file.modified || '').split(' ');
-  const date = parts[0] || '';
-  const time = parts[1] || '';
-  return `
-    <tr data-name="${file.filename.toLowerCase()}">
-      <td><input class="form-check-input" type="checkbox" /></td>
-      <td>
-        <div class="col-file">
-          <span class="file-chip"><i class="bi bi-file-earmark"></i></span>
-          <div class="file-name"><a href="${file.url || '#'}" target="_blank">${file.filename}</a></div>
-        </div>
-      </td>
-      <td>${human_size(file.size)}</td>
-      <td><div>${date}</div><small class="text-muted">${time}</small></td>
-      <td><span class="status-pill">${file.url ? 'Secure' : '—'}</span></td>
-      <td class="text-nowrap">
-        ${file.url ? `
-          <div class="d-flex gap-2 mb-2">
-            <button class="btn btn-ghost flex-fill copy-btn" data-url="${file.url}"><i class="bi bi-clipboard me-1"></i>Copy</button>
-            <a href="${file.url}" target="_blank" class="btn btn-ghost flex-fill"><i class="bi bi-box-arrow-up-right me-1"></i>Open</a>
-          </div>
-          <div class="small text-break text-muted">${file.url}</div>
-        ` : `
-          <a href="${manageUrl}" class="btn btn-ghost flex-fill"><i class="bi bi-link-45deg me-1"></i>Generate</a>
-        `}
-      </td>
-    </tr>
-  `;
-}
-
-const loadMoreBtn = document.getElementById('loadMoreBtn');
-if(loadMoreBtn){
-  if(currentPage >= lastPage){
-    loadMoreBtn.style.display = 'none';
-  }
-  loadMoreBtn.addEventListener('click', function(){
-    fetch(listUrl + '?page=' + (currentPage + 1))
-      .then(res => res.json())
-      .then(data => {
-        data.files.forEach(file => {
-          document.getElementById('filesTbody').insertAdjacentHTML('beforeend', renderRow(file));
-        });
-        currentPage = data.current_page;
-        if(currentPage >= data.last_page){
-          loadMoreBtn.style.display = 'none';
-        }
-      });
-  });
-}
 </script>
 @endpush
