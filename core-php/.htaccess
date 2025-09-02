@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Only rewrite if the request is not for an existing file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^file/([a-zA-Z0-9]+)/?$ file.php?code=$1 [L,QSA]
+
+# Allow accessing PHP files without specifying the ".php" extension
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ $1.php [L,QSA]
