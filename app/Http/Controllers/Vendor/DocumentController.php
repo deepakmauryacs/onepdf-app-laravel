@@ -112,8 +112,19 @@ class DocumentController extends Controller
         $doc->save();
 
         return response()->json([
-            'url' => route('vendor.files.public', $doc->share_token),
+            'url' => route('document.view', ['doc' => $doc->share_token]),
         ]);
+    }
+
+    /**
+     * Public access via query parameter (e.g. /view?doc=TOKEN)
+     */
+    public function view(Request $request)
+    {
+        $token = $request->query('doc');
+        abort_unless($token, 404);
+
+        return $this->public($token);
     }
 
     // public access by token (simple inline view)

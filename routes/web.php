@@ -65,4 +65,5 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
 });
 
 // Public viewer link (no auth)
+Route::get('/view', [DocumentController::class, 'view'])->name('document.view');
 Route::get('/s/{token}', [DocumentController::class, 'public'])->name('vendor.files.public');
