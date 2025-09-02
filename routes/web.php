@@ -12,6 +12,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PartnershipsController;
 use App\Http\Controllers\Vendor\DocumentController; // files + public viewer
 use App\Http\Controllers\Vendor\AnalyticsController;
+use App\Http\Controllers\Vendor\PlanController;
 
 /* ------------------------- Guest (auth) ------------------------- */
 Route::middleware('guest')->group(function () {
@@ -61,6 +62,8 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::post('files/generate-link', [DocumentController::class, 'generateLink'])->name('vendor.files.generate');
 
     Route::get('analytics',            [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
+    Route::get('plan',                 [PlanController::class, 'index'])->name('vendor.plan.index');
+    Route::post('plan/update',         [PlanController::class, 'update'])->name('vendor.plan.update');
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */
