@@ -95,13 +95,11 @@
 
   <div class="container py-4">
     <div class="card-xl mb-4">
-      @if (session('status'))
-        <div class="alert alert-success mb-3">{{ session('status') }}</div>
-      @endif
+      <div id="password-alert" class="alert mb-3 d-none"></div>
 
       <h5 class="mb-3" style="font-weight:700;color:#111827;">Change Password</h5>
 
-      <form method="POST" action="{{ route('password.update') }}">
+      <form id="password-form" method="POST" action="{{ route('password.update') }}">
         @csrf
         @method('PUT')
 
@@ -154,6 +152,66 @@
       this.classList.toggle('bi-eye');
       this.classList.toggle('bi-eye-slash');
     });
+  });
+
+  const passwordForm = document.getElementById('password-form');
+  const passwordAlert = document.getElementById('password-alert');
+
+  passwordForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    passwordAlert.classList.add('d-none');
+    passwordAlert.classList.remove('alert-success', 'alert-danger');
+
+    const current = passwordForm.current_password.value.trim();
+    const pass = passwordForm.password.value.trim();
+    const confirm = passwordForm.password_confirmation.value.trim();
+
+    if (!current || !pass || !confirm) {
+      passwordAlert.textContent = 'All fields are required.';
+      passwordAlert.classList.add('alert', 'alert-danger');
+      passwordAlert.classList.remove('d-none');
+      return;
+    }
+
+    if (pass.length < 8) {
+      passwordAlert.textContent = 'Password must be at least 8 characters.';
+      passwordAlert.classList.add('alert', 'alert-danger');
+      passwordAlert.classList.remove('d-none');
+      return;
+    }
+
+    if (pass !== confirm) {
+      passwordAlert.textContent = 'Passwords do not match.';
+      passwordAlert.classList.add('alert', 'alert-danger');
+      passwordAlert.classList.remove('d-none');
+      return;
+    }
+
+    const formData = new FormData(passwordForm);
+    try {
+      const response = await fetch(passwordForm.action, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData
+      });
+      const data = await response.json();
+      if (response.ok) {
+        passwordAlert.textContent = data.status || 'Password updated successfully.';
+        passwordAlert.classList.add('alert', 'alert-success');
+        passwordForm.reset();
+      } else if (response.status === 422) {
+        passwordAlert.textContent = Object.values(data.errors).join(' ');
+        passwordAlert.classList.add('alert', 'alert-danger');
+      } else {
+        passwordAlert.textContent = 'An error occurred.';
+        passwordAlert.classList.add('alert', 'alert-danger');
+      }
+      passwordAlert.classList.remove('d-none');
+    } catch (error) {
+      passwordAlert.textContent = 'An error occurred.';
+      passwordAlert.classList.add('alert', 'alert-danger');
+      passwordAlert.classList.remove('d-none');
+    }
   });
 </script>
 @endpush

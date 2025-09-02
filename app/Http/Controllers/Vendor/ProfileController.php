@@ -29,6 +29,11 @@ class ProfileController extends Controller
 
         $user = $request->user();
         $user->update($validated);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'Profile updated successfully.'
+            ]);
+        }
 
         return redirect()->route('profile')->with('status', 'Profile updated successfully.');
     }
