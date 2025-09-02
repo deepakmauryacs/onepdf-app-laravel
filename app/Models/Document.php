@@ -17,8 +17,16 @@ class Document extends Model
         'share_expires_at' => 'datetime',
     ];
 
-    public function getPublicUrlAttribute(): ?string
+    public function getViewerUrlAttribute(): ?string
     {
-        return $this->share_token ? route('vendor.files.public', $this->share_token) : null;
+        return $this->link? route('public.viewer', ['doc' => $this->link->slug]) : null;
     }
+
+    public function link()
+    {
+        return $this->hasOne(\App\Models\Link::class, 'document_id');
+    }
+
+
+
 }

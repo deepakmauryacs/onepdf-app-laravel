@@ -45,7 +45,6 @@
   .btn-neutral:active{ background:var(--nbg-a); color:var(--ntext); }
   .btn-neutral:disabled{ background:var(--nbg); color:var(--nmuted); border-color:#e5e7eb; opacity:1; }
   .btn-neutral.btn-sm{ padding:.3rem .6rem; border-radius:10px; }
-  /* keep icons monochrome */
   .btn-neutral i{ color:inherit; }
 
   /* --- Colored toast: keep these colors visible --- */
@@ -111,7 +110,6 @@
               <i class="bi bi-search mf-search-icon"></i>
               <input id="searchInput" type="text" class="form-control mf-search-input" placeholder="Search files..." autocomplete="off">
             </div>
-            <!-- bulk button in neutral (B&W) -->
             <button id="bulkDelete" class="btn btn-neutral" disabled>
               <i class="bi bi-trash"></i> Delete selected
             </button>
@@ -376,12 +374,13 @@
       }catch{ toast('Delete failed.','error'); }
     }
 
-    // generate link
+    // generate link (open permissions modal)
     if(btn.classList.contains('generate')){
-      document.getElementById('permModal').dataset.id = btn.dataset.id;
-      const modal = new bootstrap.Modal('#permModal'); modal.show();
-      document.getElementById('permModal')._genBtn = btn;
-      document.getElementById('permModal')._holder = btn.closest('td').querySelector('.link-holder');
+      const modalEl = document.getElementById('permModal');
+      modalEl.dataset.id = btn.dataset.id;
+      modalEl._genBtn = btn;
+      modalEl._holder = btn.closest('td').querySelector('.link-holder');
+      new bootstrap.Modal('#permModal').show();
     }
 
     // copy
@@ -411,23 +410,40 @@
   });
   tbody.addEventListener('change', (e)=>{ if(e.target.classList.contains('row-check')) syncBulkBtn(); });
 
-  // permissions -> create link
+  // permissions -> create link (NOW sends permissions JSON)
   document.getElementById('createLink').addEventListener('click', async ()=>{
     const modalEl = document.getElementById('permModal');
     const id = modalEl.dataset.id;
-    const fd = new FormData(); fd.append('id', id); fd.append('_token', csrf);
-    const modal = bootstrap.Modal.getInstance('#permModal'); modal.hide();
 
-    const btn = modalEl._genBtn; const holder = modalEl._holder;
-    btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Generating';
+    // collect permissions from modal
+    const perms = {
+      download : !!document.getElementById('permDownload')?.checked,
+      print    : !!document.getElementById('permSearch')?.checked,   // checkbox id kept as permSearch
+      analytics: !!document.getElementById('permAnalytics')?.checked,
+    };
+
+    const fd = new FormData();
+    fd.append('id', id);
+    fd.append('_token', csrf);
+    fd.append('permissions', JSON.stringify(perms)); // <-- send as JSON string
+
+    const modal = bootstrap.Modal.getInstance('#permModal'); 
+    modal.hide();
+
+    const btn = modalEl._genBtn; 
+    const holder = modalEl._holder;
+    btn.disabled = true; 
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Generating';
 
     try{
-      const r=await fetch(routes.gen,{method:'POST',body:fd}); const data=await r.json();
+      const r=await fetch(routes.gen,{method:'POST',body:fd}); 
+      const data=await r.json();
       if(data.url){
         holder.innerHTML = `<code>${data.url}</code>`;
         const copyBtn = btn.parentElement.querySelector('.copy');
-        copyBtn.disabled=false; copyBtn.dataset.url=data.url;
-        toast('Link generated.','success');
+        copyBtn.disabled=false; 
+        copyBtn.dataset.url=data.url;
+        toast('Link generated with permissions.','success');
       }else{
         holder.innerHTML = '<span class="text-danger">No URL returned</span>';
         toast('Failed to generate link.','error');
@@ -435,7 +451,8 @@
     }catch{
       toast('Failed to generate link.','error');
     }finally{
-      btn.disabled=false; btn.innerHTML = '<i class="bi bi-link-45deg"></i> Generate';
+      btn.disabled=false; 
+      btn.innerHTML = '<i class="bi bi-link-45deg"></i> Generate';
     }
   });
 
