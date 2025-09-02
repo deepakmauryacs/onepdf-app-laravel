@@ -52,7 +52,7 @@ class DocumentController extends Controller
             $query->where('filename', 'like', "%{$search}%");
         }
 
-        $docs = $query->latest()->paginate(25);
+        $docs = $query->latest()->paginate(10);
         $files = $docs->getCollection()->map(fn($d) => [
             'id'       => $d->id,
             'filename' => $d->filename,
