@@ -10,6 +10,7 @@ use App\Http\Controllers\Vendor\ProfileController;
 use App\Http\Controllers\Vendor\PasswordController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PartnershipsController;
+use App\Http\Controllers\Vendor\DocumentController; // <-- added
 
 Route::middleware('guest')->group(function () {
     // Register
@@ -46,8 +47,22 @@ Route::post('/partnerships', [PartnershipsController::class, 'store'])->name('pa
 // Vendor dashboard
 Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profile
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Change password
     Route::get('password', [PasswordController::class, 'edit'])->name('password.edit');
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+
+    // ----- Files (Upload / Manage) -----
+    Route::get('files',               [DocumentController::class, 'index'])->name('vendor.files.index');
+    Route::get('files/list',          [DocumentController::class, 'list'])->name('vendor.files.list');
+    Route::post('files/upload',       [DocumentController::class, 'upload'])->name('vendor.files.upload');
+    Route::post('files/delete',       [DocumentController::class, 'destroy'])->name('vendor.files.delete');
+    Route::post('files/generate-link',[DocumentController::class, 'generateLink'])->name('vendor.files.generate');
 });
+
+// Public viewer link (no auth)
+Route::get('/s/{token}', [DocumentController::class, 'public'])->name('vendor.files.public');
