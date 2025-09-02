@@ -18,8 +18,7 @@
   .files-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .files-left{display:flex;align-items:center;gap:10px;flex:1 1 auto;min-width:260px}
   .files-left .folder{font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
-  .files-left .count{display:inline-flex;min-width:26px;height:26px;padding:0 8px;border-radius:999px;
-    background:#f0f2f7;color:#111;align-items:center;justify-content:center;font-size:.85rem;font-weight:600}
+  .files-left .count{display:inline-flex;min-width:26px;height:26px;padding:0 8px;border-radius:999px;background:#f0f2f7;color:#111;align-items:center;justify-content:center;font-size:.85rem;font-weight:600}
   .search-wrap{position:relative;flex:1 1 420px}
   .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
   .search-input{padding-left:36px;border-radius:999px;border:1px solid var(--line);height:42px}
@@ -30,28 +29,41 @@
   thead th{color:#475569;font-weight:600;border-bottom:1px solid var(--line);background:#fff}
   tbody td{border-color:var(--line)}
   .col-file{display:flex;align-items:center;gap:12px}
-  .file-chip{display:inline-flex;width:36px;height:36px;border-radius:10px;background:#f3f6fb;color:#0b5ed7;
-    align-items:center;justify-content:center;font-size:18px}
+  .file-chip{display:inline-flex;width:36px;height:36px;border-radius:10px;background:#f3f6fb;color:#0b5ed7;align-items:center;justify-content:center;font-size:18px}
   .file-name a{color:#0f172a;text-decoration:none;font-weight:600}
-  .status-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;
-    background:#eff8ff;color:#0b5ed7;border:1px solid #d7e6ff;height:34px;padding:0 14px;font-weight:600}
+  .status-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#eff8ff;color:#0b5ed7;border:1px solid #d7e6ff;height:34px;padding:0 14px;font-weight:600}
 
-  /* --- ACTIONS: same height/shape + centered vertically --- */
+  /* Actions */
   .actions-cell{display:flex;flex-direction:column;justify-content:center;gap:8px}
   .actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap}
-  .btn-ghost,.btn-icon{
-    display:inline-flex;align-items:center;justify-content:center;
-    height:40px; border-radius:12px; line-height:1; font-weight:600;
-  }
+  .btn-ghost,.btn-icon{display:inline-flex;align-items:center;justify-content:center;height:40px;border-radius:12px;line-height:1;font-weight:600}
   .btn-ghost{border:1px solid var(--line);background:#fff;padding:0 14px}
   .btn-ghost .bi{margin-right:8px}
   .btn-ghost:hover{background:#f7f9fc}
-
   .btn-icon{width:40px;padding:0;border:1px solid #ffd7d7;background:#fff5f5;color:#b42318}
   .btn-icon:hover{background:#ffe8e8}
-
   .small-link{color:#64748b;margin-top:2px}
   .small-link a{color:#0b5ed7;text-decoration:none}
+
+  /* ===== Modern centered pagination (black & white) ===== */
+  .pagination-wrap{display:flex;justify-content:center}
+  .pagination-modern{gap:8px}
+  .pagination-modern .page-link{
+    border:1px solid var(--line);
+    background:#fff;
+    color:#111;
+    border-radius:12px;
+    min-width:42px;height:42px;
+    padding:0 12px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    box-shadow:0 2px 6px rgba(0,0,0,.04);
+  }
+  .pagination-modern .page-item.active .page-link{background:#111;border-color:#111;color:#fff}
+  .pagination-modern .page-item:not(.active):not(.disabled) .page-link:hover{background:#f2f4f7}
+  .pagination-modern .page-item.disabled .page-link{opacity:.45;cursor:not-allowed}
+  .pagination-modern .ellipsis > .page-link{pointer-events:none}
+  .pagination-modern .page-link .bi{margin:0;font-size:16px}
 </style>
 @endpush
 
@@ -88,7 +100,11 @@
       <div id="emptyState" class="p-4 text-center text-muted d-none">No files found.</div>
     </div>
   </div>
-  <nav class="mt-3"><ul class="pagination" id="pager"></ul></nav>
+
+  <!-- Centered pagination -->
+  <nav class="mt-4 pagination-wrap" aria-label="Files pagination">
+    <ul class="pagination pagination-modern justify-content-center" id="pager"></ul>
+  </nav>
 </div>
 @endsection
 
@@ -137,27 +153,104 @@
     </tr>`;
   }
 
-  function renderRows(files){ tbody.innerHTML=''; if(!files.length){ empty.classList.remove('d-none'); return; } empty.classList.add('d-none'); tbody.innerHTML=files.map(rowTemplate).join(''); fileCountEl.textContent=files.length; }
-  function renderPager(c,l){ pager.innerHTML=''; if(l<=1) return; const mk=(p,t,d=false,a=false)=>`<li class="page-item${d?' disabled':''}${a?' active':''}"><a class="page-link" href="#" data-page="${p}">${t}</a></li>`; pager.innerHTML=mk(c-1,'«',c===1)+Array.from({length:l},(_,i)=>mk(i+1,i+1,false,i+1===c)).join('')+mk(c+1,'»',c===l); }
+  function renderRows(files){
+    tbody.innerHTML='';
+    if(!files.length){ empty.classList.remove('d-none'); fileCountEl.textContent='0'; return; }
+    empty.classList.add('d-none');
+    tbody.innerHTML=files.map(rowTemplate).join('');
+    fileCountEl.textContent=files.length; // or use data.total if API returns it
+  }
 
-  async function load(p=1){ page=p; const params=new URLSearchParams({page:p,search:q}); const res=await fetch(routes.list+'?'+params.toString()); const data=await res.json(); renderRows(data.files||[]); renderPager(data.current_page||1,data.last_page||1); }
+  // ---- Modern pagination renderer (centered, with ellipses) ----
+  function renderPager(current,last){
+    pager.innerHTML='';
+    if(last<=1) return;
 
-  searchInput.addEventListener('input',()=>{ q=searchInput.value; load(1); });
-  pager.addEventListener('click',e=>{ const a=e.target.closest('a[data-page]'); if(!a) return; e.preventDefault(); load(parseInt(a.dataset.page,10)); });
-  checkAll.addEventListener('change',()=>{ document.querySelectorAll('.row-check').forEach(cb=>cb.checked=checkAll.checked); });
+    const maxWindow = 5;
+    let start = Math.max(1, current - Math.floor(maxWindow/2));
+    let end   = Math.min(last, start + maxWindow - 1);
+    if(end - start + 1 < maxWindow) start = Math.max(1, end - maxWindow + 1);
 
-  tbody.addEventListener('click',async e=>{
-    const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
-    if(e.target.closest('.btn-generate')){ 
-      const r=await fetch(routes.generate,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({id})});
-      const j=await r.json(); const link=j.url||''; if(link){ tr.querySelector('.small-link').innerHTML=`<a href="${link}" target="_blank">${link}</a>`; toast('Link generated'); }
-    }
-    if(e.target.closest('.btn-copy')){ const link=tr.querySelector('.small-link a')?.href; if(link){ await navigator.clipboard.writeText(link); toast('Copied'); } }
-    if(e.target.closest('.btn-embed')){ const link=tr.querySelector('.small-link a')?.href; if(!link){ toast('Generate first'); return; } const code=`<iframe src="${link}" width="100%" height="600" frameborder="0"></iframe>`; await navigator.clipboard.writeText(code); toast('Embed code copied'); }
-    if(e.target.closest('.btn-delete')){ if(!confirm('Delete this file?')) return; await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids:[id]})}); tr.remove(); toast('Deleted'); }
+    const add = (p, html, disabled=false, active=false, extra='')=>{
+      const li=document.createElement('li');
+      li.className=`page-item ${extra}${disabled?' disabled':''}${active?' active':''}`.trim();
+      li.innerHTML=`<a class="page-link" href="#" data-page="${p}">${html}</a>`;
+      pager.appendChild(li);
+    };
+    const dots = ()=> add(current, '…', true, false, 'ellipsis');
+
+    // First + Prev
+    add(1, `<i class="bi bi-chevron-double-left"></i>`, current===1);
+    add(current-1, `<i class="bi bi-chevron-left"></i>`, current===1);
+
+    // Left side
+    if(start>1){ add(1,'1',false,current===1); if(start>2) dots(); }
+
+    // Window
+    for(let i=start;i<=end;i++) add(i, String(i), false, i===current);
+
+    // Right side
+    if(end<last){ if(end<last-1) dots(); add(last, String(last), false, current===last); }
+
+    // Next + Last
+    add(current+1, `<i class="bi bi-chevron-right"></i>`, current===last);
+    add(last, `<i class="bi bi-chevron-double-right"></i>`, current===last);
+  }
+
+  async function load(p=1){
+    page=p;
+    const params=new URLSearchParams({page:p, search:q});
+    const res=await fetch(routes.list+'?'+params.toString());
+    const data=await res.json();
+    renderRows(data.files||[]);
+    renderPager(data.current_page||1, data.last_page||1);
+  }
+
+  document.getElementById('searchInput').addEventListener('input',()=>{ q=searchInput.value; load(1); });
+  document.getElementById('pager').addEventListener('click',function(e){
+    const a=e.target.closest('a[data-page]'); if(!a) return;
+    e.preventDefault();
+    const p=parseInt(a.dataset.page,10);
+    if(p>0) load(p);
+  });
+  document.getElementById('checkAll').addEventListener('change',()=>{
+    document.querySelectorAll('.row-check').forEach(cb=>cb.checked=checkAll.checked);
   });
 
-  btnDeleteSelected.addEventListener('click',async()=>{ const ids=[...document.querySelectorAll('.row-check:checked')].map(cb=>cb.closest('tr').dataset.id); if(!ids.length) return toast('No files'); if(!confirm('Delete selected?')) return; await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids})}); ids.forEach(id=>tbody.querySelector(`tr[data-id="${id}"]`)?.remove()); toast('Deleted'); });
+  // actions
+  tbody.addEventListener('click',async e=>{
+    const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
+    if(e.target.closest('.btn-generate')){
+      const r=await fetch(routes.generate,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({id})});
+      const j=await r.json(); const link=j.url||'';
+      if(link){ tr.querySelector('.small-link').innerHTML=`<a href="${link}" target="_blank">${link}</a>`; toast('Link generated'); }
+      return;
+    }
+    if(e.target.closest('.btn-copy')){
+      const link=tr.querySelector('.small-link a')?.href; if(link){ await navigator.clipboard.writeText(link); toast('Copied'); }
+      return;
+    }
+    if(e.target.closest('.btn-embed')){
+      const link=tr.querySelector('.small-link a')?.href; if(!link){ toast('Generate first'); return; }
+      const code=`<iframe src="${link}" width="100%" height="600" frameborder="0"></iframe>`;
+      await navigator.clipboard.writeText(code); toast('Embed code copied');
+      return;
+    }
+    if(e.target.closest('.btn-delete')){
+      if(!confirm('Delete this file?')) return;
+      await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids:[id]})});
+      tr.remove(); toast('Deleted');
+    }
+  });
+
+  document.getElementById('btnDeleteSelected').addEventListener('click',async()=>{
+    const ids=[...document.querySelectorAll('.row-check:checked')].map(cb=>cb.closest('tr').dataset.id);
+    if(!ids.length) return toast('No files');
+    if(!confirm('Delete selected?')) return;
+    await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids})});
+    ids.forEach(id=>tbody.querySelector(`tr[data-id="${id}"]`)?.remove());
+    toast('Deleted');
+  });
 
   load();
 })();
