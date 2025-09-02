@@ -6,7 +6,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\Vendor\DashboardController;
-use App\Http\Controllers\ContactController; 
+use App\Http\Controllers\Vendor\ProfileController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PartnershipsController;
 
 Route::middleware('guest')->group(function () {
@@ -44,4 +45,6 @@ Route::post('/partnerships', [PartnershipsController::class, 'store'])->name('pa
 // Vendor dashboard
 Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 });
