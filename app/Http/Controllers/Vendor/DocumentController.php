@@ -20,6 +20,11 @@ class DocumentController extends Controller
         return view('vendor.files.index');
     }
 
+    public function manage()
+    {
+        return view('vendor.files.manage');
+    }
+
     public function list()
     {
         $user = Auth::user();
@@ -36,6 +41,31 @@ class DocumentController extends Controller
             ]);
 
         return response()->json(['files' => $docs]);
+    }
+
+    public function manageList(Request $request)
+    {
+        $user = Auth::user();
+
+        $query = Document::where('user_id', $user->id);
+        if ($search = $request->input('search')) {
+            $query->where('filename', 'like', "%{$search}%");
+        }
+
+        $docs = $query->latest()->paginate(25);
+        $files = $docs->getCollection()->map(fn($d) => [
+            'id'       => $d->id,
+            'filename' => $d->filename,
+            'size'     => (int) $d->size,
+            'modified' => optional($d->updated_at)->format('Y-m-d H:i'),
+        ]);
+
+        return response()->json([
+            'files'        => $files,
+            'current_page' => $docs->currentPage(),
+            'last_page'    => $docs->lastPage(),
+            'total'        => $docs->total(),
+        ]);
     }
 
     public function upload(Request $request)

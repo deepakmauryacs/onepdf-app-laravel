@@ -17,7 +17,7 @@
     <a class="nav-link " href="{{ route('vendor.files.index') }}">
       <i class="bi bi-cloud-arrow-up"></i> <span>Upload Files</span>
     </a>
-    <a class="nav-link " href="">
+    <a class="nav-link " href="{{ route('vendor.files.manage') }}">
       <i class="bi bi-folder2-open"></i> <span>Manage Files</span>
     </a>
     <a class="nav-link " href="">

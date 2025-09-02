@@ -53,6 +53,8 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     // Files
     Route::get('files',                [DocumentController::class, 'index'])->name('vendor.files.index');
     Route::get('files/list',           [DocumentController::class, 'list'])->name('vendor.files.list');
+    Route::get('files/manage',         [DocumentController::class, 'manage'])->name('vendor.files.manage');
+    Route::get('files/manage/list',    [DocumentController::class, 'manageList'])->name('vendor.files.manage.list');
     Route::post('files/upload',        [DocumentController::class, 'upload'])->name('vendor.files.upload');
     Route::post('files/delete',        [DocumentController::class, 'destroy'])->name('vendor.files.delete');
     Route::post('files/generate-link', [DocumentController::class, 'generateLink'])->name('vendor.files.generate');
