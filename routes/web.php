@@ -44,7 +44,6 @@ Route::post('/partnerships', [PartnershipsController::class, 'store'])->name('pa
 /* ------------------------- Vendor dashboard ------------------------- */
 Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('dashboard/list', [DashboardController::class, 'list'])->name('dashboard.list');
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
