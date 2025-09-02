@@ -5,11 +5,63 @@
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f6f7fb;--surface:#fff;--text:#0f172a;--muted:#64748b;--line:#eaecef;}
-  .top-band{background:radial-gradient(1200px 220px at 50% -140px,rgba(59,130,246,.18)0%,rgba(59,130,246,0)60%),linear-gradient(180deg,#f6f7fb0%,#f6f7fb60%,transparent100%);border-bottom:1px solid var(--line);}
-  .crumb{display:flex;align-items:center;gap:.5rem;color:var(--muted);}
-  .crumb a{color:var(--text);text-decoration:none;}
-  .crumb i{opacity:.6;}
+  :root{
+    --bg:#f6f7fb; --surface:#ffffff; --text:#0f172a; --muted:#6b7280; --line:#e5e7eb;
+    --radius:12px;
+  }
+  *{font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+  /* Top band */
+  .top-band{background:linear-gradient(180deg,var(--bg) 0%,var(--bg) 60%,transparent 100%);border-bottom:1px solid var(--line)}
+  .crumb{display:flex;align-items:center;gap:.5rem;color:var(--muted)}
+  .crumb a{color:var(--text);text-decoration:none}
+  .crumb i{opacity:.6}
+
+  /* Card */
+  .card{border:1px solid var(--line); border-radius:var(--radius)}
+
+  /* Select */
+  .form-select{border-radius:12px; border:1px solid var(--line)}
+  .form-select:focus{border-color:#111; box-shadow:0 0 0 .15rem rgba(0,0,0,.08)}
+
+  /* ===== Modal (match permissions screenshot style) ===== */
+  .plan-modal .modal-content{
+    border-radius:16px; border:1px solid #e5e7eb;
+    box-shadow:0 24px 60px rgba(2,6,23,.15);
+  }
+  .plan-modal .modal-header{
+    background:#f8fafc; border-bottom:1px solid #e5e7eb;
+    border-top-left-radius:16px; border-top-right-radius:16px;
+  }
+  .plan-modal .modal-title{
+    display:flex; align-items:center; gap:.5rem; font-weight:700; color:#0f172a;
+  }
+  .plan-modal .title-ico{
+    width:28px;height:28px;border-radius:999px;display:grid;place-items:center;
+    background:#eef2ff; color:#334155; border:1px solid #e5e7eb; font-size:14px;
+  }
+  .plan-modal .btn-close{opacity:.6}
+  .plan-modal .btn-close:hover{opacity:1}
+
+  .plan-modal .modal-footer{
+    background:#fff; border-top:1px solid #e5e7eb;
+    border-bottom-left-radius:16px; border-bottom-right-radius:16px;
+  }
+  .plan-modal .btn-cancel{
+    background:#fff; color:#0f172a; border:1px solid #e5e7eb; border-radius:12px;
+    font-weight:600; padding:.5rem 1rem;
+  }
+  .plan-modal .btn-cancel:hover{background:#f3f4f6}
+
+  .plan-modal .btn-save{
+    background:#fff; color:#0f172a; border:1px solid #e5e7eb; border-radius:12px;
+    font-weight:700; padding:.5rem 1rem; display:inline-flex; align-items:center; gap:.5rem;
+  }
+  .plan-modal .btn-save:hover{background:#f3f4f6}
+  .plan-modal .spark{
+    width:22px;height:22px;border-radius:999px;display:inline-grid;place-items:center;
+    background:#eef2ff; border:1px solid #dbeafe; color:#4f46e5; font-size:12px;
+  }
 </style>
 @endpush
 
@@ -36,28 +88,31 @@
         @else
           <p>You are currently on the <strong>Free</strong> plan.</p>
         @endif
-        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#upgradeModal">
+        <button class="btn btn-outline-dark mt-3" data-bs-toggle="modal" data-bs-target="#upgradeModal">
           <i class="bi bi-arrow-up-circle me-1"></i> Upgrade Plan
         </button>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">
+  <!-- Modal -->
+  <div class="modal fade plan-modal" id="upgradeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <form id="planForm" class="modal-content">
-        <div class="modal-header bg-primary text-white">
-          <h5 class="modal-title"><i class="bi bi-box-seam me-2"></i> Upgrade Your Plan</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <span class="title-ico"><i class="bi bi-box-seam"></i></span>
+            Upgrade Your Plan
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+
         <div class="modal-body">
-          <p class="text-muted mb-3">
-            <i class="bi bi-lightning-charge-fill text-warning me-1"></i>
-            Choose a plan that suits your needs.
-          </p>
+          <p class="text-muted mb-3">Choose a plan that suits your needs.</p>
+
           <div class="mb-3">
             <label for="planSelect" class="form-label fw-bold">
-              <i class="bi bi-gem text-info me-1"></i> Available Plans
+              <i class="bi bi-gem me-1"></i> Available Plans
             </label>
             <select class="form-select" id="planSelect" name="plan_id" required>
               <option value="">-- Select a plan --</option>
@@ -67,12 +122,12 @@
             </select>
           </div>
         </div>
-        <div class="modal-footer bg-light">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-            <i class="bi bi-x-circle me-1"></i> Cancel
-          </button>
-          <button type="submit" id="btnPlanSave" class="btn btn-primary">
-            <i class="bi bi-check-circle me-1"></i> Save & Upgrade
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" id="btnPlanSave" class="btn-save">
+            <span class="spark"><i class="bi bi-stars"></i></span>
+            Save & Upgrade
           </button>
         </div>
       </form>
@@ -88,21 +143,21 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Saving...';
 
-    const res = await fetch('{{ route('vendor.plan.update') }}', {
-      method: 'POST',
-      headers: {
-        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-        'Accept': 'application/json'
-      },
-      body: new FormData(this)
-    });
-
-    if (res.ok) {
-      location.reload();
-    } else {
+    try{
+      const res = await fetch('{{ route('vendor.plan.update') }}', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+        body: new FormData(this)
+      });
+      if (res.ok) {
+        location.reload();
+      } else {
+        throw new Error();
+      }
+    }catch{
       alert('Failed to update plan');
       btn.disabled = false;
-      btn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Save & Upgrade';
+      btn.innerHTML = '<span class="spark"><i class="bi bi-stars"></i></span> Save & Upgrade';
     }
   });
 </script>
