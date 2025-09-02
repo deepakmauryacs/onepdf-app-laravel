@@ -120,13 +120,11 @@
 
       <div class="section-line"></div>
 
-      @if (session('status'))
-        <div class="alert alert-success mb-3">{{ session('status') }}</div>
-      @endif
+      <div id="profile-alert" class="alert mb-3 d-none"></div>
 
       <h5 class="mb-3" style="font-weight:700;color:#111827;">Edit Profile</h5>
 
-      <form method="POST" action="{{ route('profile.update') }}">
+      <form id="profile-form" method="POST" action="{{ route('profile.update') }}">
         @csrf
         @method('PUT')
 
@@ -175,3 +173,52 @@
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+  const profileForm = document.getElementById('profile-form');
+  const profileAlert = document.getElementById('profile-alert');
+
+  profileForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    profileAlert.classList.add('d-none');
+    profileAlert.classList.remove('alert-success', 'alert-danger');
+
+    const firstName = profileForm.first_name.value.trim();
+    const lastName = profileForm.last_name.value.trim();
+
+    if (!firstName || !lastName) {
+      profileAlert.textContent = 'First and last name are required.';
+      profileAlert.classList.add('alert', 'alert-danger');
+      profileAlert.classList.remove('d-none');
+      return;
+    }
+
+    const formData = new FormData(profileForm);
+    try {
+      const response = await fetch(profileForm.action, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        profileAlert.textContent = data.status || 'Profile updated successfully.';
+        profileAlert.classList.add('alert', 'alert-success');
+      } else if (response.status === 422) {
+        profileAlert.textContent = Object.values(data.errors).join(' ');
+        profileAlert.classList.add('alert', 'alert-danger');
+      } else {
+        profileAlert.textContent = 'An error occurred.';
+        profileAlert.classList.add('alert', 'alert-danger');
+      }
+      profileAlert.classList.remove('d-none');
+    } catch (error) {
+      profileAlert.textContent = 'An error occurred.';
+      profileAlert.classList.add('alert', 'alert-danger');
+      profileAlert.classList.remove('d-none');
+    }
+  });
+</script>
+@endpush

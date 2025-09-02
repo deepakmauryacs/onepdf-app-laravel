@@ -29,6 +29,11 @@ class PasswordController extends Controller
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'Password updated successfully.'
+            ]);
+        }
 
         return redirect()->route('password.edit')->with('status', 'Password updated successfully.');
     }
