@@ -152,7 +152,8 @@ class DocumentController extends Controller
         $link = Link::firstOrNew(['document_id' => $doc->id]);
 
         if (!$link->exists) {
-            $link->slug = bin2hex(random_bytes(5)); // 10-char hex
+            $link->slug    = bin2hex(random_bytes(5)); // 10-char hex
+            $link->user_id = Auth::id();
         }
 
         // If your Link model doesn't cast 'permissions' => 'array',

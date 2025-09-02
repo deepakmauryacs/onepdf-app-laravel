@@ -12,6 +12,7 @@ class Link extends Model
 
     protected $fillable = [
         'document_id',
+        'user_id',
         'slug',
         'permissions',
         'created_at',
@@ -25,5 +26,10 @@ class Link extends Model
     public function document()
     {
         return $this->belongsTo(Document::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

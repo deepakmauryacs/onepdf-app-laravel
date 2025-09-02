@@ -13,6 +13,7 @@ return new class extends Migration {
 
             $table->increments('id');
             $table->unsignedInteger('document_id')->index();
+            $table->unsignedInteger('user_id')->index();
             $table->string('slug', 20)->unique();
             $table->json('permissions');
             $table->timestamp('created_at')->useCurrent();
