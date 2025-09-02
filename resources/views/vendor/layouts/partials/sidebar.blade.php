@@ -36,7 +36,7 @@
       <a class="nav-link " href="{{ route('profile') }}">
         <i class="bi bi-person me-1"></i> <span>Profile</span>
       </a>
-      <a class="nav-link " href="">
+      <a class="nav-link " href="{{ route('password.edit') }}">
         <i class="bi bi-key me-1"></i> <span>Change Password</span>
       </a>
     </div>
