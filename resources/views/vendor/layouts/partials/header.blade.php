@@ -58,7 +58,14 @@
         <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
         <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-key me-2"></i> Change Password</a></li>
         <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item d-flex align-items-center" href="#"><i class="bi bi-box-arrow-right me-2"></i> Logout </a></li>
+        <li>
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="dropdown-item d-flex align-items-center">
+              <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </button>
+          </form>
+        </li>
       </ul>
     </div>
   </div>
