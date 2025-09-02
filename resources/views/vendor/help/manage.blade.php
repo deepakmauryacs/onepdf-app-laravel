@@ -105,9 +105,10 @@
           <tr>
             <th style="width:42px;"><input class="form-check-input" type="checkbox" disabled></th>
             <th>Subject</th>
+            <th style="width:180px;">Message</th>
             <th style="width:140px;">Status</th>
-            <th style="width:180px;">Agent</th>
             <th style="width:180px;">Created</th>
+            <th style="width:100px;">Action</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -153,8 +154,38 @@
       </div>
     </form>
   </div>
-</div>
-@endsection
+  </div>
+
+  <!-- View Request Modal -->
+  <div class="modal fade help-modal" id="viewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><span class="title-ico"><i class="bi bi-eye"></i></span> View Help Request</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Subject</label>
+            <div id="viewSubject"></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Message</label>
+            <div id="viewMessage"></div>
+          </div>
+          <div class="mb-0">
+            <label class="form-label">Status</label>
+            <div id="viewStatus"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @endsection
 
 @push('scripts')
 <script>
@@ -171,41 +202,59 @@
   const pagerSummary = document.getElementById('pagerSummary');
   const countBadge = document.getElementById('countBadge');
 
-  const requestModal = new bootstrap.Modal('#requestModal');
+    const requestModal = new bootstrap.Modal('#requestModal');
+    const viewModal = new bootstrap.Modal('#viewModal');
 
-  function escapeHtml(s){return (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    function escapeHtml(s){return (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+    function escapeAttr(s){return escapeHtml(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 
   function statusPill(s){
     const label = (s||'').toString().trim() || '—';
     return `<span class="status-pill">${escapeHtml(label)}</span>`;
   }
 
-  function rowTemplate(r){
-    return `<tr>
-      <td><input class="form-check-input" type="checkbox" disabled></td>
-      <td>
-        <div class="col-subject">
-          <span class="file-chip"><i class="bi bi-chat-dots"></i></span>
-          <div class="text-truncate" title="${escapeHtml(r.subject)}">${escapeHtml(r.subject)}</div>
-        </div>
-      </td>
-      <td>${statusPill(r.status)}</td>
-      <td>${escapeHtml(r.agent_name || '')}</td>
-      <td>${escapeHtml(r.created_at || '')}</td>
-    </tr>`;
-  }
-
-  function renderRows(list,total){
-    tbody.innerHTML='';
-    if(!list || !list.length){
-      empty.classList.remove('d-none');
-      countBadge.textContent = '0';
-      return;
+    function rowTemplate(r){
+      const msg = (r.message || '').toString();
+      const shortMsg = msg.length > 15 ? msg.slice(0,15) + '...' : msg;
+      return `<tr>
+        <td><input class="form-check-input" type="checkbox" disabled></td>
+        <td>
+          <div class="col-subject">
+            <span class="file-chip"><i class="bi bi-chat-dots"></i></span>
+            <div class="text-truncate" title="${escapeHtml(r.subject)}">${escapeHtml(r.subject)}</div>
+          </div>
+        </td>
+        <td>${escapeHtml(shortMsg)} <i class="bi bi-info-circle ms-1" data-bs-toggle="tooltip" title="${escapeAttr(msg)}"></i></td>
+        <td>${statusPill(r.status)}</td>
+        <td>${escapeHtml(r.created_at || '')}</td>
+        <td><button class="btn btn-sm btn-outline-primary view-btn" data-subject="${encodeURIComponent(r.subject || '')}" data-message="${encodeURIComponent(msg)}" data-status="${encodeURIComponent(r.status || '')}"><i class="bi bi-eye"></i></button></td>
+      </tr>`;
     }
-    empty.classList.add('d-none');
-    tbody.innerHTML = list.map(rowTemplate).join('');
-    countBadge.textContent = total ?? list.length;
-  }
+
+    function initRowHandlers(){
+      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('viewSubject').textContent = decodeURIComponent(btn.dataset.subject || '');
+          document.getElementById('viewMessage').textContent = decodeURIComponent(btn.dataset.message || '');
+          document.getElementById('viewStatus').textContent = decodeURIComponent(btn.dataset.status || '');
+          viewModal.show();
+        });
+      });
+    }
+
+    function renderRows(list,total){
+      tbody.innerHTML='';
+      if(!list || !list.length){
+        empty.classList.remove('d-none');
+        countBadge.textContent = '0';
+        return;
+      }
+      empty.classList.add('d-none');
+      tbody.innerHTML = list.map(rowTemplate).join('');
+      initRowHandlers();
+      countBadge.textContent = total ?? list.length;
+    }
 
   function renderPager(current,last,total=null,perPage=null){
     pager.innerHTML='';
