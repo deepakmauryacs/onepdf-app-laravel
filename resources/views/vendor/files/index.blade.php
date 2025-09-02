@@ -265,6 +265,8 @@
       await fetch(routes.upload, {
         method: 'POST',
         body: fd,
+        headers: { 'X-CSRF-TOKEN': csrf },
+        credentials: 'same-origin',
       }).then(async (r)=>{
         if(!r.ok){ throw new Error((await r.json().catch(()=>({}))).message || 'Upload failed'); }
         return r.json();
