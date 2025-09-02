@@ -2,6 +2,25 @@
 
 @section('title', 'Dashboard')
 
+@push('styles')
+<style>
+  /* ===== Modern centered pagination (black & white) ===== */
+  .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pager-summary{color:#64748b;font-size:.9rem}
+  .pagination-modern{gap:8px}
+  .pagination-modern .page-link{
+    border:1px solid #eaeef3;background:#fff;color:#111;border-radius:12px;
+    min-width:42px;height:42px;padding:0 12px;display:flex;align-items:center;justify-content:center;
+    font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.04);
+  }
+  .pagination-modern .page-item.active .page-link{background:#111;border-color:#111;color:#fff}
+  .pagination-modern .page-item:not(.active):not(.disabled) .page-link:hover{background:#f2f4f7}
+  .pagination-modern .page-item.disabled .page-link{opacity:.45;cursor:not-allowed}
+  .pagination-modern .ellipsis>.page-link{pointer-events:none}
+  .pagination-modern .page-link .bi{margin:0;font-size:16px}
+</style>
+@endpush
+
 @section('content')
   <!-- Breadcrumb band -->
   <div class="bw-band">
@@ -18,7 +37,7 @@
           <li><a class="dropdown-item" href="#">This Year</a></li>
         </ul>
       </div>
-      <button class="btn btn-dark"><i class="bi bi-graph-up-arrow me-1"></i> View All Time</button>
+      <a href="{{ route('vendor.files.index') }}" class="btn btn-dark"><i class="bi bi-graph-up-arrow me-1"></i> View All Time</a>
     </div>
   </div>
 
@@ -58,9 +77,7 @@
 if (!function_exists('human_size')) {
     function human_size($bytes) {
         $units = ['B','KB','MB','GB','TB'];
-        for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) {
-            $bytes /= 1024;
-        }
+        for ($i = 0; $bytes >= 1024 && $i < count($units) - 1; $i++) { $bytes /= 1024; }
         return round($bytes, $i ? 2 : 0) . ' ' . $units[$i];
     }
 }
@@ -76,7 +93,7 @@ if (!function_exists('human_size')) {
             </td>
             <td>{{ human_size($file['size']) }}</td>
             <td>
-              @php($parts = explode(' ', $file['modified'] ?? ''))
+@php $parts = explode(' ', $file['modified'] ?? ''); @endphp
               <div>{{ $parts[0] ?? '' }}</div>
               <small class="text-muted">{{ $parts[1] ?? '' }}</small>
             </td>
@@ -101,9 +118,62 @@ if (!function_exists('human_size')) {
         </tbody>
       </table>
     </div>
-    @if($files->hasPages())
+
+    @if ($files->hasPages())
+@php
+  $current = $files->currentPage();
+  $last    = $files->lastPage();
+  $total   = $files->total();
+  $perPage = $files->perPage();
+  $from    = ($current - 1) * $perPage + 1;
+  $to      = min($total, $current * $perPage);
+  $window  = 5;
+  $start   = max(1, $current - intdiv($window,2));
+  $end     = min($last, $start + $window - 1);
+  if (($end - $start + 1) < $window) { $start = max(1, $end - $window + 1); }
+  $params  = request()->except('page');
+@endphp
     <div class="card-footer">
-      {{ $files->links() }}
+      <nav class="pagination-wrap" aria-label="Files pagination">
+        @if($total > 0)
+        <div class="pager-summary">Showing {{ number_format($from) }}–{{ number_format($to) }} of {{ number_format($total) }}</div>
+        @endif
+        <ul class="pagination pagination-modern justify-content-center mb-0">
+          <li class="page-item {{ $current===1 ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ $current===1 ? '#' : $files->appends($params)->url(1) }}"><i class="bi bi-chevron-double-left"></i></a>
+          </li>
+          <li class="page-item {{ $current===1 ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ $current===1 ? '#' : $files->appends($params)->previousPageUrl() }}"><i class="bi bi-chevron-left"></i></a>
+          </li>
+
+          @if($start > 1)
+            <li class="page-item"><a class="page-link" href="{{ $files->appends($params)->url(1) }}">1</a></li>
+            @if($start > 2)
+              <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
+            @endif
+          @endif
+
+          @for($i=$start; $i<=$end; $i++)
+            <li class="page-item {{ $i===$current ? 'active' : '' }}">
+              <a class="page-link" href="{{ $i===$current ? '#' : $files->appends($params)->url($i) }}">{{ $i }}</a>
+            </li>
+          @endfor
+
+          @if($end < $last)
+            @if($end < $last-1)
+              <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
+            @endif
+            <li class="page-item"><a class="page-link" href="{{ $files->appends($params)->url($last) }}">{{ $last }}</a></li>
+          @endif
+
+          <li class="page-item {{ $current===$last ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ $current===$last ? '#' : $files->appends($params)->nextPageUrl() }}"><i class="bi bi-chevron-right"></i></a>
+          </li>
+          <li class="page-item {{ $current===$last ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ $current===$last ? '#' : $files->appends($params)->url($last) }}"><i class="bi bi-chevron-double-right"></i></a>
+          </li>
+        </ul>
+      </nav>
     </div>
     @endif
   </div>
@@ -124,9 +194,7 @@ document.addEventListener('click', function(e){
   if(!btn) return;
   navigator.clipboard.writeText(btn.dataset.url).then(function(){
     btn.innerHTML = '<i class="bi bi-check2 me-1"></i>Copied';
-    setTimeout(function(){
-      btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy';
-    }, 2000);
+    setTimeout(function(){ btn.innerHTML = '<i class="bi bi-clipboard me-1"></i>Copy'; }, 2000);
   });
 });
 </script>
