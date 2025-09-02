@@ -11,7 +11,7 @@
 
   <!-- NEW MENU -->
   <nav class="nav flex-column gap-1" id="mainNav">
-    <a class="nav-link " href="">
+    <a class="nav-link " href="{{ route('dashboard') }}">
       <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
     </a>
     <a class="nav-link " href="">
@@ -33,7 +33,7 @@
       <span class="ms-auto"><i class="bi bi-caret-down-fill"></i></span>
     </a>
     <div class="collapse subnav " id="settingsMenu" data-bs-parent="#mainNav">
-      <a class="nav-link " href="">
+      <a class="nav-link " href="{{ route('profile') }}">
         <i class="bi bi-person me-1"></i> <span>Profile</span>
       </a>
       <a class="nav-link " href="">
@@ -47,7 +47,7 @@
   </nav>
 
   <div class="bottom">
-    <form method="POST" action="">
+    <form method="POST" action="{{ route('logout') }}">
       @csrf
       <button type="submit" class="logout">
         <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
