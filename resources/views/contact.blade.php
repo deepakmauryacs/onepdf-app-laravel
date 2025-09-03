@@ -80,7 +80,12 @@
 
               <div class="mb-3">
                 <label for="captcha" id="captcha_label" class="form-label">What is {{ $captcha_a }} + {{ $captcha_b }}?</label>
-                <input type="text" class="form-control @error('captcha') is-invalid @enderror" id="captcha" name="captcha">
+                <div class="input-group">
+                  <input type="text" class="form-control @error('captcha') is-invalid @enderror" id="captcha" name="captcha">
+                  <button type="button" class="btn btn-outline-secondary" id="refreshCaptcha" aria-label="Refresh captcha">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
+                </div>
                 <div id="captcha_error" class="error-message mb-4">@error('captcha'){{ $message }}@enderror</div>
               </div>
 
@@ -178,6 +183,28 @@
         const err=document.getElementById(id+'_error');
         if (input) input.classList.add('is-invalid');
         if (err) err.textContent=msg||'';
+      }
+
+      const refreshBtn = document.getElementById('refreshCaptcha');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', async function(){
+          try {
+            const res = await fetch(@json(route('contact.captcha')), {
+              method:'POST',
+              headers: {
+                'X-Requested-With':'XMLHttpRequest',
+                'X-CSRF-TOKEN': @json(csrf_token())
+              }
+            });
+            const json = await res.json();
+            if (json.captcha_a && json.captcha_b) {
+              const label = document.getElementById('captcha_label');
+              if (label) label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
+              const input = document.getElementById('captcha');
+              if (input) input.value = '';
+            }
+          } catch(err){}
+        });
       }
 
       // If you want AJAX submit, uncomment below and ensure route returns JSON.
