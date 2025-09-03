@@ -58,12 +58,13 @@ class DocumentController extends Controller
             $query->where('filename', 'like', "%{$search}%");
         }
 
-        $docs = $query->latest()->paginate(10);
+        $docs = $query->with('link')->latest()->paginate(10);
         $files = $docs->getCollection()->map(fn($d) => [
-            'id'       => $d->id,
-            'filename' => $d->filename,
-            'size'     => (int) $d->size,
-            'modified' => optional($d->updated_at)->format('Y-m-d H:i'),
+            'id'         => $d->id,
+            'filename'   => $d->filename,
+            'size'       => (int) $d->size,
+            'modified'   => optional($d->updated_at)->format('Y-m-d H:i'),
+            'public_url' => $d->link ? URL::to('/view').'?doc='.$d->link->slug : null,
         ]);
 
         return response()->json([
