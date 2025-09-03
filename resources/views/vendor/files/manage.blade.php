@@ -160,7 +160,7 @@
   function toast(msg){ const n=document.createElement('div'); n.textContent=msg; Object.assign(n.style,{position:'fixed',right:'16px',bottom:'16px',background:'#111',color:'#fff',padding:'10px 14px',borderRadius:'10px',zIndex:1060}); document.body.appendChild(n); setTimeout(()=>n.remove(),1600); }
 
   function rowTemplate(f){
-    const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure'; const url=f.public_url||''; const detail=routes.detailBase+'/'+id;
+    const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure'; const url=f.public_url||''; const detail=routes.detailBase+'/'+id; const disabledAttr=url?'':'disabled';
     return `<tr data-id="${id}">
       <td><input class="form-check-input row-check" type="checkbox"/></td>
       <td><div class="col-file"><span class="file-chip"><i class="bi ${iconByExt(filename)}"></i></span><div class="file-name"><a href="${detail}">${escapeHtml(filename)}</a></div></div></td>
@@ -171,8 +171,8 @@
         <div class="actions-cell">
           <div class="actions">
             <button class="btn btn-ghost btn-generate"><i class="bi bi-link-45deg"></i>Generate</button>
-            <button class="btn btn-ghost btn-copy"><i class="bi bi-clipboard"></i>Copy</button>
-            <button class="btn btn-ghost btn-embed"><i class="bi bi-code-slash"></i>Embed</button>
+            <button class="btn btn-ghost btn-copy" ${disabledAttr}><i class="bi bi-clipboard"></i>Copy</button>
+            <button class="btn btn-ghost btn-embed" ${disabledAttr}><i class="bi bi-code-slash"></i>Embed</button>
             <button class="btn-icon btn-delete" title="Delete"><i class="bi bi-trash"></i></button>
           </div>
           <div class="small small-link text-break">${url?`<a href="${url}" target="_blank">${escapeHtml(url)}</a>`:'—'}</div>
@@ -253,8 +253,8 @@
     const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
     if(e.target.closest('.btn-generate')){
       const r=await fetch(routes.generate,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({id})});
-      const j=await r.json(); const link=j.url||'';
-      if(link){ tr.querySelector('.small-link').innerHTML=`<a href="${link}" target="_blank">${link}</a>`; toast('Link generated'); }
+        const j=await r.json(); const link=j.url||'';
+        if(link){ tr.querySelector('.small-link').innerHTML=`<a href="${link}" target="_blank">${link}</a>`; tr.querySelector('.btn-copy')?.removeAttribute('disabled'); tr.querySelector('.btn-embed')?.removeAttribute('disabled'); toast('Link generated'); }
       return;
     }
     if(e.target.closest('.btn-copy')){
