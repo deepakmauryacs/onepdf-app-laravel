@@ -63,8 +63,8 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    Route::get('password', [PasswordController::class, 'edit'])->name('password.edit');
-    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+    Route::get('password', [PasswordController::class, 'edit'])->name('vendor.password.edit');
+    Route::put('password', [PasswordController::class, 'update'])->name('vendor.password.update');
 
     // Files
     Route::get('files', [DocumentController::class, 'index'])->name('vendor.files.index');
