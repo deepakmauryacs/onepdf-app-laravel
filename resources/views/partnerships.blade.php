@@ -31,47 +31,47 @@
             @csrf
             <div class="row">
               <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="firstName" class="form-label">First Name</label>
+                <div class="form-floating mb-1">
                   <input type="text" class="form-control @error('firstName') is-invalid @enderror"
-                         id="firstName" name="firstName" autocomplete="given-name" maxlength="100"
+                         id="firstName" name="firstName" autocomplete="given-name" maxlength="100" placeholder="First Name"
                          value="{{ old('firstName') }}">
-                  <div id="firstName_error" class="error-message">@error('firstName'){{ $message }}@enderror</div>
+                  <label for="firstName">First Name</label>
                 </div>
+                <div id="firstName_error" class="error-message">@error('firstName'){{ $message }}@enderror</div>
               </div>
               <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="lastName" class="form-label">Last Name</label>
+                <div class="form-floating mb-1">
                   <input type="text" class="form-control @error('lastName') is-invalid @enderror"
-                         id="lastName" name="lastName" autocomplete="family-name" maxlength="100"
+                         id="lastName" name="lastName" autocomplete="family-name" maxlength="100" placeholder="Last Name"
                          value="{{ old('lastName') }}">
-                  <div id="lastName_error" class="error-message">@error('lastName'){{ $message }}@enderror</div>
+                  <label for="lastName">Last Name</label>
                 </div>
+                <div id="lastName_error" class="error-message">@error('lastName'){{ $message }}@enderror</div>
               </div>
             </div>
 
-            <div class="mb-3">
-              <label for="email" class="form-label">Email Address</label>
+            <div class="form-floating mb-1">
               <input type="email" class="form-control @error('email') is-invalid @enderror"
-                     id="email" name="email" autocomplete="email" maxlength="150"
+                     id="email" name="email" autocomplete="email" maxlength="150" placeholder="Email Address"
                      value="{{ old('email') }}">
-              <div id="email_error" class="error-message">@error('email'){{ $message }}@enderror</div>
+              <label for="email">Email Address</label>
             </div>
+            <div id="email_error" class="error-message">@error('email'){{ $message }}@enderror</div>
 
-            <div class="mb-3">
-              <label for="contact_number" class="form-label">Contact Number</label>
+            <div class="form-floating mb-1">
               <input type="text" class="form-control @error('contact_number') is-invalid @enderror"
-                     id="contact_number" name="contact_number" autocomplete="tel" maxlength="32" inputmode="tel"
+                     id="contact_number" name="contact_number" autocomplete="tel" maxlength="32" inputmode="tel" placeholder="Contact Number"
                      value="{{ old('contact_number') }}">
-              <div id="contact_number_error" class="error-message">@error('contact_number'){{ $message }}@enderror</div>
+              <label for="contact_number">Contact Number</label>
             </div>
+            <div id="contact_number_error" class="error-message">@error('contact_number'){{ $message }}@enderror</div>
 
-            <div class="mb-4">
-              <label for="message" class="form-label">Message</label>
+            <div class="form-floating mb-1">
               <textarea class="form-control @error('message') is-invalid @enderror"
-                        id="message" name="message" rows="5" maxlength="10000">{{ old('message') }}</textarea>
-              <div id="message_error" class="error-message">@error('message'){{ $message }}@enderror</div>
+                        id="message" name="message" maxlength="10000" placeholder="Message" style="height: 150px">{{ old('message') }}</textarea>
+              <label for="message">Message</label>
             </div>
+            <div id="message_error" class="error-message mb-4">@error('message'){{ $message }}@enderror</div>
 
             <button type="submit" class="btn btn-brand btn-lg w-100">Send Inquiry</button>
             <div id="form_success" class="mt-3 form-success"
