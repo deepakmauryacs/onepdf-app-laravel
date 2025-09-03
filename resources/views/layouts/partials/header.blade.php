@@ -11,12 +11,24 @@
 
     <div id="nav" class="collapse navbar-collapse">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-        <li class="nav-item"><a class="nav-link" href="{{ url('/features') }}">Features</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url('/how-it-works') }}">How It Works</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url('/pricing') }}">Pricing</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url('/contact') }}">Contact</a></li>
-        <li class="nav-item ms-lg-3"><a class="btn btn-ghost btn-sm" href="{{ url('/login') }}">Log in</a></li>
-        <li class="nav-item ms-2"><a class="btn btn-brand btn-sm" href="{{ url('/register') }}">Start free</a></li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->routeIs('features') ? 'active' : '' }}" href="{{ route('features') }}">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->routeIs('how-it-works') ? 'active' : '' }}" href="{{ route('how-it-works') }}">How It Works</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->routeIs('pricing') ? 'active' : '' }}" href="{{ route('pricing') }}">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Contact</a>
+        </li>
+        <li class="nav-item ms-lg-3">
+          <a class="btn btn-ghost btn-sm {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">Log in</a>
+        </li>
+        <li class="nav-item ms-2">
+          <a class="btn btn-brand btn-sm {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">Start free</a>
+        </li>
       </ul>
     </div>
   </div>
