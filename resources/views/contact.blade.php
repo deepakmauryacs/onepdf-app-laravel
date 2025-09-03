@@ -78,6 +78,12 @@
               </div>
               <div id="message_error" class="error-message mb-4">@error('message'){{ $message }}@enderror</div>
 
+              <div class="mb-3">
+                <label for="captcha" id="captcha_label" class="form-label">What is {{ $captcha_a }} + {{ $captcha_b }}?</label>
+                <input type="text" class="form-control @error('captcha') is-invalid @enderror" id="captcha" name="captcha">
+                <div id="captcha_error" class="error-message mb-4">@error('captcha'){{ $message }}@enderror</div>
+              </div>
+
               <button type="submit" class="btn btn-brand btn-lg w-100">Send Message</button>
               <div id="form_success" class="mt-3 form-success" @if(!session('contact_success'))style="display:none;"@endif>
                 {{ session('contact_success') ?? 'Thank you for your message! We will get back to you soon.' }}
@@ -155,7 +161,7 @@
 
       const globalError = document.getElementById('form_global_error');
       const successMsg  = document.getElementById('form_success');
-      const fields = ['firstName','lastName','email','company','subject','message'];
+      const fields = ['firstName','lastName','email','company','subject','message','captcha'];
 
       function clearErrors(){
         if (globalError){ globalError.style.display='none'; globalError.textContent=''; }
@@ -189,6 +195,7 @@
         else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ setFieldError('email','Please enter a valid email.'); ok=false; }
         if (!data.get('subject')) { setFieldError('subject','Subject is required.'); ok=false; }
         if (!data.get('message')) { setFieldError('message','Message is required.'); ok=false; }
+        if (!data.get('captcha')) { setFieldError('captcha','Captcha is required.'); ok=false; }
         if (!ok) return;
 
         try{
@@ -210,6 +217,12 @@
           const json=await res.json();
           if (json.success){
             form.reset();
+            if (json.captcha_a && json.captcha_b) {
+              const label = document.getElementById('captcha_label');
+              if (label) {
+                label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
+              }
+            }
             if (successMsg) {
               successMsg.textContent = json.message || 'Thank you for your message! We will get back to you soon.';
               successMsg.style.display='block';
