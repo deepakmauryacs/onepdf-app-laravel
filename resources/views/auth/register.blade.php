@@ -345,7 +345,10 @@
       try{
         const res = await fetch(@json(route('register.store')), {
           method:'POST',
-          headers:{ 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
+          headers:{
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+          },
           body:data
         });
         let result = {};
