@@ -2,7 +2,6 @@
 
 @section('title', 'Pricing - PDFOneLink')
 
-
 @section('content')
   {{-- HERO --}}
   <section class="pricing-hero">
@@ -36,11 +35,9 @@
             <div class="plan-price">$0<span class="fs-6 text-muted">/mo</span></div>
             <p class="text-muted">Perfect for individuals getting started</p>
             <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>500 MB storage</li>
-              <li><i class="bi bi-check2 check"></i>Basic analytics</li>
+              <li><i class="bi bi-check2 check"></i>Monthly uploads: 2</li>
+              <li><i class="bi bi-check2 check"></i>Available space: 20&nbsp;MB</li>
               <li><i class="bi bi-check2 check"></i>Embed viewer</li>
-              <li><i class="bi bi-check2 check"></i>Up to 10 documents</li>
-              <li><i class="bi bi-check2 check"></i>Standard support</li>
               <li><i class="bi bi-x text-muted"></i>Permission controls</li>
               <li><i class="bi bi-x text-muted"></i>Custom branding</li>
               <li><i class="bi bi-x text-muted"></i>Advanced analytics</li>
@@ -56,38 +53,41 @@
             <div class="plan-price">$12<span class="fs-6 text-muted">/mo</span></div>
             <p class="text-muted">Ideal for professionals and small teams</p>
             <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>10 GB storage</li>
+              <li><i class="bi bi-check2 check"></i>Monthly uploads: 100</li>
+              <li><i class="bi bi-check2 check"></i>Available space: 1&nbsp;GB</li>
               <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
               <li><i class="bi bi-check2 check"></i>Disable download/print</li>
               <li><i class="bi bi-check2 check"></i>Custom watermark</li>
               <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
-              <li><i class="bi bi-check2 check"></i>Unlimited documents</li>
-              <li><i class="bi bi-check2 check"></i>Priority support</li>
-              <li><i class="bi bi-x text-muted"></i>Team collaboration</li>
+              <li><i class="bi bi-x text-muted"></i>Custom branding</li>
             </ul>
             <a href="{{ url('/register') }}" class="btn btn-brand w-100">Choose Pro</a>
           </div>
         </div>
 
         {{-- Business --}}
-        <div class="col-md-6 col-lg-4">
-          <div class="plan">
-            <h5 class="plan-title">Business</h5>
-            <div class="plan-price">$29<span class="fs-6 text-muted">/mo</span></div>
-            <p class="text-muted">For organizations with advanced needs</p>
-            <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>Unlimited storage</li>
-              <li><i class="bi bi-check2 check"></i>SSO, API &amp; webhooks</li>
-              <li><i class="bi bi-check2 check"></i>OCR &amp; full-text search</li>
-              <li><i class="bi bi-check2 check"></i>Domain/IP allowlists</li>
-              <li><i class="bi bi-check2 check"></i>Team collaboration</li>
-              <li><i class="bi bi-check2 check"></i>Custom branding</li>
-              <li><i class="bi bi-check2 check"></i>Advanced permissions</li>
-              <li><i class="bi bi-check2 check"></i>Dedicated support</li>
-            </ul>
-            <a href="{{ url('/contact') }}" class="btn btn-ghost w-100">Talk to sales</a>
-          </div>
-        </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="plan">
+        <h5 class="plan-title">Business</h5>
+        <div class="plan-price">$29<span class="fs-6 text-muted">/mo</span></div>
+        <p class="text-muted">For organizations with advanced needs</p>
+        <ul class="plan-features">
+          <li><i class="bi bi-check2 check"></i>Monthly uploads: 500</li>
+          <li><i class="bi bi-check2 check"></i>Available space: 5&nbsp;GB</li>
+          <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
+          <li><i class="bi bi-check2 check"></i>Disable download/print</li>
+          <li><i class="bi bi-check2 check"></i>Custom watermark</li>
+          <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
+          <li><i class="bi bi-check2 check"></i>Unlimited viewers</li>
+          <li><i class="bi bi-check2 check"></i>SSO, API &amp; webhooks</li>
+          <li><i class="bi bi-check2 check"></i>OCR &amp; full-text search</li>
+          <li><i class="bi bi-check2 check"></i>Domain/IP allowlists</li>
+          <li><i class="bi bi-check2 check"></i>Priority support</li>
+        </ul>
+        <a href="{{ url('/register') }}" class="btn btn-ghost w-100">Choose Business</a>
+      </div>
+    </div>
+
       </div>
 
       <div class="text-center mt-5">
@@ -115,76 +115,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr><td>Storage</td><td class="text-center">500 MB</td><td class="text-center">10 GB</td><td class="text-center">Unlimited</td></tr>
-            <tr><td>Documents</td><td class="text-center">Up to 10</td><td class="text-center">Unlimited</td><td class="text-center">Unlimited</td></tr>
-            <tr><td>Download prevention</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
-            <tr><td>Print prevention</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
-            <tr><td>Custom watermarks</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
-            <tr><td>Link expiration</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Monthly uploads</td><td class="text-center">2</td><td class="text-center">100</td><td class="text-center">500</td></tr>
+            <tr><td>Available space</td><td class="text-center">20&nbsp;MB</td><td class="text-center">1&nbsp;GB</td><td class="text-center">5&nbsp;GB</td></tr>
+            <tr><td>Embed viewer</td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Custom branding</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
             <tr><td>Advanced analytics</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
-            <tr><td>API access</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
-            <tr><td>Team collaboration</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
-            <tr><td>Priority support</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Disable download/print</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Custom watermark</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Link expiry &amp; revocation</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Unlimited viewers</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>SSO, API &amp; webhooks</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>OCR &amp; full-text search</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Domain/IP allowlists</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
+            <tr><td>Priority support</td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-x text-muted"></i></td><td class="text-center"><i class="bi bi-check2 check"></i></td></tr>
           </tbody>
         </table>
-      </div>
-    </div>
-  </section>
-
-  {{-- TESTIMONIALS --}}
-  <section class="testimonial-section">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="section-title centered">Loved by Professionals</h2>
-        <p class="section-subtitle">See what our customers are saying about PDFOneLink</p>
-      </div>
-
-      <div class="row g-4">
-        <div class="col-md-6 col-lg-4">
-          <div class="testimonial-card">
-            <div class="testimonial-text">
-              <p>PDFOneLink has transformed how we share sensitive documents with clients. The analytics help us understand engagement, and the security features give us peace of mind.</p>
-            </div>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">SA</div>
-              <div>
-                <h6 class="mb-0">Sarah Anderson</h6>
-                <p class="text-muted small mb-0">Legal Consultant</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="testimonial-card">
-            <div class="testimonial-text">
-              <p>The ability to control who can view, download, or print our documents has been a game-changer for our business. The pricing is fair and the platform is incredibly reliable.</p>
-            </div>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">MJ</div>
-              <div>
-                <h6 class="mb-0">Michael Johnson</h6>
-                <p class="text-muted small mb-0">Marketing Director</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="testimonial-card">
-            <div class="testimonial-text">
-              <p>We switched to PDFOneLink from another service and couldn't be happier. The embed features work seamlessly on our website, and our clients find the viewer intuitive to use.</p>
-            </div>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">ER</div>
-              <div>
-                <h6 class="mb-0">Emily Rodriguez</h6>
-                <p class="text-muted small mb-0">CTO, Tech Startup</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
@@ -257,7 +202,6 @@
 
 @push('scripts')
   <script>
-    // (Optional) fill a year element if you use one in your footer partial
     (function(){ var y=document.getElementById('y'); if(y) y.textContent=new Date().getFullYear(); })();
   </script>
 @endpush
