@@ -65,7 +65,11 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::post('files/generate-link', [DocumentController::class, 'generateLink'])->name('vendor.files.generate');
     Route::get('files/embed',          [DocumentController::class, 'embed'])->name('vendor.files.embed');
 
-    Route::get('analytics',            [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
+    // Analytics
+    Route::get('analytics',                    [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
+    Route::get('analytics/document/{id}',      [AnalyticsController::class, 'document'])->name('vendor.analytics.document');
+
+    // Plan
     Route::get('plan',                 [PlanController::class, 'index'])->name('vendor.plan.index');
     Route::post('plan/update',         [PlanController::class, 'update'])->name('vendor.plan.update');
 

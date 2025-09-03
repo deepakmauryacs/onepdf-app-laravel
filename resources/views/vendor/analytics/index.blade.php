@@ -6,42 +6,95 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f6f7fb; --surface:#fff; --text:#0f172a; --muted:#64748b; --line:#eaecef;
-    --radius:14px; --shadow:0 10px 30px rgba(2,6,23,.06);
+    --bg:#f6f7fb; --surface:#fff; --text:#111; --muted:#666; --line:#e5e7eb;
+    --radius:14px; --shadow:0 6px 16px rgba(0,0,0,.06);
+    --chip:#f3f4f6; --bar:#222; --bar-bg:#e5e7eb;
   }
   *{font-family:"DM Sans",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  body{background:var(--bg)}
+  body{background:var(--bg);color:var(--text)}
 
-  /* Top band / crumbs (same across pages) */
-  .top-band{
-    background: radial-gradient(1200px 220px at 50% -140px, rgba(59,130,246,.18) 0%, rgba(59,130,246,0) 60%),
-                linear-gradient(180deg,#f6f7fb 0%,#f6f7fb 60%,transparent 100%);
-    border-bottom:1px solid var(--line);
-  }
-  .crumb{display:flex;align-items:center;gap:.5rem;color:var(--muted)}
+  /* Top band / crumbs */
+  .top-band{ background:#f9f9f9; border-bottom:1px solid var(--line); }
+  .crumb{display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.9rem}
   .crumb a{color:var(--text);text-decoration:none}
   .crumb i{opacity:.6}
 
   /* Cards */
   .bw-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-  .bw-card .card-header{background:var(--surface);border-bottom:1px solid var(--line);border-top-left-radius:var(--radius);border-top-right-radius:var(--radius)}
-  .stat{padding:18px}
-  .stat .label{font-size:.75rem;font-weight:700;letter-spacing:.03em;color:#111;text-transform:uppercase}
-  .stat .value{font-size:1.6rem;font-weight:800;color:var(--text);line-height:1.2;margin-top:4px}
+  .bw-card .card-header{background:var(--surface);border-bottom:1px solid var(--line)}
+  .section-title{font-weight:700;color:var(--text)}
 
-  /* Table */
-  .table thead th{border-bottom:1px solid var(--line);color:#475569;font-weight:700}
-  .table tbody td{vertical-align:middle;border-color:var(--line)}
-  .empty{padding:28px;text-align:center;color:var(--muted)}
-
-  /* Neutral buttons (shared) */
+  /* Toolbar */
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .btn-neutral{
     background:#fff;border:1px solid var(--line);color:var(--text);border-radius:12px;
-    padding:.5rem .8rem;font-weight:700;display:inline-flex;align-items:center;gap:.4rem;
+    padding:.5rem .8rem;font-weight:600;display:inline-flex;align-items:center;gap:.4rem;
   }
-  .btn-neutral:hover{background:#f3f4f6}
+  .btn-neutral:hover{background:#f2f2f2}
+  .chip{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:var(--chip);border:1px solid var(--line);border-radius:999px;
+    padding:.35rem .7rem;font-weight:600;color:var(--text);font-size:.85rem;
+  }
 
-  .dropdown-menu{border:1px solid var(--line);border-radius:12px}
+  /* Metrics */
+  .metric{display:flex;gap:14px;align-items:flex-start;padding:18px}
+  .metric .icon{
+    width:44px;height:44px;border-radius:12px;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:#111;color:#fff;font-size:18px;
+  }
+  .metric .meta{flex:1}
+  .metric .label{font-size:.78rem;font-weight:700;color:#000;text-transform:uppercase}
+  .metric .value{font-size:1.8rem;font-weight:800;color:#000;margin-top:4px}
+  .metric .sub{font-size:.85rem;color:var(--muted)}
+
+  /* Tables */
+  .table thead th{border-bottom:1px solid var(--line);color:#222;font-weight:700}
+  .table tbody td{vertical-align:middle;border-color:var(--line)}
+  .row-title{display:flex;align-items:center;gap:10px}
+  .doc-ico{
+    width:36px;height:36px;border-radius:8px;background:#f3f4f6;border:1px solid var(--line);
+    display:inline-flex;align-items:center;justify-content:center;color:#444;font-size:16px;
+  }
+  .doc-name{font-weight:600;color:#000;max-width:420px}
+  .doc-name:hover{text-decoration:underline}
+  .muted{color:var(--muted)}
+  .views-pill{
+    display:inline-flex;align-items:center;gap:.35rem;
+    border:1px solid var(--line);background:#fff;border-radius:999px;
+    padding:.25rem .6rem;font-weight:700;color:#000
+  }
+  .bar-wrap{background:var(--bar-bg);border-radius:99px;overflow:hidden;height:8px}
+  .bar{background:var(--bar);height:100%}
+
+  /* Empty state */
+  .empty{padding:36px;text-align:center;color:var(--muted);font-size:.95rem}
+  .empty .badge{background:#111;color:#fff;font-size:.8rem;border-radius:12px;padding:.3rem .8rem}
+
+  /* ===== Modern centered pagination (black & white) ===== */
+  .pagination-wrap{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    margin-bottom:1.25rem; /* bottom space */
+  }
+  .pager-summary{color:#64748b;font-size:.9rem}
+  .pagination-modern{gap:8px}
+  .pagination-modern .page-link{
+    border:1px solid var(--line);
+    background:#fff;
+    color:#111;
+    border-radius:12px;
+    min-width:42px;height:42px;
+    padding:0 12px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    box-shadow:0 2px 6px rgba(0,0,0,.04);
+  }
+  .pagination-modern .page-item.active .page-link{background:#111;border-color:#111;color:#fff}
+  .pagination-modern .page-item:not(.active):not(.disabled) .page-link:hover{background:#f2f4f7}
+  .pagination-modern .page-item.disabled .page-link{opacity:.45;cursor:not-allowed}
+  .pagination-modern .ellipsis > .page-link{pointer-events:none}
+  .pagination-modern .page-link .bi{margin:0;font-size:16px}
 </style>
 @endpush
 
@@ -55,57 +108,107 @@
           <i class="bi bi-chevron-right"></i>
           <span>Analytics</span>
         </nav>
+        <div class="toolbar">
+          <div class="chip"><i class="bi bi-calendar3"></i>
+            <span>{{ request('range','Last 7 days') }}</span>
+          </div>
+          <div class="dropdown">
+            <button class="btn-neutral dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-sliders"></i> Range
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="?range=Today">Today</a></li>
+              <li><a class="dropdown-item" href="?range=Last 7 days">Last 7 days</a></li>
+              <li><a class="dropdown-item" href="?range=Last 30 days">Last 30 days</a></li>
+              <li><a class="dropdown-item" href="?range=This month">This month</a></li>
+              <li><a class="dropdown-item" href="?range=This year">This year</a></li>
+            </ul>
+          </div>
+          
       </div>
     </div>
   </div>
 
   <div class="container py-4">
     <!-- KPI row -->
-    <div class="row g-3 mb-2">
+    <div class="row g-3 mb-3">
       <div class="col-xl-4 col-md-6">
-        <div class="bw-card stat h-100">
-          <div class="label">Visits (Last 7 Days)</div>
-          <div class="value">{{ $visits }}</div>
+        <div class="bw-card metric h-100">
+          <div class="icon"><i class="bi bi-eye"></i></div>
+          <div class="meta">
+            <div class="label">Visits</div>
+            <div class="value">{{ number_format((int)$visits) }}</div>
+            <div class="sub">Unique sessions that opened a document</div>
+          </div>
         </div>
       </div>
       <div class="col-xl-4 col-md-6">
-        <div class="bw-card stat h-100">
-          <div class="label">Average Reading Time</div>
-          <div class="value">{{ $avgTime ?? 'N/A' }}</div>
+        <div class="bw-card metric h-100">
+          <div class="icon"><i class="bi bi-stopwatch"></i></div>
+          <div class="meta">
+            <div class="label">Average Reading Time</div>
+            <div class="value">{{ $avgTime ?? 'N/A' }}</div>
+            <div class="sub">Per session</div>
+          </div>
         </div>
       </div>
       <div class="col-xl-4 col-md-6">
-        <div class="bw-card stat h-100">
-          <div class="label">Total Reading Time</div>
-          <div class="value">{{ $totalTime ?? 'N/A' }}</div>
+        <div class="bw-card metric h-100">
+          <div class="icon"><i class="bi bi-hourglass-split"></i></div>
+          <div class="meta">
+            <div class="label">Total Reading Time</div>
+            <div class="value">{{ $totalTime ?? 'N/A' }}</div>
+            <div class="sub">Across selected range</div>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Tables row -->
+    <!-- Top Documents -->
     <div class="row g-3">
-      <div class="col-lg-6">
+      <div class="col-lg-7">
         <div class="bw-card h-100">
-          <div class="card-header py-3">
-            <h6 class="m-0 fw-bold">Top 5 Documents</h6>
+          <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h6 class="m-0 section-title">Top Documents</h6>
+            <span class="chip"><i class="bi bi-trophy"></i> Top 5</span>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table mb-0">
+              <table class="table align-middle mb-0">
                 <thead>
                   <tr>
                     <th>Document</th>
                     <th style="width:120px;">Views</th>
+                    <th style="width:160px;">Engagement</th>
                   </tr>
                 </thead>
                 <tbody>
+                  @php $maxViews = max(1, (int)($topDocs->max('views') ?? 1)); @endphp
                   @forelse ($topDocs as $doc)
-                  <tr>
-                    <td class="text-truncate" title="{{ $doc->filename }}">{{ $doc->filename }}</td>
-                    <td>{{ $doc->views }}</td>
-                  </tr>
+                    @php $pct = min(100, intval(($doc->views / $maxViews) * 100)); @endphp
+                    <tr>
+                      <td>
+                        <div class="row-title">
+                          <div class="doc-ico"><i class="bi bi-file-earmark-text"></i></div>
+                          <div class="d-flex flex-column">
+                            <div class="doc-name text-truncate" title="{{ $doc->filename }}">{{ $doc->filename }}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="views-pill"><i class="bi bi-eye"></i>{{ number_format((int)$doc->views) }}</span>
+                      </td>
+                      <td>
+                        <div class="bar-wrap"><div class="bar" style="width: {{ $pct }}%"></div></div>
+                      </td>
+                    </tr>
                   @empty
-                  <tr><td colspan="2" class="empty"><i class="bi bi-inbox me-1"></i>No data</td></tr>
+                    <tr>
+                      <td colspan="3" class="empty">
+                        <div class="mb-1"><i class="bi bi-inbox"></i></div>
+                        No document analytics yet.
+                      </td>
+                    </tr>
                   @endforelse
                 </tbody>
               </table>
@@ -114,16 +217,154 @@
         </div>
       </div>
 
-      <div class="col-lg-6">
+      <!-- Visitor Cities (placeholder) -->
+      <div class="col-lg-5">
         <div class="bw-card h-100">
-          <div class="card-header py-3">
-            <h6 class="m-0 fw-bold">Top 5 Visitor Cities</h6>
+          <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h6 class="m-0 section-title">Visitor Cities</h6>
+            <span class="chip"><i class="bi bi-geo-alt"></i> Locations</span>
           </div>
           <div class="card-body">
-            <div class="empty"><i class="bi bi-geo-alt me-1"></i>Visitor location analytics are not available.</div>
+            <div class="empty">
+              <div class="mb-2"><span class="badge">Analytics</span></div>
+              <div class="mb-1 fw-bold">Location insights unavailable</div>
+              <div class="mb-3">Enable IP geolocation collection to see city-level breakdowns.</div>
+              <a href="#" class="btn-neutral"><i class="bi bi-gear"></i> Configure</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    {{-- ===== All Documents (Paginated, 10 per page) ===== --}}
+    <div class="row g-3 mt-1">
+      <div class="col-12">
+        <div class="bw-card h-100">
+          <div class="card-header py-3 d-flex align-items-center justify-content-between">
+            <h6 class="m-0 section-title">All Documents</h6>
+            @if(isset($allDocs) && $allDocs->total())
+              <span class="chip"><i class="bi bi-list-ul"></i> Page {{ $allDocs->currentPage() }} of {{ $allDocs->lastPage() }}</span>
+            @endif
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Document</th>
+                    <th style="width:120px;">Views</th>
+                    <th style="width:120px;">Sessions</th>
+                    <th style="width:180px;">Last View</th>
+                    <th style="width:110px;">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($allDocs as $doc)
+                    <tr>
+                      <td>
+                        <div class="row-title">
+                          <div class="doc-ico"><i class="bi bi-file-earmark-text"></i></div>
+                          <div class="d-flex flex-column">
+                            <a class="doc-name text-truncate" href="{{ route('vendor.analytics.document', $doc->id) }}"
+                               title="{{ $doc->filename }}">{{ $doc->filename }}</a>
+                            <span class="muted small">ID: {{ $doc->id }}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="views-pill"><i class="bi bi-eye"></i>{{ number_format((int)$doc->views) }}</span></td>
+                      <td>{{ number_format((int)($doc->sessions ?? 0)) }}</td>
+                      <td>
+                        @if($doc->last_view_at)
+                          {{ \Illuminate\Support\Carbon::parse($doc->last_view_at)->format('d M Y, H:i') }}
+                        @else
+                          <span class="muted">—</span>
+                        @endif
+                      </td>
+                      <td>
+                        <a class="btn-neutral" href="{{ route('vendor.analytics.document', $doc->id) }}">
+                          <i class="bi bi-box-arrow-up-right"></i> View
+                        </a>
+                      </td>
+                    </tr>
+                  @empty
+                    <tr>
+                      <td colspan="5" class="empty">
+                        <div class="mb-1"><i class="bi bi-inbox"></i></div>
+                        No documents in this range.
+                      </td>
+                    </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+
+            {{-- Centered pagination with bottom margin --}}
+            @if(method_exists($allDocs, 'total') && $allDocs->lastPage() > 1)
+              @php
+                $current = $allDocs->currentPage();
+                $last    = $allDocs->lastPage();
+                $perPage = $allDocs->perPage();
+                $total   = $allDocs->total();
+                $startNo = ($current - 1) * $perPage + 1;
+                $endNo   = min($total, $current * $perPage);
+
+                $maxWindow = 5;
+                $winStart = max(1, $current - intdiv($maxWindow,2));
+                $winEnd   = min($last, $winStart + $maxWindow - 1);
+                if(($winEnd - $winStart + 1) < $maxWindow){
+                  $winStart = max(1, $winEnd - $maxWindow + 1);
+                }
+                function pageUrl($n){ return request()->fullUrlWithQuery(['page'=>$n]); }
+              @endphp
+
+              <nav class="mt-3 mb-4 pagination-wrap" aria-label="All documents pagination">
+                <div class="pager-summary">Showing {{ number_format($startNo) }}–{{ number_format($endNo) }} of {{ number_format($total) }}</div>
+                <ul class="pagination pagination-modern justify-content-center mb-0">
+                  {{-- First / Prev --}}
+                  <li class="page-item {{ $current==1?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl(1) }}"><i class="bi bi-chevron-double-left"></i></a>
+                  </li>
+                  <li class="page-item {{ $current==1?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl($current-1) }}"><i class="bi bi-chevron-left"></i></a>
+                  </li>
+
+                  {{-- Left edge + ellipsis --}}
+                  @if($winStart > 1)
+                    <li class="page-item"><a class="page-link" href="{{ pageUrl(1) }}">1</a></li>
+                    @if($winStart > 2)
+                      <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
+                    @endif
+                  @endif
+
+                  {{-- Window --}}
+                  @for($i=$winStart; $i<=$winEnd; $i++)
+                    <li class="page-item {{ $i==$current?'active':'' }}">
+                      <a class="page-link" href="{{ $i==$current ? '#' : pageUrl($i) }}">{{ $i }}</a>
+                    </li>
+                  @endfor
+
+                  {{-- Right ellipsis + edge --}}
+                  @if($winEnd < $last)
+                    @if($winEnd < $last-1)
+                      <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
+                    @endif
+                    <li class="page-item"><a class="page-link" href="{{ pageUrl($last) }}">{{ $last }}</a></li>
+                  @endif
+
+                  {{-- Next / Last --}}
+                  <li class="page-item {{ $current==$last?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($current+1) }}"><i class="bi bi-chevron-right"></i></a>
+                  </li>
+                  <li class="page-item {{ $current==$last?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($last) }}"><i class="bi bi-chevron-double-right"></i></a>
+                  </li>
+                </ul>
+              </nav>
+            @endif
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 @endsection
