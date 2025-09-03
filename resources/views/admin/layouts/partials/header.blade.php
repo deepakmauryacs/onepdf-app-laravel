@@ -1,6 +1,7 @@
 <!-- Topbar -->
 <div class="topbar">
   <button class="btn icon-btn" id="toggleSidebar" aria-label="Toggle sidebar"><i class="bi bi-list"></i></button>
+  <a href="{{ route('admin.dashboard') }}" class="ms-2 text-decoration-none">Dashboard</a>
 
   <!-- Search bar - visible on desktop, hidden on mobile -->
   <div class="search">
