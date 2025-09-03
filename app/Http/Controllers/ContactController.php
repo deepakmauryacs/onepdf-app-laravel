@@ -43,4 +43,16 @@ class ContactController extends Controller
             'captcha_b' => $b,
         ]);
     }
+
+    public function refreshCaptcha()
+    {
+        $a = random_int(1, 9);
+        $b = random_int(1, 9);
+        session(['captcha_answer' => $a + $b]);
+
+        return response()->json([
+            'captcha_a' => $a,
+            'captcha_b' => $b,
+        ]);
+    }
 }
