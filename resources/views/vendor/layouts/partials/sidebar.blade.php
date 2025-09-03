@@ -1,8 +1,11 @@
 <aside class="sidebar" id="sidebar">
-  <a href="#" class="brand">
+  <a href="{{ route('dashboard') }}" class="brand">
     <span class="logo"><i class="bi bi-grid-1x2"></i></span>
-    <span>ONELINKPDF</span>
+     <img src="{{ asset('assets/logo/onelinkpdf-logo.png') }}"
+         alt="ONELINKPDF logo"
+         class="brand-logo" style="height: 35px;">
   </a>
+   
 
   <!-- Close button for sidebar (visible on mobile) -->
   <button class="sidebar-close" id="sidebarClose">
