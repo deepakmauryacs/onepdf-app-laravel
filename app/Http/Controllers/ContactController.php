@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use App\Rules\Captcha;
 
 class ContactController extends Controller
 {
@@ -17,6 +18,7 @@ class ContactController extends Controller
             'company'   => ['nullable','string','max:100'],
             'subject'   => ['required','in:sales,support,billing,partnership,other'],
             'message'   => ['required','string','min:10','max:10000'],
+            'captcha'   => ['required', new Captcha()],
         ], [], [
             'firstName' => 'first name',
             'lastName'  => 'last name',
@@ -31,6 +33,14 @@ class ContactController extends Controller
             'message'    => $data['message'],
         ]);
 
-        return response()->json(['success' => true]);
+        $a = random_int(1, 9);
+        $b = random_int(1, 9);
+        session(['captcha_answer' => $a + $b]);
+
+        return response()->json([
+            'success' => true,
+            'captcha_a' => $a,
+            'captcha_b' => $b,
+        ]);
     }
 }
