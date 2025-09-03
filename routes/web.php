@@ -14,6 +14,8 @@ use App\Http\Controllers\Vendor\DocumentController; // files + public viewer
 use App\Http\Controllers\Vendor\AnalyticsController;
 use App\Http\Controllers\Vendor\PlanController;
 use App\Http\Controllers\Vendor\HelpRequestController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 
 /* ------------------------- Guest (auth) ------------------------- */
 Route::middleware('guest')->group(function () {
@@ -81,6 +83,13 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('help/manage',       [HelpRequestController::class, 'manage'])->name('vendor.help.manage');
     Route::get('help/manage/list',  [HelpRequestController::class, 'manageList'])->name('vendor.help.manage.list');
     Route::post('help/store',       [HelpRequestController::class, 'store'])->name('vendor.help.store');
+});
+
+/* ------------------------- Admin dashboard ------------------------- */
+Route::prefix('admin')->middleware(['auth','admin'])->name('admin.')->group(function () {
+    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('users/{user}/files', [AdminUserController::class, 'files'])->name('users.files');
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */

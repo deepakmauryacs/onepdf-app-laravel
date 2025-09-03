@@ -235,7 +235,8 @@
 
         if (res.ok && result.success) {
           showToast('Login successful. Redirecting...', 'Success', 'success');
-          setTimeout(() => window.location = BASE + '/vendor/dashboard', 1000);
+          const redirect = result.redirect || (BASE + '/vendor/dashboard');
+          setTimeout(() => window.location = redirect, 1000);
         } else {
           showToast(result.error || 'Login failed.', 'Error', 'danger');
         }

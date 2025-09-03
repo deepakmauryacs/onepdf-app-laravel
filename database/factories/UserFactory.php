@@ -36,6 +36,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',
             'agreed_terms' => true,
+            'is_admin' => false,
             'remember_token' => Str::random(10),
         ];
     }
