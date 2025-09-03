@@ -50,7 +50,27 @@ class AnalyticsController extends Controller
             ->limit(5)
             ->get();
 
-        // All docs (paginated 10)
+        // Optional: average/total time (kept null until you add a numeric duration column)
+        $avgTime   = null;
+        $totalTime = null;
+
+        return view('vendor.analytics.index', [
+            'visits'     => $visits,
+            'topDocs'    => $topDocs,
+            'avgTime'    => $avgTime,
+            'totalTime'  => $totalTime,
+        ]);
+    }
+
+    /**
+     * Paginated analytics for all documents.
+     */
+    public function documents(Request $request)
+    {
+        $user  = Auth::user();
+        $range = $request->input('range', 'Last 7 days');
+        [$from, $to] = $this->resolveRange($range);
+
         $allDocs = DB::table('documents')
             ->where('documents.user_id', $user->id)
             ->leftJoin('links', 'links.document_id', '=', 'documents.id')
@@ -62,7 +82,6 @@ class AnalyticsController extends Controller
                 'documents.id',
                 'documents.filename',
                 DB::raw('COUNT(link_analytics.id) as views'),
-                // If you track unique sessions:
                 DB::raw('COUNT(DISTINCT link_analytics.session_id) as sessions'),
                 DB::raw('MAX(link_analytics.created_at) as last_view_at')
             )
@@ -71,16 +90,8 @@ class AnalyticsController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        // Optional: average/total time (kept null until you add a numeric duration column)
-        $avgTime   = null;
-        $totalTime = null;
-
-        return view('vendor.analytics.index', [
-            'visits'     => $visits,
-            'topDocs'    => $topDocs,
-            'allDocs'    => $allDocs,
-            'avgTime'    => $avgTime,
-            'totalTime'  => $totalTime,
+        return view('vendor.analytics.documents', [
+            'allDocs' => $allDocs,
         ]);
     }
 

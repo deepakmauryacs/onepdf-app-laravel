@@ -24,7 +24,7 @@
     <a class="nav-link {{ request()->routeIs('vendor.files.manage') ? 'active' : '' }}" href="{{ route('vendor.files.manage') }}">
       <i class="bi bi-folder2-open"></i> <span>Manage Files</span>
     </a>
-    <a class="nav-link {{ request()->routeIs('vendor.analytics.index') ? 'active' : '' }}" href="{{ route('vendor.analytics.index') }}">
+    <a class="nav-link {{ request()->routeIs('vendor.analytics.*') ? 'active' : '' }}" href="{{ route('vendor.analytics.index') }}">
       <i class="bi bi-bar-chart"></i> <span>Analytics</span>
     </a>
     <a class="nav-link {{ request()->routeIs('vendor.plan.index') ? 'active' : '' }}" href="{{ route('vendor.plan.index') }}">
