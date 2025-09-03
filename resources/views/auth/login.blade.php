@@ -112,8 +112,7 @@
       <p class="text-center text-muted mb-4">Welcome back — enter your credentials to continue.</p>
 
       <form id="loginForm" novalidate>
-        <input type="hidden" name="_token" value="dqiXSHcP7rwGlEqKXIvz82w3pAIt7OEs7OQScHqU" autocomplete="off">
-
+          @csrf
         <div class="form-floating mb-2">
           <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required>
           <label for="email">Email address</label>
