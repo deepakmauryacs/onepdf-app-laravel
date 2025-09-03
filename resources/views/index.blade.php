@@ -292,8 +292,8 @@ export class PdfOneLinkEmbedComponent {
             <h5 class="plan-title">Free</h5>
             <div class="plan-price">$0<span class="fs-6 text-muted">/mo</span></div>
             <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>500 MB storage</li>
-              <li><i class="bi bi-check2 check"></i>Basic analytics</li>
+              <li><i class="bi bi-check2 check"></i>Monthly uploads: 100</li>
+              <li><i class="bi bi-check2 check"></i>Available space: 1GB</li>
               <li><i class="bi bi-check2 check"></i>Embed viewer</li>
               <li><i class="bi bi-x text-muted"></i>Permission controls</li>
               <li><i class="bi bi-x text-muted"></i>Custom branding</li>
@@ -307,7 +307,8 @@ export class PdfOneLinkEmbedComponent {
             <h5 class="plan-title">Pro</h5>
             <div class="plan-price">$12<span class="fs-6 text-muted">/mo</span></div>
             <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>10 GB storage</li>
+              <li><i class="bi bi-check2 check"></i>Monthly uploads: 100</li>
+              <li><i class="bi bi-check2 check"></i>Available space: 1GB</li>
               <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
               <li><i class="bi bi-check2 check"></i>Disable download/print</li>
               <li><i class="bi bi-check2 check"></i>Custom watermark</li>
@@ -322,6 +323,12 @@ export class PdfOneLinkEmbedComponent {
             <h5 class="plan-title">Business</h5>
             <div class="plan-price">$29<span class="fs-6 text-muted">/mo</span></div>
             <ul class="plan-features">
+              <li><i class="bi bi-check2 check"></i>Monthly uploads: 500</li>
+              <li><i class="bi bi-check2 check"></i>Available space: 5GB</li>
+              <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
+              <li><i class="bi bi-check2 check"></i>Disable download/print</li>
+              <li><i class="bi bi-check2 check"></i>Custom watermark</li>
+              <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
               <li><i class="bi bi-check2 check"></i>Unlimited viewers</li>
               <li><i class="bi bi-check2 check"></i>SSO, API &amp; webhooks</li>
               <li><i class="bi bi-check2 check"></i>OCR &amp; full-text search</li>
