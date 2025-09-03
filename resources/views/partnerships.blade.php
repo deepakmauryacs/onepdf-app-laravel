@@ -164,7 +164,7 @@
 
     setLoading(true);
     try{
-      const res = await fetch(@json(route('partnerships.store')), {
+      const res = await fetch(form.action, {
         method:'POST',
         headers: {
           'X-Requested-With': 'XMLHttpRequest',

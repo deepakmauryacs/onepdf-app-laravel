@@ -28,7 +28,7 @@
             {{-- Global form error (e.g., server error) --}}
             <div id="form_global_error" class="form-error-global"></div>
 
-            <form id="contactForm" novalidate action="#" method="POST">
+            <form id="contactForm" novalidate action="{{ route('contact.store') }}" method="POST">
               @csrf
               <div class="row">
                 <div class="col-md-6">
@@ -176,10 +176,6 @@
 
       // If you want AJAX submit, uncomment below and ensure route returns JSON.
       form.addEventListener('submit', async function(e){
-        // Remove this return block to enable AJAX (and prevent full-page POST):
-        return; // keep normal Laravel POST/redirect/flash flow
-        // ---- AJAX mode (optional) ----
-        /*
         e.preventDefault();
         clearErrors();
 
@@ -196,28 +192,38 @@
         if (!ok) return;
 
         try{
-          const res=await fetch(form.action, { method:'POST', headers: {'X-Requested-With':'XMLHttpRequest'}, body:data });
+          const res=await fetch(form.action, {
+            method:'POST',
+            headers: {
+              'X-Requested-With':'XMLHttpRequest',
+              'X-CSRF-TOKEN': @json(csrf_token())
+            },
+            body:data
+          });
+
+          if (res.status === 422) {
+            const j = await res.json();
+            Object.entries(j.errors || {}).forEach(([k,v]) => setFieldError(k, Array.isArray(v) ? v[0] : v));
+            return;
+          }
+
           const json=await res.json();
           if (json.success){
             form.reset();
-            if (successMsg) { successMsg.textContent=json.message || 'Thank you for your message! We will get back to you soon.'; successMsg.style.display='block'; }
-            return;
-          }
-          if (json.errors){
-            Object.keys(json.errors).forEach(k=>{
-              if (k==='_form'){
-                if (globalError){ globalError.textContent=json.errors[k]; globalError.style.display='block'; }
-              }else{
-                setFieldError(k,json.errors[k]);
-              }
-            });
-          } else {
-            if (globalError){ globalError.textContent=json.error||'There was a problem sending your message.'; globalError.style.display='block'; }
+            if (successMsg) {
+              successMsg.textContent = json.message || 'Thank you for your message! We will get back to you soon.';
+              successMsg.style.display='block';
+            }
+          } else if (globalError){
+            globalError.textContent=json.error||'There was a problem sending your message.';
+            globalError.style.display='block';
           }
         } catch(err){
-          if (globalError){ globalError.textContent='There was a problem sending your message.'; globalError.style.display='block'; }
+          if (globalError){
+            globalError.textContent='There was a problem sending your message.';
+            globalError.style.display='block';
+          }
         }
-        */
       });
     })();
   </script>
