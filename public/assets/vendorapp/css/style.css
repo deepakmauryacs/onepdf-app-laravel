@@ -55,7 +55,7 @@ body{background:#f6f6f6;color:var(--text)}
 
 /* Collapsed sidebar */
 .sidebar.collapsed { width: 70px; }
-.sidebar.collapsed .brand span:last-child,
+.sidebar.collapsed .brand .brand-logo,
 .sidebar.collapsed .nav-link span,
 .sidebar.collapsed .logout span { display: none; }
 .sidebar.collapsed .brand { justify-content: center; padding: 10px 0; }
