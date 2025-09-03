@@ -132,6 +132,10 @@
         </div>
 
         <div class="text-center mt-3">
+          <a id="forgotPasswordLink" href="#" class="text-decoration-underline">Forgot password?</a>
+        </div>
+
+        <div class="text-center mt-3">
           <span class="text-muted">Don’t have an account?</span>
           <a id="registerLink" href="#" class="fw-semibold">Create one</a>
         </div>
@@ -159,6 +163,7 @@
 
     // Wire up nav links
     document.getElementById('registerLink').href = BASE + '/register';
+    document.getElementById('forgotPasswordLink').href = BASE + '/forgot-password';
     document.getElementById('backHomeTop').href = BASE + '/';
     document.getElementById('backHomeBottom').href = BASE + '/';
 
