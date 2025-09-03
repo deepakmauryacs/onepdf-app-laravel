@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PartnershipMessage;
+use App\Rules\Captcha;
 
 class PartnershipsController extends Controller
 {
@@ -16,6 +17,7 @@ class PartnershipsController extends Controller
             'email'           => ['required','email','max:150'],
             'contact_number'  => ['required','string','max:32'],
             'message'         => ['required','string','min:5','max:10000'],
+            'captcha'         => ['required', new Captcha()],
         ], [], [
             'firstName' => 'first name',
             'lastName'  => 'last name',
@@ -29,7 +31,14 @@ class PartnershipsController extends Controller
             'contact_number' => $data['contact_number'],
             'message'        => $data['message'],
         ]);
+        $a = random_int(1, 9);
+        $b = random_int(1, 9);
+        session(['captcha_answer' => $a + $b]);
 
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success'    => true,
+            'captcha_a'  => $a,
+            'captcha_b'  => $b,
+        ]);
     }
 }
