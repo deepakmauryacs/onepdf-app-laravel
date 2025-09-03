@@ -117,8 +117,7 @@
           <p class="text-center text-muted mb-4">Join PDFOneLink in minutes.</p>
 
           <form id="registerForm" novalidate>
-            <input type="hidden" name="_token" value="nlvhZBZnGZLoNkwuSraacLRdqWjYa1tHPCusv9d3" autocomplete="off">
-
+            @csrf
             <div class="row g-3">
               <div class="col-md-6">
                 <div class="form-floating mb-1">
