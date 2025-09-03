@@ -131,6 +131,45 @@
     <ul class="pagination pagination-modern justify-content-center" id="pager"></ul>
   </nav>
 </div>
+
+{{-- Permissions Modal --}}
+<div class="modal fade" id="permModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title mb-0"><i class="bi bi-shield-lock me-2"></i>Link Permissions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3 text-muted">
+          <i class="bi bi-lightning-charge-fill me-1"></i>
+          Choose what viewers can do before generating the link.
+        </div>
+        <div class="d-grid gap-3">
+          <label class="d-flex align-items-center gap-2">
+            <i class="bi bi-download text-secondary"></i>
+            <input id="permDownload" class="form-check-input ms-1" type="checkbox" checked>
+            <span class="ms-2">Allow downloading</span>
+          </label>
+          <label class="d-flex align-items-center gap-2">
+            <i class="bi bi-printer text-secondary"></i>
+            <input id="permSearch" class="form-check-input ms-1" type="checkbox">
+            <span class="ms-2">Allow printing</span>
+          </label>
+          <label class="d-flex align-items-center gap-2">
+            <i class="bi bi-bar-chart-line text-secondary"></i>
+            <input id="permAnalytics" class="form-check-input ms-1" type="checkbox" checked>
+            <span class="ms-2">Allow analytics tracking</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-ghost" id="createLink"><i class="bi bi-magic me-1"></i>Create link</button>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -252,9 +291,11 @@
   tbody.addEventListener('click',async e=>{
     const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
     if(e.target.closest('.btn-generate')){
-      const r=await fetch(routes.generate,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({id})});
-        const j=await r.json(); const link=j.url||'';
-        if(link){ tr.querySelector('.small-link').innerHTML=`<a href="${link}" target="_blank">${link}</a>`; tr.querySelector('.btn-copy')?.removeAttribute('disabled'); tr.querySelector('.btn-embed')?.removeAttribute('disabled'); toast('Link generated'); }
+      const modalEl=document.getElementById('permModal');
+      modalEl.dataset.id=id;
+      modalEl._genBtn=e.target.closest('.btn-generate');
+      modalEl._holder=tr.querySelector('.small-link');
+      new bootstrap.Modal('#permModal').show();
       return;
     }
     if(e.target.closest('.btn-copy')){
@@ -270,6 +311,43 @@
       if(!confirm('Delete this file?')) return;
       await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids:[id]})});
       tr.remove(); toast('Deleted');
+    }
+  });
+
+  document.getElementById('createLink').addEventListener('click', async ()=>{
+    const modalEl=document.getElementById('permModal');
+    const id=modalEl.dataset.id;
+    const perms={
+      download:!!document.getElementById('permDownload')?.checked,
+      print:!!document.getElementById('permSearch')?.checked,
+      analytics:!!document.getElementById('permAnalytics')?.checked,
+    };
+    const fd=new FormData();
+    fd.append('id',id);
+    fd.append('permissions',JSON.stringify(perms));
+    const btn=modalEl._genBtn;
+    const holder=modalEl._holder;
+    const modal=bootstrap.Modal.getInstance('#permModal');
+    modal.hide();
+    btn.disabled=true;
+    btn.innerHTML='<span class="spinner-border spinner-border-sm me-1"></span>Generating';
+    try{
+      const r=await fetch(routes.generate,{method:'POST',body:fd,headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}});
+      const j=await r.json();
+      if(j.url){
+        holder.innerHTML=`<a href="${j.url}" target="_blank">${j.url}</a>`;
+        const copyBtn=btn.parentElement.querySelector('.btn-copy');
+        const embedBtn=btn.parentElement.querySelector('.btn-embed');
+        [copyBtn,embedBtn].forEach(b=>b?.removeAttribute('disabled'));
+        toast('Link generated');
+      }else{
+        toast('Failed to generate link');
+      }
+    }catch{
+      toast('Failed to generate link');
+    }finally{
+      btn.disabled=false;
+      btn.innerHTML='<i class="bi bi-link-45deg"></i>Generate';
     }
   });
 
