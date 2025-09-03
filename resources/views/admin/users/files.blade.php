@@ -42,15 +42,6 @@
   .file-name a{color:#0f172a;text-decoration:none;font-weight:600}
   .status-pill{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;background:#eff8ff;color:#0b5ed7;border:1px solid #d7e6ff;height:34px;padding:0 14px;font-weight:600}
 
-  /* Actions */
-  .actions-cell{display:flex;flex-direction:column;justify-content:center;gap:8px}
-  .actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap}
-  .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:40px;border-radius:12px;line-height:1;font-weight:600;border:1px solid var(--line);background:#fff;padding:0 14px}
-  .btn-ghost .bi{margin-right:8px}
-  .btn-ghost:hover{background:#f7f9fc}
-  .small-link{color:#64748b;margin-top:2px}
-  .small-link a{color:#0b5ed7;text-decoration:none}
-
   /* ===== Modern centered pagination ===== */
   .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
   .pager-summary{color:#64748b;font-size:.9rem}
@@ -114,7 +105,6 @@
               <th style="width:140px;">Size</th>
               <th style="width:180px;">Modified</th>
               <th style="width:140px;">Status</th>
-              <th style="width:320px;">Actions</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -130,87 +120,36 @@
   </nav>
 </div>
 
-{{-- Permissions Modal --}}
-<div class="modal fade" id="permModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 rounded-4 shadow-lg">
-      <div class="modal-header">
-        <h5 class="modal-title mb-0"><i class="bi bi-shield-lock me-2"></i>Link Permissions</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3 text-muted">
-          <i class="bi bi-lightning-charge-fill me-1"></i>
-          Choose what viewers can do before generating the link.
-        </div>
-        <div class="d-grid gap-3">
-          <label class="d-flex align-items-center gap-2">
-            <i class="bi bi-download text-secondary"></i>
-            <input id="permDownload" class="form-check-input ms-1" type="checkbox" checked>
-            <span class="ms-2">Allow downloading</span>
-          </label>
-          <label class="d-flex align-items-center gap-2">
-            <i class="bi bi-printer text-secondary"></i>
-            <input id="permSearch" class="form-check-input ms-1" type="checkbox">
-            <span class="ms-2">Allow printing</span>
-          </label>
-          <label class="d-flex align-items-center gap-2">
-            <i class="bi bi-bar-chart-line text-secondary"></i>
-            <input id="permAnalytics" class="form-check-input ms-1" type="checkbox" checked>
-            <span class="ms-2">Allow analytics tracking</span>
-          </label>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-ghost" id="createLink"><i class="bi bi-magic me-1"></i>Create link</button>
-      </div>
-    </div>
-  </div>
-</div>
 @endsection
 
 @push('scripts')
 <script>
-(function(){
+  (function(){
     const routes = {
-    list: @json(route('admin.users.files.list', $user)),
-    generate: @json(route('admin.users.files.generate', $user)),
-    embed: @json(route('vendor.files.embed')),
-  };
+      list: @json(route('admin.users.files.list', $user)),
+    };
 
-  let page = 1, q = '';
-  const tbody = document.querySelector('#filesTable tbody');
-  const empty = document.getElementById('emptyState');
-  const pager = document.getElementById('pager');
-  const pagerSummary = document.getElementById('pagerSummary');
-  const searchInput = document.getElementById('searchInput');
-  const fileCountEl = document.getElementById('fileCount');
+    let page = 1, q = '';
+    const tbody = document.querySelector('#filesTable tbody');
+    const empty = document.getElementById('emptyState');
+    const pager = document.getElementById('pager');
+    const pagerSummary = document.getElementById('pagerSummary');
+    const searchInput = document.getElementById('searchInput');
+    const fileCountEl = document.getElementById('fileCount');
 
-  function humanSize(bytes){ if(!bytes && bytes!==0) return '—'; const u=['B','KB','MB','GB']; let i=0,n=+bytes; while(n>=1024&&i<u.length-1){n/=1024;i++;} return (i? n.toFixed(2):n)+' '+u[i]; }
-  function iconByExt(name){ const ext=(name.split('.').pop()||'').toLowerCase(); if(ext==='pdf') return 'bi-filetype-pdf'; if(['doc','docx'].includes(ext)) return 'bi-file-earmark-text'; if(ext==='csv') return 'bi-filetype-csv'; return 'bi-file-earmark'; }
-  function escapeHtml(s){ return (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function toast(msg){ const n=document.createElement('div'); n.textContent=msg; Object.assign(n.style,{position:'fixed',right:'16px',bottom:'16px',background:'#111',color:'#fff',padding:'10px 14px',borderRadius:'10px',zIndex:1060}); document.body.appendChild(n); setTimeout(()=>n.remove(),1600); }
+    function humanSize(bytes){ if(!bytes && bytes!==0) return '—'; const u=['B','KB','MB','GB']; let i=0,n=+bytes; while(n>=1024&&i<u.length-1){n/=1024;i++;} return (i? n.toFixed(2):n)+' '+u[i]; }
+    function iconByExt(name){ const ext=(name.split('.').pop()||'').toLowerCase(); if(ext==='pdf') return 'bi-filetype-pdf'; if(['doc','docx'].includes(ext)) return 'bi-file-earmark-text'; if(ext==='csv') return 'bi-filetype-csv'; return 'bi-file-earmark'; }
+    function escapeHtml(s){ return (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function rowTemplate(f){
-    const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure'; const url=f.public_url||''; const disabledAttr=url?'':'disabled';
-    return `<tr data-id="${id}">
-      <td><div class="col-file"><span class="file-chip"><i class="bi ${iconByExt(filename)}"></i></span><div class="file-name">${escapeHtml(filename)}</div></div></td>
-      <td>${size}</td>
-      <td><div>${escapeHtml(modified)}</div><small class="text-muted">${escapeHtml(timePart)}</small></td>
-      <td><span class="status-pill">${escapeHtml(status)}</span></td>
-      <td>
-        <div class="actions-cell">
-          <div class="actions">
-            <button class="btn btn-ghost btn-generate"><i class="bi bi-link-45deg"></i>Generate</button>
-            <button class="btn btn-ghost btn-copy" ${disabledAttr}><i class="bi bi-clipboard"></i>Copy</button>
-            <button class="btn btn-ghost btn-embed" ${disabledAttr}><i class="bi bi-code-slash"></i>Embed</button>
-          </div>
-          <div class="small small-link text-break">${url?`<a href="${url}" target="_blank">${escapeHtml(url)}</a>`:'—'}</div>
-        </div>
-      </td>
-    </tr>`;
-  }
+    function rowTemplate(f){
+      const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure';
+      return `<tr data-id="${id}">
+        <td><div class="col-file"><span class="file-chip"><i class="bi ${iconByExt(filename)}"></i></span><div class="file-name">${escapeHtml(filename)}</div></div></td>
+        <td>${size}</td>
+        <td><div>${escapeHtml(modified)}</div><small class="text-muted">${escapeHtml(timePart)}</small></td>
+        <td><span class="status-pill">${escapeHtml(status)}</span></td>
+      </tr>`;
+    }
 
   function renderRows(files, total){
     tbody.innerHTML='';
@@ -272,64 +211,6 @@
     e.preventDefault();
     const p=parseInt(a.dataset.page,10);
     if(p>0) load(p);
-  });
-
-  tbody.addEventListener('click',async e=>{
-    const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
-    if(e.target.closest('.btn-generate')){
-      const modalEl=document.getElementById('permModal');
-      modalEl.dataset.id=id;
-      modalEl._genBtn=e.target.closest('.btn-generate');
-      modalEl._holder=tr.querySelector('.small-link');
-      new bootstrap.Modal('#permModal').show();
-      return;
-    }
-    if(e.target.closest('.btn-copy')){
-      const link=tr.querySelector('.small-link a')?.href; if(link){ await navigator.clipboard.writeText(link); toast('Copied'); }
-      return;
-    }
-    if(e.target.closest('.btn-embed')){
-      const link=tr.querySelector('.small-link a')?.href; if(!link){ toast('Generate first'); return; }
-      window.open(routes.embed+'?url='+encodeURIComponent(link),'_blank');
-      return;
-    }
-  });
-
-  document.getElementById('createLink').addEventListener('click', async ()=>{
-    const modalEl=document.getElementById('permModal');
-    const id=modalEl.dataset.id;
-    const perms={
-      download:!!document.getElementById('permDownload')?.checked,
-      print:!!document.getElementById('permSearch')?.checked,
-      analytics:!!document.getElementById('permAnalytics')?.checked,
-    };
-    const fd=new FormData();
-    fd.append('id',id);
-    fd.append('permissions',JSON.stringify(perms));
-    const btn=modalEl._genBtn;
-    const holder=modalEl._holder;
-    const modal=bootstrap.Modal.getInstance('#permModal');
-    modal.hide();
-    btn.disabled=true;
-    btn.innerHTML='<span class="spinner-border spinner-border-sm me-1"></span>Generating';
-    try{
-      const r=await fetch(routes.generate,{method:'POST',body:fd,headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'}});
-      const j=await r.json();
-      if(j.url){
-        holder.innerHTML=`<a href="${j.url}" target="_blank">${j.url}</a>`;
-        const copyBtn=btn.parentElement.querySelector('.btn-copy');
-        const embedBtn=btn.parentElement.querySelector('.btn-embed');
-        [copyBtn,embedBtn].forEach(b=>b?.removeAttribute('disabled'));
-        toast('Link generated');
-      }else{
-        toast('Failed to generate link');
-      }
-    }catch{
-      toast('Failed to generate link');
-    }finally{
-      btn.disabled=false;
-      btn.innerHTML='<i class="bi bi-link-45deg"></i>Generate';
-    }
   });
 
   load();
