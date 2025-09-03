@@ -32,7 +32,6 @@
   .search-wrap{position:relative;flex:1 1 420px}
   .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
   .search-input{padding-left:36px;border-radius:12px;border:1px solid var(--line);height:42px}
-  .btn-danger-soft{background:#ffecec;border:1px solid #ffd0d0;color:#b42318;border-radius:10px}
 
   table.table{margin:0}
   .table td, .table th{vertical-align:middle}
@@ -46,12 +45,9 @@
   /* Actions */
   .actions-cell{display:flex;flex-direction:column;justify-content:center;gap:8px}
   .actions{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;white-space:nowrap}
-  .btn-ghost,.btn-icon{display:inline-flex;align-items:center;justify-content:center;height:40px;border-radius:12px;line-height:1;font-weight:600}
-  .btn-ghost{border:1px solid var(--line);background:#fff;padding:0 14px}
+  .btn-ghost{display:inline-flex;align-items:center;justify-content:center;height:40px;border-radius:12px;line-height:1;font-weight:600;border:1px solid var(--line);background:#fff;padding:0 14px}
   .btn-ghost .bi{margin-right:8px}
   .btn-ghost:hover{background:#f7f9fc}
-  .btn-icon{width:40px;padding:0;border:1px solid #ffd7d7;background:#fff5f5;color:#b42318}
-  .btn-icon:hover{background:#ffe8e8}
   .small-link{color:#64748b;margin-top:2px}
   .small-link a{color:#0b5ed7;text-decoration:none}
 
@@ -107,20 +103,18 @@
             <input id="searchInput" type="text" class="form-control search-input" placeholder="Search files...">
           </div>
         </div>
-        <button id="btnDeleteSelected" class="btn btn-danger-soft"><i class="bi bi-trash"></i> Delete selected</button>
+        </div>
       </div>
-    </div>
 
-    <div class="table-responsive">
-      <table class="table align-middle" id="filesTable">
-        <thead>
-          <tr>
-            <th style="width:46px;"><input id="checkAll" class="form-check-input" type="checkbox" /></th>
-            <th>File Name</th>
-            <th style="width:140px;">Size</th>
-            <th style="width:180px;">Modified</th>
-            <th style="width:140px;">Status</th>
-            <th style="width:320px;">Actions</th>
+      <div class="table-responsive">
+        <table class="table align-middle" id="filesTable">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th style="width:140px;">Size</th>
+              <th style="width:180px;">Modified</th>
+              <th style="width:140px;">Status</th>
+              <th style="width:320px;">Actions</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -179,10 +173,9 @@
 @push('scripts')
 <script>
 (function(){
-  const routes = {
+    const routes = {
     list: @json(route('admin.users.files.list', $user)),
     generate: @json(route('admin.users.files.generate', $user)),
-    delete: @json(route('admin.users.files.delete', $user)),
     embed: @json(route('vendor.files.embed')),
   };
 
@@ -193,8 +186,6 @@
   const pagerSummary = document.getElementById('pagerSummary');
   const searchInput = document.getElementById('searchInput');
   const fileCountEl = document.getElementById('fileCount');
-  const checkAll = document.getElementById('checkAll');
-  const btnDeleteSelected = document.getElementById('btnDeleteSelected');
 
   function humanSize(bytes){ if(!bytes && bytes!==0) return '—'; const u=['B','KB','MB','GB']; let i=0,n=+bytes; while(n>=1024&&i<u.length-1){n/=1024;i++;} return (i? n.toFixed(2):n)+' '+u[i]; }
   function iconByExt(name){ const ext=(name.split('.').pop()||'').toLowerCase(); if(ext==='pdf') return 'bi-filetype-pdf'; if(['doc','docx'].includes(ext)) return 'bi-file-earmark-text'; if(ext==='csv') return 'bi-filetype-csv'; return 'bi-file-earmark'; }
@@ -204,7 +195,6 @@
   function rowTemplate(f){
     const id=f.id||''; const filename=f.filename||'—'; const size=humanSize(f.size); const modified=f.modified||''; const timePart=f.time||''; const status=f.status||'Secure'; const url=f.public_url||''; const disabledAttr=url?'':'disabled';
     return `<tr data-id="${id}">
-      <td><input class="form-check-input row-check" type="checkbox"/></td>
       <td><div class="col-file"><span class="file-chip"><i class="bi ${iconByExt(filename)}"></i></span><div class="file-name">${escapeHtml(filename)}</div></div></td>
       <td>${size}</td>
       <td><div>${escapeHtml(modified)}</div><small class="text-muted">${escapeHtml(timePart)}</small></td>
@@ -215,7 +205,6 @@
             <button class="btn btn-ghost btn-generate"><i class="bi bi-link-45deg"></i>Generate</button>
             <button class="btn btn-ghost btn-copy" ${disabledAttr}><i class="bi bi-clipboard"></i>Copy</button>
             <button class="btn btn-ghost btn-embed" ${disabledAttr}><i class="bi bi-code-slash"></i>Embed</button>
-            <button class="btn-icon btn-delete" title="Delete"><i class="bi bi-trash"></i></button>
           </div>
           <div class="small small-link text-break">${url?`<a href="${url}" target="_blank">${escapeHtml(url)}</a>`:'—'}</div>
         </div>
@@ -284,9 +273,6 @@
     const p=parseInt(a.dataset.page,10);
     if(p>0) load(p);
   });
-  checkAll.addEventListener('change',()=>{
-    document.querySelectorAll('.row-check').forEach(cb=>cb.checked=checkAll.checked);
-  });
 
   tbody.addEventListener('click',async e=>{
     const tr=e.target.closest('tr'); if(!tr) return; const id=tr.dataset.id;
@@ -306,11 +292,6 @@
       const link=tr.querySelector('.small-link a')?.href; if(!link){ toast('Generate first'); return; }
       window.open(routes.embed+'?url='+encodeURIComponent(link),'_blank');
       return;
-    }
-    if(e.target.closest('.btn-delete')){
-      if(!confirm('Delete this file?')) return;
-      await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids:[id]})});
-      tr.remove(); toast('Deleted');
     }
   });
 
@@ -349,15 +330,6 @@
       btn.disabled=false;
       btn.innerHTML='<i class="bi bi-link-45deg"></i>Generate';
     }
-  });
-
-  btnDeleteSelected.addEventListener('click',async()=>{
-    const ids=[...document.querySelectorAll('.row-check:checked')].map(cb=>cb.closest('tr').dataset.id);
-    if(!ids.length) return toast('No files');
-    if(!confirm('Delete selected?')) return;
-    await fetch(routes.delete,{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},body:JSON.stringify({ids})});
-    ids.forEach(id=>tbody.querySelector(`tr[data-id="${id}"]`)?.remove());
-    toast('Deleted');
   });
 
   load();
