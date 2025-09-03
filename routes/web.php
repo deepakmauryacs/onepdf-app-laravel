@@ -16,6 +16,7 @@ use App\Http\Controllers\Vendor\PlanController;
 use App\Http\Controllers\Vendor\HelpRequestController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\UserPlanController as AdminUserPlanController;
 
 /* ------------------------- Guest (auth) ------------------------- */
 Route::middleware('guest')->group(function () {
@@ -92,6 +93,7 @@ Route::prefix('admin')->middleware(['auth','admin'])->name('admin.')->group(func
     Route::get('users/{user}/files', [AdminUserController::class, 'files'])->name('users.files');
     Route::get('users/{user}/files/list', [AdminUserController::class, 'filesList'])->name('users.files.list');
     Route::post('users/{user}/files/generate-link', [AdminUserController::class, 'generateLink'])->name('users.files.generate');
+    Route::get('user-plans', [AdminUserPlanController::class, 'index'])->name('user-plans.index');
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */
