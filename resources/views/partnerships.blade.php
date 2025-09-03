@@ -2,15 +2,6 @@
 
 @section('title', 'Partner With Us - PDFOneLink')
 
-@push('styles')
-  <link rel="stylesheet" href="{{ asset('assets/webapp/css/contact.css') }}">
-  <style>
-    .error-message { color:#dc2626; font-size:.875rem; margin-top:.25rem; min-height:1em; }
-    .is-invalid { border-color:#dc2626 !important; }
-    .form-success { color:#16a34a; }
-    .form-error-global { color:#dc2626; margin-bottom:10px; display:none; }
-  </style>
-@endpush
 
 @section('content')
 <!-- Hero Section -->
