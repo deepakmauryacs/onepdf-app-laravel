@@ -55,7 +55,14 @@ class HomeController extends Controller
 
     public function partnerships()
     {
-        return view('partnerships');
+        $a = random_int(1, 9);
+        $b = random_int(1, 9);
+        session(['captcha_answer' => $a + $b]);
+
+        return view('partnerships', [
+            'captcha_a' => $a,
+            'captcha_b' => $b,
+        ]);
     }
 
     

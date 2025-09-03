@@ -42,6 +42,7 @@ Route::post('/subscribe', [NewsletterSubscriptionController::class, 'store'])->n
 /* Contact + Partnerships (AJAX) */
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 Route::post('/contact/captcha', [ContactController::class, 'refreshCaptcha'])->name('contact.captcha');
+Route::post('/partnerships/captcha', [ContactController::class, 'refreshCaptcha'])->name('partnerships.captcha');
 Route::post('/partnerships', [PartnershipsController::class, 'store'])->name('partnerships.store');
 
 /* ------------------------- Vendor dashboard ------------------------- */

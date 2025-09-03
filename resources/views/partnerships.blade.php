@@ -73,6 +73,17 @@
             </div>
             <div id="message_error" class="error-message mb-4">@error('message'){{ $message }}@enderror</div>
 
+            <div class="mb-3">
+              <label for="captcha" id="captcha_label" class="form-label">What is {{ $captcha_a }} + {{ $captcha_b }}?</label>
+              <div class="input-group">
+                <input type="text" class="form-control @error('captcha') is-invalid @enderror" id="captcha" name="captcha">
+                <button type="button" class="btn btn-outline-secondary" id="refreshCaptcha" aria-label="Refresh captcha">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+              <div id="captcha_error" class="error-message mb-4">@error('captcha'){{ $message }}@enderror</div>
+            </div>
+
             <button type="submit" class="btn btn-brand btn-lg w-100">Send Inquiry</button>
             <div id="form_success" class="mt-3 form-success"
                  @if(!session('partnership_success')) style="display:none;" @endif>
@@ -110,7 +121,7 @@
 
   const globalError = document.getElementById('form_global_error');
   const successMsg  = document.getElementById('form_success');
-  const fields = ['firstName','lastName','email','contact_number','message'];
+  const fields = ['firstName','lastName','email','contact_number','message','captcha'];
   const submitBtn = form.querySelector('button[type="submit"]');
   const originalBtnHtml = submitBtn.innerHTML;
 
@@ -143,6 +154,28 @@
     }
   }
 
+  const refreshBtn = document.getElementById('refreshCaptcha');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', async function(){
+      try {
+        const res = await fetch(@json(route('partnerships.captcha')), {
+          method:'POST',
+          headers: {
+            'X-Requested-With':'XMLHttpRequest',
+            'X-CSRF-TOKEN': @json(csrf_token())
+          }
+        });
+        const json = await res.json();
+        if (json.captcha_a && json.captcha_b) {
+          const label = document.getElementById('captcha_label');
+          if (label) label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
+          const input = document.getElementById('captcha');
+          if (input) input.value = '';
+        }
+      } catch(err){}
+    });
+  }
+
   form.addEventListener('submit', async function(e){
     // Comment the next line if you prefer full-page POST/redirect instead of AJAX.
     e.preventDefault();
@@ -159,6 +192,7 @@
     else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setFieldError('email','Please enter a valid email.'); ok = false; }
     if (!data.get('contact_number')) { setFieldError('contact_number','Contact number is required.'); ok = false; }
     if (!data.get('message'))        { setFieldError('message','Message is required.'); ok = false; }
+    if (!data.get('captcha'))        { setFieldError('captcha','Captcha is required.'); ok = false; }
 
     if (!ok) return;
 
@@ -183,6 +217,10 @@
       const json = await res.json();
       if (json.success) {
         form.reset();
+        if (json.captcha_a && json.captcha_b) {
+          const label = document.getElementById('captcha_label');
+          if (label) label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
+        }
         const modalEl = document.getElementById('partnershipSuccessModal');
         if (window.bootstrap && modalEl) new bootstrap.Modal(modalEl).show();
         else if (successMsg) successMsg.style.display = 'block';
