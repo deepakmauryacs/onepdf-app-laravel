@@ -8,7 +8,6 @@ use App\Models\Country;
 use App\Rules\Captcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
@@ -60,7 +59,7 @@ class RegisterController extends Controller
                 'last_name'    => $validated['last_name'],
                 'company'      => $validated['company'],
                 'email'        => $validated['email'],
-                'password'     => Hash::make($validated['password']),
+                'password'     => $validated['password'],
                 'agreed_terms' => true,
             ]);
 
