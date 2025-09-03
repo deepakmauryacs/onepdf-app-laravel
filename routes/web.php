@@ -14,6 +14,7 @@ use App\Http\Controllers\Vendor\DocumentController; // files + public viewer
 use App\Http\Controllers\Vendor\AnalyticsController;
 use App\Http\Controllers\Vendor\PlanController;
 use App\Http\Controllers\Vendor\HelpRequestController;
+use App\Http\Controllers\Vendor\NotificationController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\UserPlanController as AdminUserPlanController;
@@ -84,6 +85,9 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('help/manage',       [HelpRequestController::class, 'manage'])->name('vendor.help.manage');
     Route::get('help/manage/list',  [HelpRequestController::class, 'manageList'])->name('vendor.help.manage.list');
     Route::post('help/store',       [HelpRequestController::class, 'store'])->name('vendor.help.store');
+
+    // Notifications
+    Route::get('notifications', [NotificationController::class, 'index'])->name('vendor.notifications.index');
 });
 
 /* ------------------------- Admin dashboard ------------------------- */
