@@ -11,7 +11,7 @@
   <button class="sidebar-close" id="sidebarClose">
     <i class="bi bi-x-lg"></i>
   </button>
-  <div class="side-title">GENERAL</div>
+  
   <!-- NEW MENU -->
   <nav class="nav flex-column gap-1" id="mainNav">
     <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
@@ -29,7 +29,7 @@
     <a class="nav-link {{ request()->routeIs('vendor.plan.index') ? 'active' : '' }}" href="{{ route('vendor.plan.index') }}">
       <i class="bi bi-gem"></i> <span>Plan</span>
     </a>
-    <div class="side-title">ACCOUNT</div>
+
     <!-- Settings collapsible -->
     <a class="nav-link {{ request()->routeIs('profile') || request()->routeIs('password.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="{{ request()->routeIs('profile') || request()->routeIs('password.*') ? 'true' : 'false' }}" aria-controls="settingsMenu">
       <i class="bi bi-gear"></i> <span>Settings</span>
