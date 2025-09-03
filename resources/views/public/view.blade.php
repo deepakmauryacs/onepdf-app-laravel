@@ -11,6 +11,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>PDF Viewer</title>
 
+<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/favicon_io/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/favicon_io/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('assets/favicon_io/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ asset('assets/favicon_io/site.webmanifest') }}">
+<link rel="shortcut icon" href="{{ asset('assets/favicon_io/favicon.ico') }}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
