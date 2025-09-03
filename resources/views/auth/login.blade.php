@@ -140,10 +140,6 @@
           <a id="registerLink" href="#" class="fw-semibold">Create one</a>
         </div>
 
-        <!-- Back to website (bottom helper link) -->
-        <div class="text-center mt-3">
-          <a id="backHomeBottom" href="#" class="text-decoration-underline">← Back to Website</a>
-        </div>
       </form>
 
       <div id="loginAlert" class="mt-3"></div>
