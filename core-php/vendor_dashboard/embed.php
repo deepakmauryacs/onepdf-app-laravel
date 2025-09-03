@@ -6,9 +6,17 @@ include 'includes/topbar.php';
 
 $url = $_GET['url'] ?? '';
 $safeUrl = htmlspecialchars($url, ENT_QUOTES);
+$extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+$imageTypes = ['jpg','jpeg','png','gif','webp','bmp','svg'];
+$isImage = in_array($extension, $imageTypes, true);
 $rawSnippet = $url
-  ? '<iframe src="' . $url . '" width="100%" height="600" style="border:none;border-radius:8px;"></iframe>'
+  ? ($isImage
+      ? '<img src="' . $url . '" alt="" style="max-width:100%;height:auto;border-radius:8px;">'
+      : '<iframe src="' . $url . '" width="100%" height="600" style="border:none;border-radius:8px;"></iframe>'
+    )
   : '';
+$titleText = $isImage ? 'Embed Image' : 'Embed PDF Viewer';
+$iconClass = $isImage ? 'bi-card-image text-info' : 'bi-file-earmark-pdf text-danger';
 ?>
 <style>
   /* Page header row */
@@ -37,8 +45,13 @@ $rawSnippet = $url
     width:100%; height:600px; border:1px solid #e5e7eb; border-radius:8px;
     background:#0b1220;
   }
+  .viewer-wrap img{
+    max-width:100%; border:1px solid #e5e7eb; border-radius:8px;
+    background:#0b1220;
+  }
   @media (max-width: 768px){
     .viewer-wrap iframe{ height:70vh; }
+    .viewer-wrap img{ max-height:70vh; }
   }
 
   /* Small helpers */
@@ -49,8 +62,8 @@ $rawSnippet = $url
   <!-- Top bar with title + actions -->
   <div class="d-sm-flex align-items-center justify-content-between mb-3 page-header">
     <h1 class="h3 mb-0 text-gray-800">
-      <i class="bi bi-file-earmark-pdf text-danger"></i>
-      <span>Embed PDF Viewer</span>
+      <i class="<?php echo $iconClass; ?>"></i>
+      <span><?php echo $titleText; ?></span>
     </h1>
 
     <?php if ($url): ?>
@@ -60,7 +73,7 @@ $rawSnippet = $url
           <i class="bi bi-box-arrow-up-right"></i><span>Open Link</span>
         </a>
         <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                id="copyUrlBtn" data-bs-toggle="tooltip" data-bs-title="Copy the PDF URL">
+                id="copyUrlBtn" data-bs-toggle="tooltip" data-bs-title="Copy the file URL">
           <i class="bi bi-link-45deg"></i><span>Copy URL</span>
         </button>
       </div>
@@ -78,7 +91,7 @@ $rawSnippet = $url
         <div class="code-card border rounded">
           <div class="code-toolbar">
             <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
-                    id="copyCodeBtn" data-bs-toggle="tooltip" data-bs-title="Copy the iframe embed code">
+                    id="copyCodeBtn" data-bs-toggle="tooltip" data-bs-title="Copy the embed code">
               <i class="bi bi-clipboard"></i><span>Copy</span>
             </button>
           </div>
@@ -91,9 +104,15 @@ $rawSnippet = $url
             <h6 class="mb-0 d-flex align-items-center gap-2">
               <i class="bi bi-display"></i><span>Live Preview</span>
             </h6>
-            <div class="muted-note small">Height auto-adjusts on mobile.</div>
+            <div class="muted-note small">
+              <?php echo $isImage ? 'Image scales to fit container.' : 'Height auto-adjusts on mobile.'; ?>
+            </div>
           </div>
-          <iframe src="<?php echo $safeUrl; ?>" allow="clipboard-write"></iframe>
+          <?php if ($isImage): ?>
+            <img src="<?php echo $safeUrl; ?>" alt="">
+          <?php else: ?>
+            <iframe src="<?php echo $safeUrl; ?>" allow="clipboard-write"></iframe>
+          <?php endif; ?>
         </div>
       <?php else: ?>
         <p class="mb-0">No URL provided.</p>

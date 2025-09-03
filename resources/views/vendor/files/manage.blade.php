@@ -141,6 +141,7 @@
     generate: @json(route('vendor.files.generate')),
     delete: @json(route('vendor.files.delete')),
     detailBase: @json(url('vendor/files/manage')),
+    embed: @json(route('vendor.files.embed')),
   };
 
   let page = 1, q = '';
@@ -262,8 +263,7 @@
     }
     if(e.target.closest('.btn-embed')){
       const link=tr.querySelector('.small-link a')?.href; if(!link){ toast('Generate first'); return; }
-      const code=`<iframe src="${link}" width="100%" height="600" frameborder="0"></iframe>`;
-      await navigator.clipboard.writeText(code); toast('Embed code copied');
+      window.open(routes.embed+'?url='+encodeURIComponent(link),'_blank');
       return;
     }
     if(e.target.closest('.btn-delete')){

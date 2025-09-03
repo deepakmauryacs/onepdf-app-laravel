@@ -63,6 +63,7 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::post('files/upload',        [DocumentController::class, 'upload'])->name('vendor.files.upload');
     Route::post('files/delete',        [DocumentController::class, 'destroy'])->name('vendor.files.delete');
     Route::post('files/generate-link', [DocumentController::class, 'generateLink'])->name('vendor.files.generate');
+    Route::get('files/embed',          [DocumentController::class, 'embed'])->name('vendor.files.embed');
 
     Route::get('analytics',            [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
     Route::get('plan',                 [PlanController::class, 'index'])->name('vendor.plan.index');

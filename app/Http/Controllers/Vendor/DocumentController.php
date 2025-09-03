@@ -210,6 +210,27 @@ class DocumentController extends Controller
         return response()->json(['url' => $url]);
     }
 
+    public function embed(Request $request)
+    {
+        $url = (string) $request->query('url', '');
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION));
+        $imageTypes = ['jpg','jpeg','png','gif','webp','bmp','svg'];
+        $isImage = in_array($extension, $imageTypes, true);
+
+        $snippet = '';
+        if ($url) {
+            $snippet = $isImage
+                ? '<img src="'.$url.'" alt="" style="max-width:100%;height:auto;border-radius:8px;">'
+                : '<iframe src="'.$url.'" width="100%" height="600" style="border:none;border-radius:8px;"></iframe>';
+        }
+
+        return view('vendor.files.embed', [
+            'url' => $url,
+            'isImage' => $isImage,
+            'snippet' => $snippet,
+        ]);
+    }
+
     /**
      * Pretty viewer route: /view?doc=SLUG
      * Shows Blade viewer and (optionally) logs a "view" event.
