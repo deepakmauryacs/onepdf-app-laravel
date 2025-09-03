@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login</title>
-  <meta name="csrf-token" content="dqiXSHcP7rwGlEqKXIvz82w3pAIt7OEs7OQScHqU">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <!-- Fonts & Vendors -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
