@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Country;
 use App\Rules\Captcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +20,12 @@ class RegisterController extends Controller
         $b = random_int(1, 9);
         session(['captcha_answer' => $a + $b]);
 
+        $countries = Country::orderBy('name')->get();
+
         return view('auth.register', [
             'captcha_a' => $a,
             'captcha_b' => $b,
+            'countries' => $countries,
         ]);
     }
 
@@ -31,7 +35,7 @@ class RegisterController extends Controller
         $validated = $request->validate([
             'first_name'   => ['required','string','max:255'],
             'last_name'    => ['required','string','max:255'],
-            'country'      => ['required','string','max:255'],
+            'country'      => ['required','string','max:255','exists:countries,name'],
             'company'      => ['required','string','max:255'],
             'plan_id'      => ['required','in:1,2,3,4,5'],
             'email'        => ['required','email','max:255','unique:users,email'],

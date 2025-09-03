@@ -137,7 +137,12 @@
             </div>
 
             <div class="form-floating mb-1">
-              <input type="text" name="country" class="form-control" id="country" placeholder="Country" required>
+              <select name="country" class="form-select" id="country" required>
+                <option value="" disabled selected>Select Country</option>
+                @foreach($countries as $country)
+                  <option value="{{ $country->name }}">{{ $country->name }}</option>
+                @endforeach
+              </select>
               <label for="country">Country</label>
             </div>
             <div id="country_error" class="error-message"></div>
