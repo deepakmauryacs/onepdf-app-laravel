@@ -153,16 +153,32 @@ class DocumentController extends Controller
 
     public function destroy(Request $request)
     {
-        $request->validate(['id' => 'required|integer']);
+        $validated = $request->validate([
+            'id'  => 'nullable|integer|required_without:ids',
+            'ids' => 'nullable|array|required_without:id',
+            'ids.*' => 'integer',
+        ]);
 
-        $doc = Document::where('id', $request->id)
+        $ids = $validated['ids'] ?? [$validated['id']];
+
+        $docs = Document::whereIn('id', $ids)
             ->where('user_id', Auth::id())
-            ->firstOrFail();
+            ->get();
 
-        $full = public_path($doc->filepath);
-        if (is_file($full)) @unlink($full);
+        foreach ($docs as $doc) {
+            $full = public_path($doc->filepath);
+            if (is_file($full)) {
+                @unlink($full);
+            }
 
-        $doc->delete();
+            $linkIds = Link::where('document_id', $doc->id)->pluck('id');
+            if ($linkIds->isNotEmpty()) {
+                LinkAnalytics::whereIn('link_id', $linkIds)->delete();
+                Link::whereIn('id', $linkIds)->delete();
+            }
+
+            $doc->delete();
+        }
 
         return response()->json(['success' => true]);
     }
