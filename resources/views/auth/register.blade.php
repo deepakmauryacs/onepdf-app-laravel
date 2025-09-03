@@ -210,7 +210,7 @@
 
             <div class="text-center mt-3">
               <span class="text-muted">Already have an account?</span>
-              <a href="http://localhost/onepdf-app-laravel/public/login" class="fw-semibold">Log in</a>
+              <a href="{{ route('login') }}" class="fw-semibold">Log in</a>
             </div>
           </form>
 
@@ -343,7 +343,7 @@
       }
 
       try{
-        const res = await fetch('http://localhost/onepdf-app-laravel/public/register', {
+        const res = await fetch(@json(route('register.store')), {
           method:'POST',
           headers:{ 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') },
           body:data
@@ -373,14 +373,14 @@
 
         if(res.ok && result.success){
           showToast('Registration successful. Redirecting to login...','Success','success');
-          setTimeout(()=> window.location = 'http://localhost/onepdf-app-laravel/public/login', 1200);
+          setTimeout(()=> window.location = @json(route('login')), 1200);
         }else{
           const msg = result.error || 'Registration failed.';
           showToast(msg,'Error','danger');
 
           if((msg || '').toLowerCase().includes('email')){
             showToast('Already have an account? Click here to log in.','Login','info', 4000,
-              () => window.location = 'http://localhost/onepdf-app-laravel/public/login'
+              () => window.location = @json(route('login'))
             );
           }
         }
