@@ -19,6 +19,7 @@
 
   {{-- Base layout CSS (optional) --}}
   <link rel="stylesheet" href="{{ asset('assets/webapp/css/layout.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/webapp/css/style.css') }}">
 
   @stack('styles')
 </head>
