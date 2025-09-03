@@ -10,8 +10,15 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::paginate(15);
-        return view('admin.users.index', compact('users'));
+        $query = User::where('is_admin', false);
+        if ($search = request('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        $users = $query->paginate(15)->withQueryString();
+        return view('admin.users.index', compact('users', 'search'));
     }
 
     public function files(User $user)
