@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Rules\Captcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +15,14 @@ class RegisterController extends Controller
 {
     public function create()
     {
-        return view('auth.register');
+        $a = random_int(1, 9);
+        $b = random_int(1, 9);
+        session(['captcha_answer' => $a + $b]);
+
+        return view('auth.register', [
+            'captcha_a' => $a,
+            'captcha_b' => $b,
+        ]);
     }
 
     public function store(Request $request)
@@ -29,6 +37,7 @@ class RegisterController extends Controller
             'email'        => ['required','email','max:255','unique:users,email'],
             'password'     => ['required','string','min:6'],
             'agreed_terms' => ['accepted'], // checkbox must be checked
+            'captcha'      => ['required', new Captcha()],
         ], [
             'agreed_terms.accepted' => 'Terms must be accepted',
         ]);
@@ -72,7 +81,16 @@ class RegisterController extends Controller
             ]);
 
             DB::commit();
-            return response()->json(['success' => true]);
+
+            $a = random_int(1, 9);
+            $b = random_int(1, 9);
+            session(['captcha_answer' => $a + $b]);
+
+            return response()->json([
+                'success'   => true,
+                'captcha_a' => $a,
+                'captcha_b' => $b,
+            ]);
         } catch (\Illuminate\Validation\ValidationException $ve) {
             DB::rollBack();
             throw $ve;

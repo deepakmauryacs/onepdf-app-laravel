@@ -182,6 +182,17 @@
             </div>
             <div id="agreed_terms_error" class="error-message"></div>
 
+            <div class="mb-3">
+              <label for="captcha" id="captcha_label" class="form-label">What is {{ $captcha_a }} + {{ $captcha_b }}?</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="captcha" name="captcha">
+                <button type="button" class="btn btn-outline-secondary" id="refreshCaptcha" aria-label="Refresh captcha">
+                  <i class="bi bi-arrow-clockwise"></i>
+                </button>
+              </div>
+              <div id="captcha_error" class="error-message"></div>
+            </div>
+
             <div class="d-grid gap-2 mt-3">
               <button type="submit" class="btn btn-primary btn-lg">Register</button>
             </div>
@@ -266,6 +277,25 @@
       document.querySelectorAll('.form-control, .form-select, .form-check-input').forEach(el => el.classList.remove('is-invalid'));
     }
 
+    const refreshBtn = document.getElementById('refreshCaptcha');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', async function(){
+        try {
+          const res = await fetch('http://localhost/onepdf-app-laravel/public/register/captcha', {
+            method:'POST',
+            headers:{ 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') }
+          });
+          const json = await res.json();
+          if (json.captcha_a && json.captcha_b) {
+            const label = document.getElementById('captcha_label');
+            if (label) label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
+            const input = document.getElementById('captcha');
+            if (input) input.value = '';
+          }
+        } catch(err){}
+      });
+    }
+
     // Submit
     document.getElementById('registerForm').addEventListener('submit', async function(e){
       e.preventDefault();
@@ -294,6 +324,7 @@
       if(!data.get('agreed_terms')){
         setErr('terms','agreed_terms_error','You must agree to the terms.'); valid = false;
       }
+      if(!data.get('captcha')) { setErr('captcha','captcha_error','Captcha is required.'); valid = false; }
 
       if(!valid){
         showToast('Please correct the errors above.','Validation Error','danger');
@@ -307,7 +338,27 @@
           body:data
         });
         let result = {};
-        try{ result = await res.json(); } catch(_){}
+        try{ result = await res.json(); } catch(_){ }
+
+        if (res.status === 422) {
+          const map = {
+            first_name: 'firstName',
+            last_name: 'lastName',
+            country: 'country',
+            company: 'company',
+            plan_id: 'plan',
+            email: 'email',
+            password: 'password',
+            agreed_terms: 'terms',
+            captcha: 'captcha'
+          };
+          Object.entries(result.errors || {}).forEach(([k,v]) => {
+            const inputId = map[k] || k;
+            setErr(inputId, `${k}_error`, Array.isArray(v) ? v[0] : v);
+          });
+          showToast('Please correct the errors above.','Validation Error','danger');
+          return;
+        }
 
         if(res.ok && result.success){
           showToast('Registration successful. Redirecting to login...','Success','success');
@@ -316,7 +367,6 @@
           const msg = result.error || 'Registration failed.';
           showToast(msg,'Error','danger');
 
-          // If email already used, offer quick login via clickable toast
           if((msg || '').toLowerCase().includes('email')){
             showToast('Already have an account? Click here to log in.','Login','info', 4000,
               () => window.location = 'http://localhost/onepdf-app-laravel/public/login'
