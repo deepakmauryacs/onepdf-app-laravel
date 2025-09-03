@@ -1,8 +1,12 @@
 <?php
 
 namespace App\Providers;
-use Illuminate\Support\ServiceProvider;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use App\Models\Notification;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +23,27 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         Schema::defaultStringLength(191);
+        Schema::defaultStringLength(191);
+
+        View::composer('vendor.layouts.partials.header', function ($view) {
+            $notifications = collect();
+            $unreadCount = 0;
+
+            if ($user = Auth::user()) {
+                $notifications = Notification::forUser($user->id)
+                    ->orderByDesc('created_at')
+                    ->limit(5)
+                    ->get();
+
+                $unreadCount = Notification::forUser($user->id)
+                    ->where('is_read', false)
+                    ->count();
+            }
+
+            $view->with([
+                'notifications' => $notifications,
+                'unreadCount'   => $unreadCount,
+            ]);
+        });
     }
 }

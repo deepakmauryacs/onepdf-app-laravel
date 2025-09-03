@@ -13,38 +13,28 @@
 
     <!-- Notification Dropdown -->
     <div class="dropdown">
-      <button class="icon-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+      <button class="icon-btn dropdown-toggle position-relative" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-bell"></i>
+        @if($unreadCount > 0)
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ $unreadCount }}</span>
+        @endif
       </button>
       <div class="dropdown-menu dropdown-menu-end notif-menu shadow-sm mt-2">
         <div class="notif-head">
-          <span>Notifications</span><a href="#" class="notif-clear">Clear All</a>
+          <span>Notifications</span><a href="{{ route('vendor.notifications.index') }}" class="notif-clear">View All</a>
         </div>
         <div class="notif-list">
-          <div class="notif-item">
-            <div class="notif-avatar"><i class="bi bi-person"></i></div>
-            <div class="notif-body">
-              <div class="notif-name">Josephine Thompson</div>
-              <p class="notif-text mb-0">commented on admin panel "Wow 🤩! this admin looks good and awesome design"</p>
+          @forelse($notifications as $note)
+            <div class="notif-item">
+              <div class="notif-avatar"><i class="bi bi-info-circle"></i></div>
+              <div class="notif-body">
+                <div class="notif-name">{{ $note->title }}</div>
+                <p class="notif-text mb-0">{{ $note->message }}</p>
+              </div>
             </div>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar">D</div>
-            <div class="notif-body">
-              <div class="notif-name">Donoghue Susan</div>
-              <p class="notif-text mb-0">Hi, how are you? What about our next meeting</p>
-            </div>
-          </div>
-          <div class="notif-item">
-            <div class="notif-avatar"><img src="https://i.pravatar.cc/80?img=5" alt=""></div>
-            <div class="notif-body">
-              <div class="notif-name">Jacob Gines</div>
-              <p class="notif-text mb-0">Answered to your comment on the dashboard post</p>
-            </div>
-          </div>
-        </div>
-        <div class="notif-cta">
-          <button class="btn btn-cta">View All Notification <i class="bi bi-arrow-right-short ms-1"></i></button>
+          @empty
+            <div class="p-3 text-center text-muted">No notifications</div>
+          @endforelse
         </div>
       </div>
     </div>
