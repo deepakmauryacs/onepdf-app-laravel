@@ -21,6 +21,9 @@
     <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">
       <i class="bi bi-people"></i> <span>Users</span>
     </a>
+    <a class="nav-link {{ request()->routeIs('admin.user-plans.*') ? 'active' : '' }}" href="{{ route('admin.user-plans.index') }}">
+      <i class="bi bi-gem"></i> <span>User Plans</span>
+    </a>
   </nav>
 
   <div class="bottom">
