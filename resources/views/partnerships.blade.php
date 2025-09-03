@@ -13,7 +13,6 @@
 @endpush
 
 @section('content')
-
 <!-- Hero Section -->
 <section class="contact-hero">
   <div class="container position-relative">
@@ -36,44 +35,58 @@
 
           <div id="form_global_error" class="form-error-global"></div>
 
-          <form id="partnershipForm" novalidate>
+          {{-- Normal POST fallback works even if JS is disabled --}}
+          <form id="partnershipForm" novalidate action="{{ route('partnerships.store') }}" method="POST">
+            @csrf
             <div class="row">
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="firstName" class="form-label">First Name</label>
-                  <input type="text" class="form-control" id="firstName" name="firstName" autocomplete="given-name" maxlength="100">
-                  <div id="firstName_error" class="error-message"></div>
+                  <input type="text" class="form-control @error('firstName') is-invalid @enderror"
+                         id="firstName" name="firstName" autocomplete="given-name" maxlength="100"
+                         value="{{ old('firstName') }}">
+                  <div id="firstName_error" class="error-message">@error('firstName'){{ $message }}@enderror</div>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="mb-3">
                   <label for="lastName" class="form-label">Last Name</label>
-                  <input type="text" class="form-control" id="lastName" name="lastName" autocomplete="family-name" maxlength="100">
-                  <div id="lastName_error" class="error-message"></div>
+                  <input type="text" class="form-control @error('lastName') is-invalid @enderror"
+                         id="lastName" name="lastName" autocomplete="family-name" maxlength="100"
+                         value="{{ old('lastName') }}">
+                  <div id="lastName_error" class="error-message">@error('lastName'){{ $message }}@enderror</div>
                 </div>
               </div>
             </div>
 
             <div class="mb-3">
               <label for="email" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="email" name="email" autocomplete="email" maxlength="150">
-              <div id="email_error" class="error-message"></div>
+              <input type="email" class="form-control @error('email') is-invalid @enderror"
+                     id="email" name="email" autocomplete="email" maxlength="150"
+                     value="{{ old('email') }}">
+              <div id="email_error" class="error-message">@error('email'){{ $message }}@enderror</div>
             </div>
 
             <div class="mb-3">
               <label for="contact_number" class="form-label">Contact Number</label>
-              <input type="text" class="form-control" id="contact_number" name="contact_number" autocomplete="tel" maxlength="32" inputmode="tel">
-              <div id="contact_number_error" class="error-message"></div>
+              <input type="text" class="form-control @error('contact_number') is-invalid @enderror"
+                     id="contact_number" name="contact_number" autocomplete="tel" maxlength="32" inputmode="tel"
+                     value="{{ old('contact_number') }}">
+              <div id="contact_number_error" class="error-message">@error('contact_number'){{ $message }}@enderror</div>
             </div>
 
             <div class="mb-4">
               <label for="message" class="form-label">Message</label>
-              <textarea class="form-control" id="message" name="message" rows="5" maxlength="10000"></textarea>
-              <div id="message_error" class="error-message"></div>
+              <textarea class="form-control @error('message') is-invalid @enderror"
+                        id="message" name="message" rows="5" maxlength="10000">{{ old('message') }}</textarea>
+              <div id="message_error" class="error-message">@error('message'){{ $message }}@enderror</div>
             </div>
 
             <button type="submit" class="btn btn-brand btn-lg w-100">Send Inquiry</button>
-            <div id="form_success" class="mt-3 form-success" style="display:none;">Thank you for reaching out! Our partnerships team will contact you soon.</div>
+            <div id="form_success" class="mt-3 form-success"
+                 @if(!session('partnership_success')) style="display:none;" @endif>
+              {{ session('partnership_success') ?? 'Thank you for reaching out! Our partnerships team will contact you soon.' }}
+            </div>
           </form>
         </div>
       </div>
@@ -96,13 +109,14 @@
     </div>
   </div>
 </div>
-
 @endsection
 
 @push('scripts')
 <script>
 (function(){
   const form = document.getElementById('partnershipForm');
+  if (!form) return;
+
   const globalError = document.getElementById('form_global_error');
   const successMsg  = document.getElementById('form_success');
   const fields = ['firstName','lastName','email','contact_number','message'];
@@ -110,9 +124,8 @@
   const originalBtnHtml = submitBtn.innerHTML;
 
   function clearErrors(){
-    globalError.style.display = 'none';
-    globalError.textContent = '';
-    successMsg.style.display = 'none';
+    if (globalError){ globalError.style.display='none'; globalError.textContent=''; }
+    if (successMsg){ successMsg.style.display='none'; }
     fields.forEach(id => {
       const input = document.getElementById(id);
       if (input) input.classList.remove('is-invalid');
@@ -129,6 +142,7 @@
   }
 
   function setLoading(loading){
+    if (!submitBtn) return;
     if (loading) {
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Sending...';
@@ -139,20 +153,19 @@
   }
 
   form.addEventListener('submit', async function(e){
+    // Comment the next line if you prefer full-page POST/redirect instead of AJAX.
     e.preventDefault();
+
     clearErrors();
 
     let ok = true;
     const data = new FormData(form);
 
     if (!data.get('firstName')) { setFieldError('firstName','First name is required.'); ok = false; }
-    if (!data.get('lastName'))  { setFieldError('lastName','Last name is required.'); ok = false; }
+    if (!data.get('lastName'))  { setFieldError('lastName','Last name is required.');  ok = false; }
     const email = data.get('email');
-    if (!email) {
-      setFieldError('email','Email is required.'); ok = false;
-    } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      setFieldError('email','Please enter a valid email.'); ok = false;
-    }
+    if (!email) { setFieldError('email','Email is required.'); ok = false; }
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { setFieldError('email','Please enter a valid email.'); ok = false; }
     if (!data.get('contact_number')) { setFieldError('contact_number','Contact number is required.'); ok = false; }
     if (!data.get('message'))        { setFieldError('message','Message is required.'); ok = false; }
 
@@ -160,15 +173,18 @@
 
     setLoading(true);
     try{
-      const res = await fetch("{{ route('partnerships.store') }}", {
+      const res = await fetch(@json(route('partnerships.store')), {
         method:'POST',
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRF-TOKEN': @json(csrf_token())
+        },
         body:data
       });
 
       if (res.status === 422) {
         const j = await res.json();
-        Object.entries(j.errors || {}).forEach(([k,v]) => setFieldError(k, Array.isArray(v)? v[0]: v));
+        Object.entries(j.errors || {}).forEach(([k,v]) => setFieldError(k, Array.isArray(v) ? v[0] : v));
         setLoading(false);
         return;
       }
@@ -178,14 +194,18 @@
         form.reset();
         const modalEl = document.getElementById('partnershipSuccessModal');
         if (window.bootstrap && modalEl) new bootstrap.Modal(modalEl).show();
-        else successMsg.style.display = 'block';
+        else if (successMsg) successMsg.style.display = 'block';
       } else {
-        globalError.textContent = json.error || 'There was a problem sending your inquiry.';
-        globalError.style.display = 'block';
+        if (globalError){
+          globalError.textContent = json.error || 'There was a problem sending your inquiry.';
+          globalError.style.display = 'block';
+        }
       }
     } catch(err){
-      globalError.textContent = 'There was a problem sending your inquiry.';
-      globalError.style.display = 'block';
+      if (globalError){
+        globalError.textContent = 'There was a problem sending your inquiry.';
+        globalError.style.display = 'block';
+      }
     } finally {
       setLoading(false);
     }
