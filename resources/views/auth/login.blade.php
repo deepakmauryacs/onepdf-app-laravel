@@ -161,7 +161,7 @@
     document.getElementById('registerLink').href = BASE + '/register';
     document.getElementById('forgotPasswordLink').href = BASE + '/forgot-password';
     document.getElementById('backHomeTop').href = BASE + '/';
-    document.getElementById('backHomeBottom').href = BASE + '/';
+  
 
     // Keyboard shortcuts: Esc or Alt+H => Home
     document.addEventListener('keydown', (e) => {

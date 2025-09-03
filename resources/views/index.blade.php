@@ -213,21 +213,21 @@ export class PdfOneLinkEmbedComponent {
                   <span class="bg-secondary rounded-circle d-inline-block mx-2" style="width: 12px; height: 12px;"></span>
                   <span class="bg-secondary rounded-circle d-inline-block" style="width: 12px; height: 12px;"></span>
                 </div>
-                <div class="text-muted small">https://pdfonelink.com/view?doc=DEMO_TOKEN</div>
+                <div class="text-muted small">https://www.onelinkpdf.com/view?doc=DEMO_TOKEN</div>
               </div>
               <div class="dropdown">
                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-gear"></i>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Refresh</a></li>
-                  <li><a class="dropdown-item" href="#" target="_blank">Open in new tab</a></li>
+                  <li><a class="dropdown-item" href="{{ url('/') }}">Refresh</a></li>
+                  <li><a class="dropdown-item" href="https://www.onelinkpdf.com/view?doc=045210e8da" target="_blank">Open in new tab</a></li>
                 </ul>
               </div>
             </div>
 
             <div class="demo-browser">
-              <iframe src="https://pdfonelink.com/view?doc=DEMO_TOKEN" title="PDFOneLink Demo Viewer" allow="clipboard-write"></iframe>
+              <iframe src="https://www.onelinkpdf.com/view?doc=045210e8da" title="PDFOneLink Demo Viewer" allow="clipboard-write"></iframe>
             </div>
 
             <div class="demo-controls">
