@@ -159,7 +159,7 @@
 
   <script>
     // Centralize your base URL here (adjust if needed)
-    const BASE = 'http://localhost/onepdf-app-laravel/public';
+    const BASE = "{{ url('/') }}";
 
     // Wire up nav links
     document.getElementById('registerLink').href = BASE + '/register';
