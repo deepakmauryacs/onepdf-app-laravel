@@ -34,15 +34,15 @@
     <div class="side-title">ACCOUNT</div>
   
     <!-- Settings collapsible -->
-    <a class="nav-link {{ request()->routeIs('profile') || request()->routeIs('password.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="{{ request()->routeIs('profile') || request()->routeIs('password.*') ? 'true' : 'false' }}" aria-controls="settingsMenu">
+    <a class="nav-link {{ request()->routeIs('profile') || request()->routeIs('vendor.password.*') ? 'active' : '' }}" data-bs-toggle="collapse" href="#settingsMenu" role="button" aria-expanded="{{ request()->routeIs('profile') || request()->routeIs('vendor.password.*') ? 'true' : 'false' }}" aria-controls="settingsMenu">
       <i class="bi bi-gear"></i> <span>Settings</span>
       <span class="ms-auto"><i class="bi bi-caret-down-fill"></i></span>
     </a>
-    <div class="collapse subnav {{ request()->routeIs('profile') || request()->routeIs('password.*') ? 'show' : '' }}" id="settingsMenu" data-bs-parent="#mainNav">
+    <div class="collapse subnav {{ request()->routeIs('profile') || request()->routeIs('vendor.password.*') ? 'show' : '' }}" id="settingsMenu" data-bs-parent="#mainNav">
       <a class="nav-link {{ request()->routeIs('profile') ? 'active' : '' }}" href="{{ route('profile') }}">
         <i class="bi bi-person me-1"></i> <span>Profile</span>
       </a>
-      <a class="nav-link {{ request()->routeIs('password.edit') ? 'active' : '' }}" href="{{ route('password.edit') }}">
+      <a class="nav-link {{ request()->routeIs('vendor.password.edit') ? 'active' : '' }}" href="{{ route('vendor.password.edit') }}">
         <i class="bi bi-key me-1"></i> <span>Change Password</span>
       </a>
     </div>

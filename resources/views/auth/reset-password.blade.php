@@ -89,7 +89,7 @@
       <h3 class="text-center mb-3">Reset Password</h3>
       <p class="text-center text-muted mb-4">Create a new password to secure your account.</p>
 
-      <form id="resetForm" method="POST" action="{{ route('password.update') }}" novalidate>
+      <form id="resetForm" method="POST" action="{{ url('/reset-password') }}" novalidate>
         @csrf
         <input type="hidden" name="token" value="{{ $token }}">
 

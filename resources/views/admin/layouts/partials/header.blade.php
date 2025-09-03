@@ -57,7 +57,7 @@
       </button>
       <ul class="dropdown-menu dropdown-menu-end user-menu shadow-sm mt-2">
         <li><a class="dropdown-item d-flex align-items-center" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i> Profile</a></li>
-        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('password.edit') }}"><i class="bi bi-key me-2"></i> Change Password</a></li>
+        <li><a class="dropdown-item d-flex align-items-center" href="{{ route('vendor.password.edit') }}"><i class="bi bi-key me-2"></i> Change Password</a></li>
         <li><hr class="dropdown-divider"></li>
         <li>
           <form method="POST" action="{{ route('logout') }}">

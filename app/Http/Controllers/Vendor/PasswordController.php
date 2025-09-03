@@ -35,6 +35,6 @@ class PasswordController extends Controller
             ]);
         }
 
-        return redirect()->route('password.edit')->with('status', 'Password updated successfully.');
+        return redirect()->route('vendor.password.edit')->with('status', 'Password updated successfully.');
     }
 }

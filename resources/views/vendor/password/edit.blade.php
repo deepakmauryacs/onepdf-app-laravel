@@ -98,7 +98,7 @@
         </div>
       </div>
 
-      <form id="password-form" method="POST" action="{{ route('password.update') }}" novalidate>
+      <form id="password-form" method="POST" action="{{ route('vendor.password.update') }}" novalidate>
         @csrf
         @method('PUT')
 
