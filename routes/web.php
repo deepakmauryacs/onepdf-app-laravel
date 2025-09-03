@@ -92,7 +92,6 @@ Route::prefix('admin')->middleware(['auth','admin'])->name('admin.')->group(func
     Route::get('users/{user}/files', [AdminUserController::class, 'files'])->name('users.files');
     Route::get('users/{user}/files/list', [AdminUserController::class, 'filesList'])->name('users.files.list');
     Route::post('users/{user}/files/generate-link', [AdminUserController::class, 'generateLink'])->name('users.files.generate');
-    Route::post('users/{user}/files/delete', [AdminUserController::class, 'delete'])->name('users.files.delete');
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */

@@ -92,22 +92,4 @@ class UserController extends Controller
         return response()->json(['url' => $url]);
     }
 
-    public function delete(User $user, Request $request)
-    {
-        $request->validate(['ids' => 'required|array', 'ids.*' => 'integer']);
-
-        $docs = Document::where('user_id', $user->id)
-            ->whereIn('id', $request->ids)
-            ->get();
-
-        foreach ($docs as $doc) {
-            $full = public_path($doc->filepath);
-            if (is_file($full)) {
-                @unlink($full);
-            }
-            $doc->delete();
-        }
-
-        return response()->json(['success' => true]);
-    }
 }
