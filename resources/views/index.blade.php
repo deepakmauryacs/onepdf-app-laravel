@@ -270,8 +270,8 @@ export class PdfOneLinkEmbedComponent {
           </div>
 
           <div class="d-flex gap-3 mt-4">
-            <a href="{{ url('/registration') }}" class="btn btn-brand"><i class="bi bi-rocket-takeoff me-2"></i>Get started</a>
-            <a href="{{ url('/docs') }}" class="btn btn-ghost"><i class="bi bi-journal-text me-2"></i>View docs</a>
+            <a href="{{ route('register') }}" class="btn btn-brand"><i class="bi bi-rocket-takeoff me-2"></i>Get started</a>
+            <a href="{{ route('docs') }}" class="btn btn-ghost"><i class="bi bi-journal-text me-2"></i>View docs</a>
           </div>
         </div><!-- /right -->
       </div>
@@ -298,7 +298,7 @@ export class PdfOneLinkEmbedComponent {
               <li><i class="bi bi-x text-muted"></i>Permission controls</li>
               <li><i class="bi bi-x text-muted"></i>Custom branding</li>
             </ul>
-            <a href="{{ url('/registration') }}" class="btn btn-ghost w-100">Start free</a>
+            <a href="{{ route('register') }}" class="btn btn-ghost w-100">Start free</a>
           </div>
         </div>
 
@@ -314,7 +314,7 @@ export class PdfOneLinkEmbedComponent {
               <li><i class="bi bi-check2 check"></i>Custom watermark</li>
               <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
             </ul>
-            <a href="{{ url('/registration') }}" class="btn btn-brand w-100">Choose Pro</a>
+            <a href="{{ route('register') }}" class="btn btn-brand w-100">Choose Pro</a>
           </div>
         </div>
 
@@ -373,7 +373,7 @@ export class PdfOneLinkEmbedComponent {
       <div class="cta-section">
         <h2 class="fw-bold mb-3">Start sharing secure, trackable PDFs today</h2>
         <p class="text-muted mb-4">It only takes a minute to set up. No credit card required.</p>
-        <a href="{{ url('/registration') }}" class="btn btn-brand btn-lg"><i class="bi bi-rocket-takeoff me-2"></i>Create your free account</a>
+        <a href="{{ route('register') }}" class="btn btn-brand btn-lg"><i class="bi bi-rocket-takeoff me-2"></i>Create your free account</a>
       </div>
     </div>
   </section>

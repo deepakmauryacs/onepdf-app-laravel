@@ -84,6 +84,22 @@ class HomeController extends Controller
     }
 
     /**
+     * Display the documentation page.
+     */
+    public function docs()
+    {
+        return view('docs');
+    }
+
+    /**
+     * Display the integrations page.
+     */
+    public function integrations()
+    {
+        return view('integrations');
+    }
+
+    /**
      * Display the login page.
      */
     public function login()
