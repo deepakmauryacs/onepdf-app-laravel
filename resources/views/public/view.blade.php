@@ -183,6 +183,7 @@
   <div style="background:#fff;color:#000;padding:20px;border-radius:8px;width:90%;max-width:400px;">
     <h5 style="margin-top:0;margin-bottom:15px;">Please leave your details</h5>
     <form id="leadForm">
+      @csrf
       <div style="margin-bottom:10px;"><input name="name" type="text" placeholder="Name" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></div>
       <div style="margin-bottom:10px;"><input name="email" type="email" placeholder="Email" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></div>
       <button type="submit" style="width:100%;padding:10px;border:0;background:#111;color:#fff;border-radius:4px;">Submit</button>
@@ -438,7 +439,11 @@
     e.preventDefault();
     var fd = new FormData(this);
     fd.append('slug', slug);
-    fetch('{{ route('public.lead.store') }}', {method:'POST', body: fd}).then(function(){ modal.style.display='none'; });
+    fetch('{{ route('public.lead.store') }}', {
+      method:'POST',
+      headers:{'X-CSRF-TOKEN': @json(csrf_token())},
+      body: fd
+    }).then(function(){ modal.style.display='none'; });
   });
   @endif
 })();
