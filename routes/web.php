@@ -104,6 +104,8 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
     Route::get('leads', [VendorLeadController::class, 'index'])->name('vendor.leads.index');
     Route::get('lead-forms', [VendorLeadFormController::class, 'index'])->name('vendor.lead_forms.index');
     Route::post('lead-forms', [VendorLeadFormController::class, 'store'])->name('vendor.lead_forms.store');
+    Route::get('lead-forms/{lead_form}/edit', [VendorLeadFormController::class, 'edit'])->name('vendor.lead_forms.edit');
+    Route::put('lead-forms/{lead_form}', [VendorLeadFormController::class, 'update'])->name('vendor.lead_forms.update');
 });
 
 /* ------------------------- Admin dashboard ------------------------- */
