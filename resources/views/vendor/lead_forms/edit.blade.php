@@ -2,8 +2,6 @@
 
 @section('title', 'Edit Lead Form')
 
-@vite('resources/js/lead-form-builder.js')
-
 @section('content')
 <div class="container py-3">
   <h2 class="mb-3">Edit Lead Form: {{ $form->name }}</h2>
@@ -36,3 +34,7 @@
   window.existingFields = @json($form->fields ?? []);
 </script>
 @endsection
+
+@push('scripts')
+  @vite('resources/js/lead-form-builder.js')
+@endpush
