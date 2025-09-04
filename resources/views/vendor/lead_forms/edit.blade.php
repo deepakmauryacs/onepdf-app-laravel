@@ -13,6 +13,11 @@
         <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="text">Text</div>
         <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="email">Email</div>
         <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="textarea">Textarea</div>
+        <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="number">Number</div>
+        <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="date">Date</div>
+        <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="select">Dropdown</div>
+        <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="radio">Radio</div>
+        <div class="draggable-field btn btn-light w-100 mb-2" draggable="true" data-type="checkbox">Checkbox</div>
       </div>
     </div>
     <div class="col-md-8">
