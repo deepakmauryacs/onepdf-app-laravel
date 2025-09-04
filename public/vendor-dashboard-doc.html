@@ -2,80 +2,438 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vendor Dashboard Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vendor Dashboard Guide | OnePDF</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
   <style>
-    body {font-family: Arial, sans-serif; margin: 0; line-height: 1.6; background: #f8f9fa; color: #333;}
-    header {background: #343a40; color: #fff; padding: 1rem 2rem;}
-    header h1 {margin: 0; font-size: 1.5rem;}
-    nav {background: #495057; padding: 0.5rem 2rem;}
-    nav a {color: #fff; margin-right: 1rem; text-decoration: none; font-weight: bold;}
-    section {padding: 2rem; border-bottom: 1px solid #e1e1e1; background: #fff;}
-    h2 {color: #0d6efd; margin-top: 0;}
-    .page-list {margin-left: 1rem;}
-    footer {background: #343a40; color: #fff; text-align: center; padding: 1rem;}
+    :root{
+      --primary:#3b82f6; --primary-dark:#2563eb; --primary-soft:rgba(59,130,246,.12);
+      --secondary:#9aa3b2;
+      --light:#f8fafc; --dark:#0f172a;
+      --white:#ffffff;
+      --success:#10b981; --warning:#f59e0b; --error:#ef4444;
+      --sidebar-bg:#0b1220;
+      --sidebar-text:#e5e7eb;
+      --sidebar-muted:#9aa3b2;
+      --sidebar-active:#111a2b;
+      --sidebar-border:#1a2335;
+      --content-bg:#ffffff;
+      --radius:12px;
+      --shadow:0 10px 30px rgba(2,6,23,.08);
+      --sidebar-width:280px;
+      --header-height:64px;
+      --transition:all .28s ease;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family:"DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      line-height:1.6;
+      background:var(--light);
+      color:var(--dark);
+      display:flex; flex-direction:column; min-height:100vh;
+    }
+
+    /* === Topbar === */
+    .topbar{
+      position:fixed; inset:0 0 auto 0; height:var(--header-height);
+      display:flex; align-items:center; justify-content:space-between;
+      background:#ffffff;
+      backdrop-filter:saturate(180%) blur(6px);
+      border-bottom:1px solid #eef2f7;
+      padding:0 .75rem 0 .5rem;
+      z-index:100; transition:box-shadow .25s ease, border-color .25s ease;
+    }
+    .topbar.scrolled{
+      box-shadow:0 10px 24px rgba(2,6,23,.08);
+      border-color:transparent;
+    }
+    .logo{ display:flex; align-items:center; gap:.55rem; padding-left:.5rem; font-size:1.05rem; color:var(--primary-dark); font-weight:700; text-decoration:none; }
+    .logo i{ font-size:1.35rem; }
+
+    .topbar-right{ display:flex; align-items:center; gap:.6rem; }
+
+    .search-pill{ position:relative; }
+    .search-pill input{
+      height:38px; border-radius:999px; border:1px solid #e6e8ee;
+      background:#fff; width:280px; padding:.55rem 1rem .55rem 2.25rem;
+      font-size:.95rem; transition:all .2s ease;
+    }
+    .search-pill i{
+      position:absolute; left:.8rem; top:50%; transform:translateY(-50%);
+      color:#9aa3b2; font-size:1rem;
+    }
+    .search-pill input:focus{
+      outline:none; border-color:#3b82f6; box-shadow:0 0 0 4px rgba(59,130,246,.12);
+    }
+
+    .icon-btn{
+      height:38px; width:38px; border-radius:10px; border:1px solid #e6e8ee;
+      background:#fff; display:inline-flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:transform .1s ease, background .2s ease, border-color .2s ease;
+    }
+    .icon-btn i{ font-size:1.1rem; color:#475569; }
+    .icon-btn:hover{ background:#f7f9fc; }
+    .icon-btn:active{ transform:scale(.98); }
+    #menuBtn{ display:none; }
+
+    /* === Sidebar === */
+    .sidebar{
+      position:fixed; top:var(--header-height); left:0;
+      width:var(--sidebar-width); height:calc(100vh - var(--header-height));
+      background:var(--sidebar-bg); border-right:1px solid var(--sidebar-border);
+      padding:1rem 0; overflow-y:auto; transition:var(--transition); z-index:99;
+    }
+    .sidebar-header{ padding:.2rem 1.25rem 1rem; border-bottom:1px solid var(--sidebar-border); margin-bottom:.6rem; }
+    .sidebar-header h2{ font-size:1rem; color:var(--sidebar-muted); font-weight:600; }
+
+    .nav-links{ list-style:none; margin:0; padding:0; }
+    .nav-links li{ margin:.1rem 0; }
+    .nav-links a{
+      display:flex; align-items:center; gap:.75rem;
+      padding:.7rem 1.1rem; margin:0 .5rem; border-radius:10px;
+      color:var(--sidebar-text); text-decoration:none; font-weight:500;
+      transition:var(--transition);
+    }
+    .nav-links a i{ width:22px; text-align:center; font-size:1.08rem; color:var(--sidebar-muted); }
+    .nav-links a:hover{ background:#0f1a30; }
+    .nav-links a.active{ background:var(--sidebar-active); color:#fff; }
+
+    /* === Content === */
+    .main-container{ display:flex; margin-top:var(--header-height); flex:1; }
+    .content{ flex:1; padding:2rem; margin-left:var(--sidebar-width); transition:var(--transition); }
+    .content-header{ margin-bottom:1.6rem; }
+    .section-card{ background:#fff; border-radius:var(--radius); padding:1.25rem; margin-bottom:1.2rem; box-shadow:var(--shadow); }
+    .section-card h2{ display:flex; align-items:center; gap:.55rem; font-size:1.22rem; color:var(--primary-dark); margin:0 0 .9rem; padding:0 0 .7rem; border-bottom:1px solid #eef2f7; }
+    .section-card h2 i{ color:var(--primary); }
+    .section-card p{ margin:.6rem 0; line-height:1.7; }
+
+    .feature-list{ list-style:none; margin:1rem 0 0; padding:0; }
+    .feature-list li{ display:flex; gap:.75rem; align-items:flex-start; padding:.7rem 0; border-bottom:1px solid #eef2f7; }
+    .feature-list li:last-child{ border-bottom:none; }
+    .feature-list i{ color:var(--success); margin-top:.15rem; font-size:1.05rem; }
+
+    /* Help cards */
+    .help-cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.1rem; margin-top:1.2rem; }
+    .help-card{ background:#fff; border-radius:12px; padding:1.1rem; box-shadow:var(--shadow); transition:var(--transition); }
+    .help-card:hover{ transform:translateY(-3px); box-shadow:0 12px 22px rgba(2,6,23,.10); }
+    .help-card h3{ display:flex; gap:.5rem; align-items:center; font-size:1.05rem; color:var(--primary-dark); margin:.1rem 0 .5rem; }
+    .help-card p{ color:#5b6576; font-size:.95rem; margin:.4rem 0 1rem; }
+    .help-card a{ color:var(--primary-dark); text-decoration:none; font-weight:600; font-size:.92rem; display:inline-flex; gap:.35rem; align-items:center; }
+    .help-card a:hover{ text-decoration:underline; }
+
+    /* Overlay (mobile) */
+    .overlay{ position:fixed; top:var(--header-height); left:0; right:0; bottom:0; background:rgba(0,0,0,.5); z-index:98; display:none; }
+    .overlay.active{ display:block; }
+
+    /* Footer */
+    footer{ background:#fff; border-top:1px solid #eef2f7; padding:1.2rem 1.5rem; text-align:center; color:#64748b; font-size:.95rem; }
+
+    /* Responsive */
+    @media (max-width: 992px){
+      .search-pill input{ width:220px; }
+    }
+    @media (max-width: 768px){
+      #menuBtn{ display:inline-flex; }
+      .search-pill{ display:none; }
+      .sidebar{ transform:translateX(-100%); }
+      .sidebar.active{ transform:translateX(0); }
+      .content{ margin-left:0; padding:1.25rem; }
+    }
+    @media (max-width: 560px){
+      .search-pill{ display:none; }
+    }
+
+    /* Small utility chips */
+    .chip{display:inline-flex; align-items:center; gap:.4rem; padding:.25rem .55rem; border-radius:999px; background:#f3f6fb; color:#475569; font-weight:600; font-size:.8rem;}
   </style>
 </head>
 <body>
-  <header>
-    <h1>Vendor Dashboard – How It Works</h1>
+  <!-- Header -->
+  <header class="topbar">
+    <a href="#" class="logo">
+      <i class="bi bi-file-earmark-pdf"></i>
+      <span>OnePDF</span>
+    </a>
+
+    <div class="topbar-right">
+      <div class="search-pill">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search help articles…">
+      </div>
+      <button class="icon-btn" aria-label="Notifications">
+        <i class="bi bi-bell"></i>
+      </button>
+      <button class="icon-btn" id="menuBtn" aria-label="Open menu">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
   </header>
-  <nav>
-    <a href="#dashboard">Dashboard</a>
-    <a href="#files">Files</a>
-    <a href="#analytics">Analytics</a>
-    <a href="#plan">Plan</a>
-    <a href="#notifications">Notifications</a>
-    <a href="#help">Help Center</a>
-    <a href="#profile">Profile</a>
-    <a href="#password">Password</a>
-  </nav>
-  <section id="dashboard">
-    <h2>Dashboard</h2>
-    <p>The dashboard gives vendors a quick overview of their recent activity. It lists the latest uploaded documents and displays quick statistics like total documents and recent downloads.</p>
-  </section>
-  <section id="files">
-    <h2>Files</h2>
-    <p>All file management lives here.</p>
-    <ul class="page-list">
-      <li><strong>List:</strong> Browse every file you have uploaded.</li>
-      <li><strong>Upload:</strong> Add new PDF files using the upload form.</li>
-      <li><strong>Manage:</strong> Rename files, generate sharing links and delete documents you no longer need.</li>
-      <li><strong>Details:</strong> View file specific information and update metadata like title or description.</li>
-      <li><strong>Embed:</strong> Generate embeddable code snippets to display documents on external sites.</li>
-    </ul>
-  </section>
-  <section id="analytics">
-    <h2>Analytics</h2>
-    <p>Analytics pages show how your documents perform.</p>
-    <ul class="page-list">
-      <li><strong>Overview:</strong> Charts and counters summarizing views and downloads.</li>
-      <li><strong>Documents:</strong> Performance table for each document.</li>
-      <li><strong>Document Detail:</strong> Drill down into a single document’s metrics.</li>
-    </ul>
-  </section>
-  <section id="plan">
-    <h2>Plan</h2>
-    <p>The plan page displays your current subscription and available upgrades. Vendors can switch plans directly from this page.</p>
-  </section>
-  <section id="notifications">
-    <h2>Notifications</h2>
-    <p>Shows system and account notifications. Use this page to stay informed about important updates.</p>
-  </section>
-  <section id="help">
-    <h2>Help Center</h2>
-    <p>Submit support requests and view existing tickets. The manage page lists past requests for quick reference.</p>
-  </section>
-  <section id="profile">
-    <h2>Profile</h2>
-    <p>Edit personal information like name and email. Changes here affect your account settings.</p>
-  </section>
-  <section id="password">
-    <h2>Password</h2>
-    <p>Change your account password. Enter the current password and a new password to update.</p>
-  </section>
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>Vendor Dashboard Guide</h2>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#dashboard" class="active"><i class="bi bi-house"></i> Dashboard</a></li>
+        <li><a href="#files"><i class="bi bi-file-earmark"></i> Files</a></li>
+        <li><a href="#analytics"><i class="bi bi-graph-up"></i> Analytics</a></li>
+        <li><a href="#plan"><i class="bi bi-credit-card"></i> Plan</a></li>
+        <li><a href="#notifications"><i class="bi bi-bell"></i> Notifications</a></li>
+        <li><a href="#help"><i class="bi bi-question-circle"></i> Help Center</a></li>
+        <li><a href="#profile"><i class="bi bi-person"></i> Profile</a></li>
+        <li><a href="#password"><i class="bi bi-key"></i> Password</a></li>
+        <li><a href="#shortcuts" ><i class="bi bi-lightning-charge"></i> Keyboard Shortcuts</a></li>
+        <li><a href="#qa" ><i class="bi bi-clipboard2-check"></i> QA Checklist</a></li>
+      </ul>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Content -->
+    <main class="content">
+      <div class="content-header">
+        <h1>Vendor Dashboard Guide</h1>
+        <p>Learn how to use all features of your OnePDF Vendor Dashboard</p>
+      </div>
+
+      <!-- End-to-End Happy Path -->
+      <section id="happy-path" class="section-card">
+        <h2><i class="bi bi-rocket-takeoff"></i> End-to-End “Happy Path”</h2>
+        <ol class="feature-list" style="list-style:decimal; padding-left:1rem;">
+          <li><strong>Create account → Pick plan → Verify email</strong> → auto-land on <em>Dashboard</em>.</li>
+          <li><strong>Upload PDFs</strong> (drag & drop or browse) → each file shows progress/state (PDF only, up to 50 MB).</li>
+          <li><strong>Manage files</strong> → generate secure share link / embed → copy link → (optional) open <em>Details</em> to set Title/Description.</li>
+          <li><strong>Set link permissions</strong> (Allow Download/Print, Require Email, Visibility) → Save.</li>
+          <li><strong>Share</strong> → later review <em>Analytics</em> (views, top documents, devices/geo).</li>
+        </ol>
+        <p class="chip"><i class="bi bi-info-circle"></i> Tip: Use <strong>Permissions</strong> to quickly toggle download/print without changing the link.</p>
+      </section>
+
+      <!-- Dashboard -->
+      <section id="dashboard" class="section-card">
+        <h2><i class="bi bi-house"></i> Dashboard</h2>
+        <p>Snapshot of recent activity with quick actions.</p>
+        <ul class="feature-list">
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Zero state:</strong> “Your library is empty. Drop PDFs here or click <em>Upload</em>.”</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Recent uploads:</strong> last files with quick actions (Copy link / Details).</li>
+          <li><i class="bi bi-check-circle-fill"></i> <strong>Counters:</strong> total documents, total views, downloads.</li>
+        </ul>
+      </section>
+
+      <!-- Files -->
+      <section id="files" class="section-card">
+        <h2><i class="bi bi-file-earmark"></i> Files</h2>
+        <p>Organize, share, and manage documents.</p>
+
+        <h3 class="h5" style="margin-top:.5rem">Upload Workflow</h3>
+        <ul class="feature-list">
+          <li><i class="bi bi-upload"></i> Drag & drop or <strong>Browse</strong> → upload starts automatically with a per-file row (name, size, progress).</li>
+          <li><i class="bi bi-filetype-pdf"></i> <strong>Validation:</strong> PDF only; max size 50 MB. Errors appear inline.</li>
+          <li><i class="bi bi-check2-circle"></i> On success: status “<strong>Ready • Get link</strong>” → primary action opens <em>Details</em>/Permissions.</li>
+        </ul>
+
+        <h3 class="h5" style="margin-top:.5rem">Manage (Bulk)</h3>
+        <ul class="feature-list">
+          <li><i class="bi bi-list-ul"></i> Batch select rows → actions (Delete, Make Private, Get Links).</li>
+          <li><i class="bi bi-link-45deg"></i> Row actions: Copy link, Open Details, Embed, Delete.</li>
+          <li><i class="bi bi-shield-lock"></i> “Secure” pill shows when link is restricted (download/print off or private visibility).</li>
+        </ul>
+
+        <h3 class="h5" style="margin-top:.5rem">Empty/Error States</h3>
+        <ul class="feature-list">
+          <li><i class="bi bi-exclamation-circle"></i> Only PDF files are supported. Try again with a .pdf.</li>
+          <li><i class="bi bi-exclamation-circle"></i> File exceeds 50 MB. Reduce size and retry.</li>
+          <li><i class="bi bi-slash-circle"></i> Link revoked: “This link is inactive. Generate a new link or enable in <em>Permissions</em>.”</li>
+        </ul>
+      </section>
+
+      <!-- Details & Permissions -->
+      <section id="details-permissions" class="section-card">
+        <h2><i class="bi bi-gear"></i> File Details & Permissions</h2>
+        <h3 class="h5">Details</h3>
+        <ul class="feature-list">
+          <li><i class="bi bi-pencil-square"></i> Editable: Title, Description, Tags.</li>
+          <li><i class="bi bi-info-circle"></i> System: size, upload date, link status (Secure).</li>
+          <li><i class="bi bi-shuffle"></i> Actions: Copy Link, Get Embed, Regenerate, Revoke.</li>
+        </ul>
+
+        <h3 class="h5" style="margin-top:.5rem">Permissions</h3>
+        <ul class="feature-list">
+          <li><i class="bi bi-cloud-download"></i> <strong>Allow download</strong> (toggle)</li>
+          <li><i class="bi bi-printer"></i> <strong>Allow print</strong> (toggle)</li>
+          <li><i class="bi bi-envelope-check"></i> <strong>Require email</strong> (viewer must submit email)</li>
+          <li><i class="bi bi-eye"></i> <strong>Visibility</strong>: Public / Private / Off (revoked)</li>
+        </ul>
+        <p class="chip"><i class="bi bi-stars"></i> Save updates → status pill & mini-diff confirm (“Download disabled”).</p>
+
+        <h3 class="h5" style="margin-top:.5rem">Embed</h3>
+        <ul class="feature-list">
+          <li><i class="bi bi-braces-asterisk"></i> iFrame/script snippets with size presets (Full / Card / Minimal).</li>
+          <li><i class="bi bi-clipboard-check"></i> Copy buttons with “Copied!” feedback.</li>
+        </ul>
+      </section>
+
+      <!-- Analytics -->
+      <section id="analytics" class="section-card">
+        <h2><i class="bi bi-graph-up"></i> Analytics</h2>
+        <p>Visualize performance and drill into audience insights.</p>
+        <ul class="feature-list">
+          <li><i class="bi bi-activity"></i> <strong>Overview:</strong> Views by day, Unique viewers, Total downloads; “Top documents”.</li>
+          <li><i class="bi bi-pin-map"></i> <strong>Per-Document:</strong> referrers, locations, device breakdown.</li>
+          <li><i class="bi bi-calendar3"></i> Time range: 7d / 30d / 90d / Custom.</li>
+          <li><i class="bi bi-emoji-frown"></i> No data: “No views in this range. Share your link to start seeing activity.”</li>
+        </ul>
+      </section>
+
+      <!-- Plans -->
+      <section id="plan" class="section-card">
+        <h2><i class="bi bi-credit-card"></i> Plan</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-bar-chart-steps"></i> Current plan + usage bars (Docs stored, Bandwidth, Team seats).</li>
+          <li><i class="bi bi-arrow-left-right"></i> Upgrade/downgrade with feature comparison.</li>
+        </ul>
+      </section>
+
+      <!-- Notifications -->
+      <section id="notifications" class="section-card">
+        <h2><i class="bi bi-bell"></i> Notifications</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-ui-checks-grid"></i> System & account notifications (document views, system updates).</li>
+          <li><i class="bi bi-toggles2"></i> Preferences: choose which alerts & delivery channel (email/in-app).</li>
+        </ul>
+      </section>
+
+      <!-- Help -->
+      <section id="help" class="section-card">
+        <h2><i class="bi bi-question-circle"></i> Help Center</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-headset"></i> <strong>Contact Support:</strong> open ticket form; SLA message in confirmation.</li>
+          <li><i class="bi bi-journal-text"></i> <strong>Knowledge Base:</strong> search articles for embeds, permissions, analytics.</li>
+        </ul>
+
+        <div class="help-cards">
+          <div class="help-card">
+            <h3><i class="bi bi-journal-text"></i> Knowledge Base</h3>
+            <p>Browse detailed guides and tutorials.</p>
+            <a href="#">View articles <i class="bi bi-arrow-right-short"></i></a>
+          </div>
+          <div class="help-card">
+            <h3><i class="bi bi-camera-video"></i> Video Tutorials</h3>
+            <p>Watch step-by-step videos to master the dashboard.</p>
+            <a href="#">Watch videos <i class="bi bi-arrow-right-short"></i></a>
+          </div>
+          <div class="help-card">
+            <h3><i class="bi bi-headset"></i> Contact Support</h3>
+            <p>Need help? Our team is here for you.</p>
+            <a href="#">Get help <i class="bi bi-arrow-right-short"></i></a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Profile -->
+      <section id="profile" class="section-card">
+        <h2><i class="bi bi-person"></i> Profile</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-person-badge"></i> Edit name, email; set communication preferences.</li>
+          <li><i class="bi bi-link-45deg"></i> Manage connected accounts (if enabled).</li>
+        </ul>
+      </section>
+
+      <!-- Password -->
+      <section id="password" class="section-card">
+        <h2><i class="bi bi-key"></i> Password</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-lock"></i> Change password using Current + New + Confirm.</li>
+          <li><i class="bi bi-shield-check"></i> Tip: Use a strong, unique password not used elsewhere.</li>
+        </ul>
+      </section>
+
+      <!-- Shortcuts -->
+      <section id="shortcuts" class="section-card">
+        <h2><i class="bi bi-lightning-charge"></i> Keyboard Shortcuts</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-command"></i> <strong>Global search:</strong> <code>Ctrl + K</code> focuses the header search anywhere.</li>
+          <li><i class="bi bi-mouse2"></i> <strong>Files list:</strong> <code>A</code> Select all, <code>Del</code> Delete selected, <code>L</code> Copy link (first selected).</li>
+        </ul>
+      </section>
+
+      <!-- QA Checklist -->
+      <section id="qa" class="section-card">
+        <h2><i class="bi bi-clipboard2-check"></i> QA Checklist</h2>
+        <ul class="feature-list">
+          <li><i class="bi bi-filetype-pdf"></i> Upload validator: MIME + extension + size, and server re-validates.</li>
+          <li><i class="bi bi-traffic-cone"></i> Link states: <code>public</code>, <code>private</code>, <code>revoked</code> — UI pill updates instantly.</li>
+          <li><i class="bi bi-arrow-repeat"></i> Regenerate rotates token; old token becomes revoked.</li>
+          <li><i class="bi bi-wifi-off"></i> Analytics counters exclude internal IPs (optional setting).</li>
+          <li><i class="bi bi-arrow-counterclockwise"></i> Bulk actions: optimistic UI with rollback + per-row toasts.</li>
+          <li><i class="bi bi-clipboard"></i> Copy buttons use <code>navigator.clipboard.writeText</code> with fallback.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
   <footer>
-    <p>&copy; 2024 OnePDF Vendor Dashboard</p>
+    <p>&copy; 2024 OnePDF Vendor Dashboard. All rights reserved.</p>
   </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const topbar = document.querySelector('.topbar');
+
+    const closeMenu = () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    };
+
+    menuBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+    overlay.addEventListener('click', closeMenu);
+
+    // Topbar shadow on scroll
+    const setTopbarShadow = () => {
+      if (window.scrollY > 4) topbar.classList.add('scrolled');
+      else topbar.classList.remove('scrolled');
+    };
+    setTopbarShadow();
+    window.addEventListener('scroll', setTopbarShadow);
+
+    // Smooth scrolling for nav links + active state update
+    document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (!el) return;
+        closeMenu();
+        window.scrollTo({ top: el.offsetTop - 90, behavior: 'smooth' });
+      });
+    });
+
+    const sections = document.querySelectorAll('.section-card');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop;
+        if (pageYOffset >= top - 120) current = sec.id;
+      });
+      navLinks.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href').slice(1) === current);
+      });
+    });
+  </script>
 </body>
 </html>
