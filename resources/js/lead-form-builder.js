@@ -13,12 +13,37 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentIndex = null;
 
   let fields = window.existingFields || [];
+  let reorderMode = false;
+  let dragIndex = null;
 
   function render() {
     canvas.innerHTML = '';
+    if (!fields.length) {
+      const empty = document.createElement('div');
+      empty.className = 'canvas-empty';
+      empty.id = 'canvas-empty';
+      empty.innerHTML = '<div class="mb-2"><i class="bi bi-mouse2"></i></div>Drag fields here to build your form.';
+      canvas.appendChild(empty);
+    }
     fields.forEach((field, index) => {
       const wrapper = document.createElement('div');
       wrapper.className = 'mb-3';
+      if (reorderMode) {
+        wrapper.draggable = true;
+        wrapper.addEventListener('dragstart', e => {
+          dragIndex = index;
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        wrapper.addEventListener('dragover', e => e.preventDefault());
+        wrapper.addEventListener('drop', e => {
+          e.preventDefault();
+          if (dragIndex === null) return;
+          const moved = fields.splice(dragIndex, 1)[0];
+          fields.splice(index, 0, moved);
+          dragIndex = null;
+          render();
+        });
+      }
 
       const label = document.createElement('label');
       label.textContent = field.label || field.type;
@@ -93,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
       canvas.appendChild(wrapper);
     });
     input.value = JSON.stringify(fields);
+    window.dispatchEvent(new CustomEvent('lfb:canvas:changed', { detail: { count: fields.length } }));
   }
 
   render();
@@ -109,6 +135,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const type = e.dataTransfer.getData('type');
     const field = { type, label: type.charAt(0).toUpperCase() + type.slice(1) };
     openModal(field);
+  });
+
+  window.addEventListener('lfb:action:clear', () => {
+    fields = [];
+    render();
+  });
+
+  window.addEventListener('lfb:action:toggleReorder', () => {
+    reorderMode = !reorderMode;
+    render();
   });
 
   function openModal(field, index = null) {
