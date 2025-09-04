@@ -438,7 +438,7 @@
     e.preventDefault();
     var fd = new FormData(this);
     fd.append('slug', slug);
-    fetch('/lead', {method:'POST', body: fd}).then(function(){ modal.style.display='none'; });
+    fetch('{{ route('public.lead.store') }}', {method:'POST', body: fd}).then(function(){ modal.style.display='none'; });
   });
   @endif
 })();
