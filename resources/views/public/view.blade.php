@@ -1,5 +1,6 @@
 {{-- resources/views/public/view.blade.php --}}
 @php
+  use Illuminate\Support\Str;
   $allowDownload  = !empty($perms['download']);
   $allowPrint     = !empty($perms['print']);
   $allowAnalytics = !empty($perms['analytics']);
@@ -184,8 +185,33 @@
     <h5 style="margin-top:0;margin-bottom:15px;">Please leave your details</h5>
     <form id="leadForm">
       @csrf
-      <div style="margin-bottom:10px;"><input name="name" type="text" placeholder="Name" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></div>
-      <div style="margin-bottom:10px;"><input name="email" type="email" placeholder="Email" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></div>
+      @foreach($leadFields as $field)
+        @php $name = $field['name'] ?? Str::slug($field['label'] ?? 'field', '_'); @endphp
+        <div style="margin-bottom:10px;">
+          @switch($field['type'])
+            @case('textarea')
+              <textarea name="{{ $name }}" placeholder="{{ $field['label'] ?? '' }}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></textarea>
+              @break
+            @case('select')
+              <select name="{{ $name }}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+                @foreach($field['options'] ?? [] as $opt)
+                  <option value="{{ $opt }}">{{ $opt }}</option>
+                @endforeach
+              </select>
+              @break
+            @case('radio')
+              @foreach($field['options'] ?? [] as $opt)
+                <label style="display:block;margin-bottom:4px;"><input type="radio" name="{{ $name }}" value="{{ $opt }}"> {{ $opt }}</label>
+              @endforeach
+              @break
+            @case('checkbox')
+              <label><input type="checkbox" name="{{ $name }}"> {{ $field['label'] ?? '' }}</label>
+              @break
+            @default
+              <input type="{{ $field['type'] }}" name="{{ $name }}" placeholder="{{ $field['label'] ?? '' }}" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;">
+          @endswitch
+        </div>
+      @endforeach
       <button type="submit" style="width:100%;padding:10px;border:0;background:#111;color:#fff;border-radius:4px;">Submit</button>
     </form>
   </div>

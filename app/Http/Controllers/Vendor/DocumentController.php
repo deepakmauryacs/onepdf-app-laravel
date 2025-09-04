@@ -275,7 +275,7 @@ class DocumentController extends Controller
     {
         $slug = (string) $request->query('doc', '');
 
-        $link = Link::where('slug', $slug)->firstOrFail();
+        $link = Link::where('slug', $slug)->with('leadForm')->firstOrFail();
 
         // permissions array (avoid shorthand ?:)
         $perms = [];
@@ -312,6 +312,7 @@ class DocumentController extends Controller
             'downloadUrl' => $downloadUrl,
             'perms'       => $perms,
             'leadEnabled' => !empty($link->lead_form_id),
+            'leadFields'  => $link->leadForm->fields ?? [],
         ]);
     }
 
