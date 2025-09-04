@@ -39,6 +39,13 @@
   thead th{color:#475569;font-weight:600;border-bottom:1px solid var(--line);background:#fff}
   tbody td{border-color:var(--line)}
 
+  /* S.No column */
+  .col-sno{width:76px;text-align:center}
+  .td-sno{text-align:center;font-weight:600;color:#0f172a}
+
+  /* Date column */
+  .col-date{width:180px;white-space:nowrap}
+
   /* Pagination */
   .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
   .pager-summary{color:#64748b;font-size:.9rem}
@@ -94,16 +101,20 @@
       <table class="table align-middle mb-0">
         <thead>
           <tr>
+            <th class="col-sno">S.No</th>
             <th>Name</th>
             <th>Email</th>
             <th>Document</th>
             <th>Form</th>
-            <th style="width:180px;">Date</th>
+            <th class="col-date">Date</th>
           </tr>
         </thead>
         <tbody>
           @forelse($leads as $lead)
             <tr>
+              <td class="td-sno">
+                {{ ($leads->firstItem() ?? 0) + $loop->index }}
+              </td>
               <td>{{ $lead->name }}</td>
               <td>{{ $lead->email }}</td>
               <td>{{ optional($lead->document)->filename }}</td>
@@ -112,7 +123,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="5" class="text-center py-4">No leads found.</td>
+              <td colspan="6" class="text-center py-4">No leads found.</td>
             </tr>
           @endforelse
         </tbody>
@@ -138,4 +149,3 @@ document.getElementById('searchInput').addEventListener('input', function(){
 });
 </script>
 @endpush
-
