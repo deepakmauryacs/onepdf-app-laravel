@@ -48,6 +48,8 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/partnerships', [HomeController::class, 'partnerships'])->name('partnerships');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
+Route::get('/docs', [HomeController::class, 'docs'])->name('docs');
+Route::get('/integrations', [HomeController::class, 'integrations'])->name('integrations');
 Route::post('/subscribe', [NewsletterSubscriptionController::class, 'store'])->name('subscribe');
 
 /* Contact + Partnerships (AJAX) */

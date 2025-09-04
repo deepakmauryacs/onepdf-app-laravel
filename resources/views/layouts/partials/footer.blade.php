@@ -27,8 +27,8 @@
       <div class="col-6 col-lg-2">
         <h6 class="mb-4">Resources</h6>
         <ul class="list-unstyled">
-          <li><a href="{{ url('/docs') }}">Documentation</a></li>
-          <li><a href="{{ url('/docs#api') }}">API &amp; Webhooks</a></li>
+          <li><a href="{{ route('docs') }}">Documentation</a></li>
+          <li><a href="{{ route('docs') }}#api">API &amp; Webhooks</a></li>
           <li><a href="{{ url('/#demo') }}">Embed Demo</a></li>
           <li><a href="{{ url('/#faq') }}">FAQ</a></li>
         </ul>

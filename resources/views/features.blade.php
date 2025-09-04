@@ -333,7 +333,7 @@
       </div>
 
       <div class="text-center mt-5">
-        <a href="{{ url('/integrations') }}" class="btn btn-brand">View All Integrations</a>
+        <a href="{{ route('integrations') }}" class="btn btn-brand">View All Integrations</a>
       </div>
     </div>
   </section>
@@ -346,7 +346,7 @@
           <h2 class="mb-4">Ready to try PDFOneLink?</h2>
           <p class="text-muted mb-4">Start sharing your PDFs securely today. No credit card required.</p>
           <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <a href="{{ url('/registration') }}" class="btn btn-brand btn-lg">Get Started for Free</a>
+            <a href="{{ route('register') }}" class="btn btn-brand btn-lg">Get Started for Free</a>
             <a href="javascript:void(0)" class="btn btn-ghost btn-lg">Schedule a Demo</a>
           </div>
         </div>
