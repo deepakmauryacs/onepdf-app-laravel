@@ -12,5 +12,11 @@
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
+  },
+  "resources/js/lead-form-builder.js": {
+    "file": "assets/lead-form-builder-BETNKzhc.js",
+    "name": "lead-form-builder",
+    "src": "resources/js/lead-form-builder.js",
+    "isEntry": true
   }
 }
