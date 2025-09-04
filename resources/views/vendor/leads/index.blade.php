@@ -94,40 +94,61 @@
             </form>
           </div>
         </div>
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <button id="exportBtn" class="btn btn-outline-primary btn-sm">Export</button>
+          <button id="bulkDeleteBtn" form="bulkDeleteForm" class="btn btn-outline-danger btn-sm">Delete Selected</button>
+        </div>
+      </div>
+      <div id="exportProgress" class="progress mt-2 d-none">
+        <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
 
     <div class="table-responsive">
-      <table class="table align-middle mb-0">
-        <thead>
-          <tr>
-            <th class="col-sno">S.No</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Document</th>
-            <th>Form</th>
-            <th class="col-date">Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse($leads as $lead)
+      <form id="bulkDeleteForm" method="POST" action="{{ route('vendor.leads.bulkDestroy') }}">
+        @csrf
+        @method('DELETE')
+        <table class="table align-middle mb-0">
+          <thead>
             <tr>
-              <td class="td-sno">
-                {{ ($leads->firstItem() ?? 0) + $loop->index }}
-              </td>
-              <td>{{ $lead->name }}</td>
-              <td>{{ $lead->email }}</td>
-              <td>{{ optional($lead->document)->filename }}</td>
-              <td>{{ optional($lead->leadForm)->name }}</td>
-              <td>{{ $lead->created_at->format('Y-m-d H:i') }}</td>
+              <th><input type="checkbox" id="selectAll"></th>
+              <th class="col-sno">S.No</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Document</th>
+              <th>Form</th>
+              <th class="col-date">Date</th>
+              <th>Actions</th>
             </tr>
-          @empty
-            <tr>
-              <td colspan="6" class="text-center py-4">No leads found.</td>
-            </tr>
-          @endforelse
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @forelse($leads as $lead)
+              <tr>
+                <td><input type="checkbox" class="row-check" name="ids[]" value="{{ $lead->id }}"></td>
+                <td class="td-sno">
+                  {{ ($leads->firstItem() ?? 0) + $loop->index }}
+                </td>
+                <td>{{ $lead->name }}</td>
+                <td>{{ $lead->email }}</td>
+                <td>{{ optional($lead->document)->filename }}</td>
+                <td>{{ optional($lead->leadForm)->name }}</td>
+                <td>{{ $lead->created_at->format('Y-m-d H:i') }}</td>
+                <td>
+                  <form method="POST" action="{{ route('vendor.leads.destroy', $lead) }}" onsubmit="return confirm('Delete this lead?');" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm text-danger"><i class="bi bi-trash"></i></button>
+                  </form>
+                </td>
+              </tr>
+            @empty
+              <tr>
+                <td colspan="8" class="text-center py-4">No leads found.</td>
+              </tr>
+            @endforelse
+          </tbody>
+        </table>
+      </form>
     </div>
   </div>
 
@@ -146,6 +167,40 @@
 <script>
 document.getElementById('searchInput').addEventListener('input', function(){
   document.getElementById('searchForm').submit();
+});
+
+document.getElementById('selectAll').addEventListener('change', function(){
+  document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
+});
+
+document.getElementById('exportBtn').addEventListener('click', function(e){
+  e.preventDefault();
+  const barWrap = document.getElementById('exportProgress');
+  const bar = barWrap.querySelector('.progress-bar');
+  bar.style.width = '0%';
+  barWrap.classList.remove('d-none');
+  let progress = 0;
+  const timer = setInterval(() => {
+    progress = Math.min(progress + 10, 90);
+    bar.style.width = progress + '%';
+  }, 200);
+
+  fetch('{{ route('vendor.leads.export') }}')
+    .then(r => r.blob())
+    .then(blob => {
+      clearInterval(timer);
+      bar.style.width = '100%';
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'leads.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => {
+        barWrap.classList.add('d-none');
+      }, 500);
+    });
 });
 </script>
 @endpush
