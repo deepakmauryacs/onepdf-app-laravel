@@ -102,6 +102,9 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
 
     // Leads
     Route::get('leads', [VendorLeadController::class, 'index'])->name('vendor.leads.index');
+    Route::delete('leads', [VendorLeadController::class, 'bulkDestroy'])->name('vendor.leads.bulkDestroy');
+    Route::delete('leads/{lead}', [VendorLeadController::class, 'destroy'])->name('vendor.leads.destroy');
+    Route::get('leads/export', [VendorLeadController::class, 'export'])->name('vendor.leads.export');
     Route::get('lead-forms', [VendorLeadFormController::class, 'index'])->name('vendor.lead_forms.index');
     Route::post('lead-forms', [VendorLeadFormController::class, 'store'])->name('vendor.lead_forms.store');
     Route::get('lead-forms/{lead_form}/edit', [VendorLeadFormController::class, 'edit'])->name('vendor.lead_forms.edit');
