@@ -11,6 +11,12 @@ class LeadCaptureController extends Controller
 {
     public function store(Request $request)
     {
+        // Normalize empty email values to null so the email rule does not fail when
+        // the field is left blank on the lead form.
+        $request->merge([
+            'email' => $request->email ?: null,
+        ]);
+
         $request->validate([
             'slug' => 'required|string',
             'name' => 'required|string|max:255',
