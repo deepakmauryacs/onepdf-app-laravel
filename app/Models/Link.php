@@ -15,6 +15,7 @@ class Link extends Model
         'user_id',
         'slug',
         'permissions',
+        'lead_form_id',
         'created_at',
     ];
 
@@ -31,5 +32,10 @@ class Link extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function leadForm()
+    {
+        return $this->belongsTo(LeadForm::class);
     }
 }

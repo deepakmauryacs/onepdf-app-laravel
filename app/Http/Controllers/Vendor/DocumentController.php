@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Link;
 use App\Models\LinkAnalytics;
+use App\Models\LeadForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -17,12 +18,14 @@ class DocumentController extends Controller
 {
     public function index()
     {
-        return view('vendor.files.index');
+        $forms = LeadForm::where('user_id', Auth::id())->get(['id','name']);
+        return view('vendor.files.index', ['leadForms' => $forms]);
     }
 
     public function manage()
     {
-        return view('vendor.files.manage');
+        $forms = LeadForm::where('user_id', Auth::id())->get(['id','name']);
+        return view('vendor.files.manage', ['leadForms' => $forms]);
     }
 
     public function list()
@@ -83,10 +86,12 @@ class DocumentController extends Controller
             ->firstOrFail();
 
         $url = $doc->link ? URL::to('/view').'?doc='.$doc->link->slug : null;
+        $forms = LeadForm::where('user_id', Auth::id())->get(['id','name']);
 
         return view('vendor.files.show', [
-            'doc' => $doc,
-            'url' => $url,
+            'doc'       => $doc,
+            'url'       => $url,
+            'leadForms' => $forms,
         ]);
     }
 
@@ -189,10 +194,23 @@ class DocumentController extends Controller
      */
     public function generateLink(Request $request)
     {
-        $request->validate(['id' => 'required|integer']);
+        $request->validate([
+            'id' => 'required|integer',
+            'lead_form_id' => 'nullable|integer',
+        ]);
         $doc = Document::where('id', $request->id)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+
+        $leadFormId = $request->input('lead_form_id');
+        if ($leadFormId) {
+            $valid = LeadForm::where('id', $leadFormId)
+                ->where('user_id', Auth::id())
+                ->exists();
+            if (!$valid) {
+                abort(403);
+            }
+        }
 
         // Parse permissions from request (optional)
         $permJson = (string) $request->input('permissions', '{}');
@@ -211,8 +229,9 @@ class DocumentController extends Controller
 
         // If your Link model doesn't cast 'permissions' => 'array',
         // encode manually to ensure proper storage into JSON column.
-        $link->permissions = json_encode($permArr, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        $link->created_at  = $link->created_at ?: now();
+        $link->permissions  = json_encode($permArr, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $link->lead_form_id = $leadFormId;
+        $link->created_at   = $link->created_at ?: now();
         $link->save();
 
         // Build pretty viewer URL: /view?doc=SLUG
@@ -292,6 +311,7 @@ class DocumentController extends Controller
             'pdfUrl'      => $pdfUrl,
             'downloadUrl' => $downloadUrl,
             'perms'       => $perms,
+            'leadEnabled' => !empty($link->lead_form_id),
         ]);
     }
 

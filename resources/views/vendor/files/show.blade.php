@@ -19,6 +19,13 @@
     <p><strong>Size:</strong> {{ number_format($doc->size / 1024, 2) }} KB</p>
     <p><strong>Type:</strong> PDF</p>
     <div class="my-3">
+      <label for="leadFormSelect" class="form-label">Lead form</label>
+      <select id="leadFormSelect" class="form-select w-auto mb-2">
+        <option value="">None</option>
+        @foreach($leadForms as $form)
+          <option value="{{ $form->id }}">{{ $form->name }}</option>
+        @endforeach
+      </select>
       <button id="btnGenerate" type="button" class="btn btn-secondary">Generate Link</button>
     </div>
     <div class="input-group mb-3">
@@ -32,13 +39,14 @@
 @push('scripts')
 <script>
   document.getElementById('btnGenerate').addEventListener('click', function(){
+    const lead = document.getElementById('leadFormSelect').value;
     fetch(@json(route('vendor.files.generate')), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-TOKEN': @json(csrf_token())
       },
-      body: JSON.stringify({id: {{ $doc->id }}})
+      body: JSON.stringify({id: {{ $doc->id }}, lead_form_id: lead})
     }).then(r => r.json()).then(data => {
       if(data.url){
         document.getElementById('linkInput').value = data.url;

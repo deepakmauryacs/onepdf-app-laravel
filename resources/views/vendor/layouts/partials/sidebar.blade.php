@@ -27,6 +27,12 @@
     <a class="nav-link {{ request()->routeIs('vendor.analytics.*') ? 'active' : '' }}" href="{{ route('vendor.analytics.index') }}">
       <i class="bi bi-bar-chart"></i> <span>Analytics</span>
     </a>
+    <a class="nav-link {{ request()->routeIs('vendor.leads.index') ? 'active' : '' }}" href="{{ route('vendor.leads.index') }}">
+      <i class="bi bi-person-lines-fill"></i> <span>Leads</span>
+    </a>
+    <a class="nav-link {{ request()->routeIs('vendor.lead_forms.index') ? 'active' : '' }}" href="{{ route('vendor.lead_forms.index') }}">
+      <i class="bi bi-ui-checks-grid"></i> <span>Lead Forms</span>
+    </a>
     <a class="nav-link {{ request()->routeIs('vendor.plan.index') ? 'active' : '' }}" href="{{ route('vendor.plan.index') }}">
       <i class="bi bi-gem"></i> <span>Plan</span>
     </a>
