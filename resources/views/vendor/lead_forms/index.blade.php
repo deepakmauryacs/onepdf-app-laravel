@@ -21,6 +21,7 @@
           <tr>
             <th>Name</th>
             <th>Created</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -28,10 +29,11 @@
             <tr>
               <td>{{ $form->name }}</td>
               <td>{{ $form->created_at->format('Y-m-d H:i') }}</td>
+              <td><a href="{{ route('vendor.lead_forms.edit', $form) }}" class="btn btn-sm btn-secondary">Edit</a></td>
             </tr>
           @empty
             <tr>
-              <td colspan="2" class="text-center py-4">No forms yet.</td>
+              <td colspan="3" class="text-center py-4">No forms yet.</td>
             </tr>
           @endforelse
         </tbody>

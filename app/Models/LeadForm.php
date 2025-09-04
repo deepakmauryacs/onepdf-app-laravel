@@ -12,5 +12,10 @@ class LeadForm extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'fields',
+    ];
+
+    protected $casts = [
+        'fields' => 'array',
     ];
 }
