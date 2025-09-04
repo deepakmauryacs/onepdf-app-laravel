@@ -324,12 +324,12 @@
       </div>
 
       <div class="d-flex flex-wrap justify-content-center align-items-center">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/slack/slack-original.svg" class="integration-logo" alt="Slack">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" class="integration-logo" alt="Google">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/microsoft/microsoft-original.svg" class="integration-logo" alt="Microsoft">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/salesforce/salesforce-original.svg" class="integration-logo" alt="Salesforce">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/wordpress/wordpress-original.svg" class="integration-logo" alt="WordPress">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/zapier/zapier-original.svg" class="integration-logo" alt="Zapier">
+        <img src="{{ asset('assets/brand-svg/slack-original.svg') }}" class="integration-logo" alt="Slack">
+        <img src="{{ asset('assets/brand-svg/google-original.svg') }}" class="integration-logo" alt="Google">
+        <img src="{{ asset('assets/brand-svg/microsoft.svg') }}" class="integration-logo" alt="Microsoft">
+        <img src="{{ asset('assets/brand-svg/salesforce-original.svg') }}" class="integration-logo" alt="Salesforce">
+        <img src="{{ asset('assets/brand-svg/wordpress-original.svg') }}" class="integration-logo" alt="WordPress">
+        <img src="{{ asset('assets/brand-svg/zapier-icon.svg') }}" class="integration-logo" alt="Zapier">
       </div>
 
       <div class="text-center mt-5">

@@ -54,11 +54,11 @@
           </div>
 
           <div class="logo-strip mt-4">
-            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/slack/slack-original.svg" alt="Slack">
-            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
-            <img src="https://www.svgrepo.com/show/132023/microsoft.svg" alt="Microsoft">
-            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/wordpress/wordpress-original.svg" alt="WordPress">
-            <img src="https://www.svgrepo.com/show/354596/zapier-icon.svg" alt="Zapier">
+            <img src="{{ asset('assets/brand-svg/slack-original.svg') }}" alt="Slack">
+            <img src="{{ asset('assets/brand-svg/google-original.svg') }}" alt="Google">
+            <img src="{{ asset('assets/brand-svg/microsoft.svg') }}" alt="Microsoft">
+            <img src="{{ asset('assets/brand-svg/wordpress-original.svg') }}" alt="WordPress">
+            <img src="{{ asset('assets/brand-svg/zapier-icon.svg') }}" alt="Zapier">
           </div>
         </div>
 
