@@ -2,6 +2,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const palette = document.getElementById('field-palette');
   const canvas = document.getElementById('builder-canvas');
   const input = document.getElementById('fields-input');
+  const modalEl = document.getElementById('fieldModal');
+  const modal = new window.bootstrap.Modal(modalEl);
+  const form = modalEl.querySelector('form');
+  const labelInput = document.getElementById('field-label');
+  const optionsWrapper = document.getElementById('options-wrapper');
+  const optionsInput = document.getElementById('field-options');
+
+  let currentField = null;
+  let currentIndex = null;
 
   let fields = window.existingFields || [];
 
@@ -65,16 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
       edit.className = 'btn btn-sm btn-secondary me-1';
       edit.textContent = 'Edit';
       edit.addEventListener('click', () => {
-        const newLabel = prompt('Field label', field.label);
-        if (newLabel !== null) field.label = newLabel;
-        if (['select', 'radio'].includes(field.type)) {
-          const current = (field.options || []).join(', ');
-          const opts = prompt('Options (comma separated)', current);
-          if (opts !== null) {
-            field.options = opts.split(',').map(o => o.trim()).filter(o => o);
-          }
-        }
-        render();
+        openModal(field, index);
       });
       btnGroup.appendChild(edit);
 
@@ -107,13 +107,41 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.addEventListener('drop', e => {
     e.preventDefault();
     const type = e.dataTransfer.getData('type');
-    const label = prompt('Field label', type.charAt(0).toUpperCase() + type.slice(1)) || type;
-    const field = { type, label };
-    if (['select', 'radio'].includes(type)) {
-      const opts = prompt('Options (comma separated)', 'Option 1, Option 2');
-      field.options = opts ? opts.split(',').map(o => o.trim()).filter(o => o) : [];
+    const field = { type, label: type.charAt(0).toUpperCase() + type.slice(1) };
+    openModal(field);
+  });
+
+  function openModal(field, index = null) {
+    currentField = field;
+    currentIndex = index;
+    labelInput.value = field.label || '';
+    if (['select', 'radio'].includes(field.type)) {
+      optionsWrapper.style.display = '';
+      optionsInput.value = (field.options || []).join(', ');
+    } else {
+      optionsWrapper.style.display = 'none';
+      optionsInput.value = '';
     }
-    fields.push(field);
+    modal.show();
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    currentField.label = labelInput.value || currentField.type;
+    if (['select', 'radio'].includes(currentField.type)) {
+      currentField.options = optionsInput.value
+        .split(',')
+        .map(o => o.trim())
+        .filter(o => o);
+    } else {
+      delete currentField.options;
+    }
+    if (currentIndex === null) {
+      fields.push(currentField);
+    } else {
+      fields[currentIndex] = currentField;
+    }
+    modal.hide();
     render();
   });
 });
