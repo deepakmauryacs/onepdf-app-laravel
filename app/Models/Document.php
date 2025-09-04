@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Lead;
 
 class Document extends Model
 {
@@ -25,6 +26,11 @@ class Document extends Model
     public function link()
     {
         return $this->hasOne(\App\Models\Link::class, 'document_id');
+    }
+
+    public function leads()
+    {
+        return $this->hasMany(Lead::class);
     }
 
 

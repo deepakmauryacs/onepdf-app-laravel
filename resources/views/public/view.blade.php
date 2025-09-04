@@ -178,6 +178,19 @@
   </main>
 </div>
 
+@if($leadEnabled)
+<div id="leadModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:1000;">
+  <div style="background:#fff;color:#000;padding:20px;border-radius:8px;width:90%;max-width:400px;">
+    <h5 style="margin-top:0;margin-bottom:15px;">Please leave your details</h5>
+    <form id="leadForm">
+      <div style="margin-bottom:10px;"><input name="name" type="text" placeholder="Name" required style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></div>
+      <div style="margin-bottom:10px;"><input name="email" type="email" placeholder="Email" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></div>
+      <button type="submit" style="width:100%;padding:10px;border:0;background:#111;color:#fff;border-radius:4px;">Submit</button>
+    </form>
+  </div>
+</div>
+@endif
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.js"></script>
 <script>
@@ -417,6 +430,17 @@
     }
   });
   document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+  @if($leadEnabled)
+  var modal = document.getElementById('leadModal');
+  setTimeout(function(){ modal.style.display='flex'; }, 5000);
+  document.getElementById('leadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var fd = new FormData(this);
+    fd.append('slug', slug);
+    fetch('/lead', {method:'POST', body: fd}).then(function(){ modal.style.display='none'; });
+  });
+  @endif
 })();
 </script>
 </body>

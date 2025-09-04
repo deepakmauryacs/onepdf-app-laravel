@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LeadCaptureController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\PartnershipsController;
 use App\Http\Controllers\Vendor\AnalyticsController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\Vendor\NotificationController;
 use App\Http\Controllers\Vendor\PasswordController;
 use App\Http\Controllers\Vendor\PlanController;
 use App\Http\Controllers\Vendor\ProfileController;
+use App\Http\Controllers\Vendor\LeadController as VendorLeadController;
+use App\Http\Controllers\Vendor\LeadFormController as VendorLeadFormController;
 use Illuminate\Support\Facades\Route;
 
 /* ------------------------- Guest (auth) ------------------------- */
@@ -96,6 +99,11 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
 
     // Notifications
     Route::get('notifications', [NotificationController::class, 'index'])->name('vendor.notifications.index');
+
+    // Leads
+    Route::get('leads', [VendorLeadController::class, 'index'])->name('vendor.leads.index');
+    Route::get('lead-forms', [VendorLeadFormController::class, 'index'])->name('vendor.lead_forms.index');
+    Route::post('lead-forms', [VendorLeadFormController::class, 'store'])->name('vendor.lead_forms.store');
 });
 
 /* ------------------------- Admin dashboard ------------------------- */
@@ -115,6 +123,11 @@ Route::get('/get-pdf', [DocumentController::class, 'streamBySlug'])->name('publi
 // 🔹 NEW: analytics endpoint used by the viewer JS
 Route::post('/track', [DocumentController::class, 'track'])
     ->name('public.track')
+    ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+
+// Lead capture
+Route::post('/lead', [LeadCaptureController::class, 'store'])
+    ->name('public.lead.store')
     ->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
 
 /* Optional legacy */

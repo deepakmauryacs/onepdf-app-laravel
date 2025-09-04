@@ -204,6 +204,15 @@
             <i class="bi bi-lightning-charge-fill me-1"></i>
             Choose what viewers can do before generating the link.
           </div>
+          <div class="mb-3">
+            <label for="leadFormSelect" class="form-label">Lead form</label>
+            <select id="leadFormSelect" class="form-select">
+              <option value="">None</option>
+              @foreach($leadForms as $form)
+                <option value="{{ $form->id }}">{{ $form->name }}</option>
+              @endforeach
+            </select>
+          </div>
 
           <div class="d-grid gap-3">
             <label class="d-flex align-items-center gap-2">
@@ -493,6 +502,7 @@
       modalEl.dataset.id = btn.dataset.id;
       modalEl._genBtn = btn;
       modalEl._holder = btn.closest('td').querySelector('.link-holder');
+      document.getElementById('leadFormSelect').value='';
       new bootstrap.Modal('#permModal').show();
     }
 
@@ -540,6 +550,8 @@
     fd.append('id', id);
     fd.append('_token', csrf);
     fd.append('permissions', JSON.stringify(perms));
+    const leadId = document.getElementById('leadFormSelect').value;
+    if(leadId) fd.append('lead_form_id', leadId);
 
     const modal = bootstrap.Modal.getInstance('#permModal'); 
     modal.hide();
