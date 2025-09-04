@@ -55,4 +55,18 @@ class LeadFormController extends Controller
 
         return redirect()->route('vendor.lead_forms.index');
     }
+
+    public function destroy(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer',
+        ]);
+
+        LeadForm::where('user_id', Auth::id())
+            ->whereIn('id', $data['ids'])
+            ->delete();
+
+        return redirect()->route('vendor.lead_forms.index');
+    }
 }
