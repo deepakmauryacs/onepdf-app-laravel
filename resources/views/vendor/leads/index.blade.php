@@ -34,10 +34,19 @@
   .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
   .search-input{padding-left:36px;border-radius:12px;border:1px solid var(--line);height:42px}
 
+  /* Make buttons same height as input */
+  .control-42{
+    height:42px;
+    padding:0 14px !important;
+    border-radius:12px !important;
+    display:inline-flex;align-items:center;gap:8px;
+    line-height:1;
+  }
+
   table.table{margin:0}
   .table td, .table th{vertical-align:middle}
-  thead th{color:#475569;font-weight:600;border-bottom:1px solid var(--line);background:#fff}
-  tbody td{border-color:var(--line)}
+  thead th{color:#475569;font-weight:600;border-bottom:1px solid var(--line);background:#fff;padding:14px 16px}
+  tbody td{border-color:var(--line);padding:14px 16px} /* comfortable row height */
 
   /* S.No column */
   .col-sno{width:76px;text-align:center}
@@ -45,6 +54,9 @@
 
   /* Date column */
   .col-date{width:180px;white-space:nowrap}
+
+  /* Actions */
+  .actions .btn{padding:0 !important;width:34px;height:34px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center}
 
   /* Pagination */
   .pagination-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -95,11 +107,15 @@
           </div>
         </div>
         <div class="ms-auto d-flex align-items-center gap-2">
-          <button id="exportBtn" class="btn btn-outline-primary btn-sm">Export</button>
-          <button id="bulkDeleteBtn" form="bulkDeleteForm" class="btn btn-outline-danger btn-sm">Delete Selected</button>
+          <button id="exportBtn" class="btn btn-outline-primary btn-sm control-42">
+            <i class="bi bi-download"></i> <span class="d-none d-sm-inline">Export</span>
+          </button>
+          <button id="bulkDeleteBtn" form="bulkDeleteForm" class="btn btn-outline-danger btn-sm control-42" disabled>
+            <i class="bi bi-trash"></i> <span class="d-none d-sm-inline">Delete Selected</span>
+          </button>
         </div>
       </div>
-      <div id="exportProgress" class="progress mt-2 d-none">
+      <div id="exportProgress" class="progress mt-2 d-none" style="height:8px;border-radius:8px;">
         <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
@@ -108,10 +124,10 @@
       <form id="bulkDeleteForm" method="POST" action="{{ route('vendor.leads.bulkDestroy') }}">
         @csrf
         @method('DELETE')
-        <table class="table align-middle mb-0">
+        <table class="table table-hover align-middle mb-0">
           <thead>
             <tr>
-              <th><input type="checkbox" id="selectAll"></th>
+              <th style="width:48px;"><input type="checkbox" id="selectAll"></th>
               <th class="col-sno">S.No</th>
               <th>Name</th>
               <th>Email</th>
@@ -133,11 +149,13 @@
                 <td>{{ optional($lead->document)->filename }}</td>
                 <td>{{ optional($lead->leadForm)->name }}</td>
                 <td>{{ $lead->created_at->format('Y-m-d H:i') }}</td>
-                <td>
+                <td class="actions">
                   <form method="POST" action="{{ route('vendor.leads.destroy', $lead) }}" onsubmit="return confirm('Delete this lead?');" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-sm text-danger"><i class="bi bi-trash"></i></button>
+                    <button type="submit" class="btn btn-light border text-danger" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
                   </form>
                 </td>
               </tr>
@@ -165,13 +183,22 @@
 
 @push('scripts')
 <script>
-document.getElementById('searchInput').addEventListener('input', function(){
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', function(){
   document.getElementById('searchForm').submit();
 });
 
-document.getElementById('selectAll').addEventListener('change', function(){
+const selectAll = document.getElementById('selectAll');
+const bulkBtn = document.getElementById('bulkDeleteBtn');
+function updateBulkBtnState(){
+  const anyChecked = [...document.querySelectorAll('.row-check')].some(cb => cb.checked);
+  bulkBtn.disabled = !anyChecked;
+}
+selectAll.addEventListener('change', function(){
   document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
+  updateBulkBtnState();
 });
+document.querySelectorAll('.row-check').forEach(cb => cb.addEventListener('change', updateBulkBtnState));
 
 document.getElementById('exportBtn').addEventListener('click', function(e){
   e.preventDefault();
@@ -181,9 +208,9 @@ document.getElementById('exportBtn').addEventListener('click', function(e){
   barWrap.classList.remove('d-none');
   let progress = 0;
   const timer = setInterval(() => {
-    progress = Math.min(progress + 10, 90);
+    progress = Math.min(progress + 12, 90);
     bar.style.width = progress + '%';
-  }, 200);
+  }, 180);
 
   fetch('{{ route('vendor.leads.export') }}')
     .then(r => r.blob())
@@ -197,9 +224,12 @@ document.getElementById('exportBtn').addEventListener('click', function(e){
       document.body.appendChild(a);
       a.click();
       a.remove();
-      setTimeout(() => {
-        barWrap.classList.add('d-none');
-      }, 500);
+      setTimeout(() => barWrap.classList.add('d-none'), 500);
+    })
+    .catch(() => {
+      clearInterval(timer);
+      barWrap.classList.add('d-none');
+      alert('Export failed. Please try again.');
     });
 });
 </script>
