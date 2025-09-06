@@ -129,7 +129,6 @@
             <tr>
               <th style="width:48px;"><input type="checkbox" id="selectAll"></th>
               <th class="col-sno">S.No</th>
-              <th>Name</th>
               <th>Email</th>
               <th>Document</th>
               <th>Form</th>
@@ -144,7 +143,6 @@
                 <td class="td-sno">
                   {{ ($leads->firstItem() ?? 0) + $loop->index }}
                 </td>
-                <td>{{ $lead->name }}</td>
                 <td>{{ $lead->email }}</td>
                 <td>{{ optional($lead->document)->filename }}</td>
                 <td>{{ optional($lead->leadForm)->name }}</td>
@@ -162,7 +160,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="8" class="text-center py-4">No leads found.</td>
+                <td colspan="7" class="text-center py-4">No leads found.</td>
               </tr>
             @endforelse
           </tbody>
