@@ -15,6 +15,11 @@ class Lead extends Model
         'lead_form_id',
         'name',
         'email',
+        'data',
+    ];
+
+    protected $casts = [
+        'data' => 'array',
     ];
 
     public function document()

@@ -31,11 +31,14 @@ class LeadCaptureController extends Controller
             return response()->json(['error' => 'Leads table not found'], 500);
         }
 
+        $data = $request->except(['slug', 'name', 'email']);
+
         $lead = Lead::create([
             'document_id'  => $link->document_id,
             'lead_form_id' => $link->lead_form_id,
             'name'         => $request->name ?? '',
             'email'        => $request->email,
+            'data'         => $data,
         ]);
 
         // Also persist the lead data to a JSON file for easy export/viewing.

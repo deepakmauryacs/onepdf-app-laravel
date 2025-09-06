@@ -106,4 +106,35 @@ class LeadCaptureTest extends TestCase
         $data = json_decode(Storage::disk('local')->get('leads.json'), true);
         $this->assertEquals('John Doe', $data[0]['name']);
     }
+
+    public function test_dynamic_fields_are_stored_as_json(): void
+    {
+        Storage::fake('local');
+
+        $user = User::factory()->create();
+        $document = Document::create([
+            'user_id' => $user->id,
+            'filename' => 'test.pdf',
+            'filepath' => 'test.pdf',
+            'size' => 100,
+        ]);
+        $link = Link::create([
+            'document_id' => $document->id,
+            'user_id' => $user->id,
+            'slug' => Str::random(10),
+            'permissions' => json_encode([]),
+        ]);
+
+        $this->postJson('/lead', [
+            'slug' => $link->slug,
+            'company' => 'Acme',
+            'phone' => '1234567890',
+        ])->assertOk();
+
+        $this->assertDatabaseHas('leads', [
+            'document_id' => $document->id,
+            'data->company' => 'Acme',
+            'data->phone' => '1234567890',
+        ]);
+    }
 }
