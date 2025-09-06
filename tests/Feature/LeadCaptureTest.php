@@ -7,6 +7,7 @@ use App\Models\Link;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class LeadCaptureTest extends TestCase
@@ -15,7 +16,8 @@ class LeadCaptureTest extends TestCase
 
     public function test_lead_can_be_stored_with_blank_email(): void
     {
-        // Create a user, document and link for the lead capture.
+        Storage::fake('local');
+
         $user = User::factory()->create();
         $document = Document::create([
             'user_id' => $user->id,
@@ -46,6 +48,8 @@ class LeadCaptureTest extends TestCase
 
     public function test_lead_can_be_stored_without_name(): void
     {
+        Storage::fake('local');
+
         $user = User::factory()->create();
         $document = Document::create([
             'user_id' => $user->id,
@@ -72,5 +76,34 @@ class LeadCaptureTest extends TestCase
             'name' => '',
             'email' => 'john@example.com',
         ]);
+    }
+
+    public function test_lead_is_written_to_json_file(): void
+    {
+        Storage::fake('local');
+
+        $user = User::factory()->create();
+        $document = Document::create([
+            'user_id' => $user->id,
+            'filename' => 'test.pdf',
+            'filepath' => 'test.pdf',
+            'size' => 100,
+        ]);
+        $link = Link::create([
+            'document_id' => $document->id,
+            'user_id' => $user->id,
+            'slug' => Str::random(10),
+            'permissions' => json_encode([]),
+        ]);
+
+        $this->postJson('/lead', [
+            'slug' => $link->slug,
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+        ])->assertOk();
+
+        Storage::disk('local')->assertExists('leads.json');
+        $data = json_decode(Storage::disk('local')->get('leads.json'), true);
+        $this->assertEquals('John Doe', $data[0]['name']);
     }
 }

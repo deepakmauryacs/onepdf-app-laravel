@@ -6,6 +6,7 @@ use App\Models\Lead;
 use App\Models\Link;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class LeadCaptureController extends Controller
 {
@@ -30,12 +31,20 @@ class LeadCaptureController extends Controller
             return response()->json(['error' => 'Leads table not found'], 500);
         }
 
-        Lead::create([
+        $lead = Lead::create([
             'document_id'  => $link->document_id,
             'lead_form_id' => $link->lead_form_id,
             'name'         => $request->name ?? '',
             'email'        => $request->email,
         ]);
+
+        // Also persist the lead data to a JSON file for easy export/viewing.
+        $leads = [];
+        if (Storage::disk('local')->exists('leads.json')) {
+            $leads = json_decode(Storage::disk('local')->get('leads.json'), true) ?? [];
+        }
+        $leads[] = $lead->toArray();
+        Storage::disk('local')->put('leads.json', json_encode($leads));
 
         return response()->json(['success' => true]);
     }
