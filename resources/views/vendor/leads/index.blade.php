@@ -149,7 +149,8 @@
                 <td>{{ optional($lead->document)->filename }}</td>
                 <td>{{ optional($lead->leadForm)->name }}</td>
                 <td>{{ $lead->created_at->format('Y-m-d H:i') }}</td>
-                <td class="actions">
+                <td>
+                  <button type="button" class="btn btn-sm text-primary view-lead" data-lead='@json($lead->toArray())'><i class="bi bi-eye"></i></button>
                   <form method="POST" action="{{ route('vendor.leads.destroy', $lead) }}" onsubmit="return confirm('Delete this lead?');" class="d-inline">
                     @csrf
                     @method('DELETE')
@@ -178,6 +179,20 @@
       {{ $leads->onEachSide(1)->links('pagination::bootstrap-5') }}
     </div>
   </nav>
+</div>
+<!-- Lead Data Modal -->
+<div class="modal fade" id="leadModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Lead Data</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <pre id="leadModalBody" class="mb-0"></pre>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -231,6 +246,15 @@ document.getElementById('exportBtn').addEventListener('click', function(e){
       barWrap.classList.add('d-none');
       alert('Export failed. Please try again.');
     });
+});
+
+document.querySelectorAll('.view-lead').forEach(btn => {
+  btn.addEventListener('click', function(){
+    const data = JSON.parse(this.dataset.lead);
+    document.getElementById('leadModalBody').textContent = JSON.stringify(data, null, 2);
+    const modal = new bootstrap.Modal(document.getElementById('leadModal'));
+    modal.show();
+  });
 });
 </script>
 @endpush
