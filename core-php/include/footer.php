@@ -2,7 +2,7 @@
     <div class="container">
       <div class="row g-5">
         <div class="col-md-6 col-lg-4">
-          <h5 class="mb-4"><i class="bi bi-file-earmark-pdf me-2"></i>PDFOneLink</h5>
+          <h5 class="mb-4"><i class="bi bi-file-earmark-pdf me-2"></i>OneLinkPDF</h5>
           <p class="mb-4">Secure PDF upload, sharing, permissions, and analytics — all in one link.</p>
 
           <div class="social-links">
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="copyright">© <span id="y"></span> PDFOneLink. All rights reserved.</p>
+        <p class="copyright">© <span id="y"></span> OneLinkPDF. All rights reserved.</p>
         <div class="legal-links">
           <a href="privacy.php">Privacy Policy</a>
           <span class="divider">•</span>

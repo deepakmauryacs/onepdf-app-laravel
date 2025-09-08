@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 /* --------- Page meta + header --------- */
-$page_title = 'Contact Us - PDFOneLink';
+$page_title = 'Contact Us - OneLinkPDF';
 $page_css   = 'assets/webapp/css/contact.css';
 $page_js    = ''; // we’ll inline JS below for simplicity
 include 'include/header.php';
@@ -73,7 +73,7 @@ include 'include/header.php';
     <div class="row justify-content-center">
       <div class="col-lg-8 text-center">
         <h1 class="display-5 fw-bold mb-3">Get in Touch</h1>
-        <p class="lead text-muted mb-4">We'd love to hear from you. Our team is always ready to help with any questions about PDFOneLink.</p>
+        <p class="lead text-muted mb-4">We'd love to hear from you. Our team is always ready to help with any questions about OneLinkPDF.</p>
       </div>
     </div>
   </div>
@@ -153,8 +153,8 @@ include 'include/header.php';
             <div class="contact-icon"><i class="bi bi-envelope"></i></div>
             <div>
               <h5>Email Us</h5>
-              <p class="text-muted mb-0">support@pdfonelink.com</p>
-              <p class="text-muted">sales@pdfonelink.com</p>
+              <p class="text-muted mb-0">support@onelinkpdf.com</p>
+              <p class="text-muted">sales@onelinkpdf.com</p>
             </div>
           </div>
 
@@ -222,11 +222,11 @@ include 'include/header.php';
         </div>
         <div class="faq-item">
           <h6 class="faq-question"><i class="bi bi-question-circle"></i>How can I request a feature?</h6>
-          <p class="text-muted mb-0">We welcome feature requests! Please email us at feedback@pdfonelink.com with your suggestions. Our product team reviews all requests regularly.</p>
+          <p class="text-muted mb-0">We welcome feature requests! Please email us at feedback@onelinkpdf.com with your suggestions. Our product team reviews all requests regularly.</p>
         </div>
         <div class="faq-item">
           <h6 class="faq-question"><i class="bi bi-question-circle"></i>Do you have an affiliate program?</h6>
-          <p class="text-muted mb-0">Yes, we have an affiliate program that offers commissions for referrals. Contact partnerships@pdfonelink.com for more details.</p>
+          <p class="text-muted mb-0">Yes, we have an affiliate program that offers commissions for referrals. Contact partnerships@onelinkpdf.com for more details.</p>
         </div>
       </div>
     </div>

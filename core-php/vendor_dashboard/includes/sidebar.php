@@ -32,7 +32,7 @@ $menu = [
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="bi bi-file-earmark-pdf"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">PDFOneLink</div>
+        <div class="sidebar-brand-text mx-3">OneLinkPDF</div>
     </a>
     <?php foreach ($menu as $item): ?>
         <?php if (isset($item['divider'])): ?>

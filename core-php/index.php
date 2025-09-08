@@ -1,5 +1,5 @@
 <?php
-$page_title = 'PDFOneLink — Secure PDF Sharing & Analytics in One Link';
+$page_title = 'OneLinkPDF — Secure PDF Sharing & Analytics in One Link';
 $page_css = '';
 $page_js = 'assets/webapp/js/index.js';
 include 'include/header.php';
@@ -34,7 +34,7 @@ include 'include/header.php';
               <button class="btn btn-sm btn-outline-light" id="copySnippet"><i class="bi bi-clipboard"></i> Copy</button>
             </div>
 <pre><code id="snippet">&lt;iframe
-  src="https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN"
+  src="https://onelinkpdf.com/view?doc=YOUR_DOC_TOKEN"
   width="100%" height="600"
   style="border:none;border-radius:12px;"
   allow="clipboard-write"&gt;&lt;/iframe&gt;</code></pre>
@@ -148,7 +148,7 @@ include 'include/header.php';
     <div class="container demo-container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">Live Embed Demo</h2>
-        <p class="section-subtitle">See how PDFOneLink works with this interactive demo</p>
+        <p class="section-subtitle">See how OneLinkPDF works with this interactive demo</p>
       </div>
       
       <div class="row g-5 align-items-center">
@@ -161,7 +161,7 @@ include 'include/header.php';
                   <span class="bg-warning rounded-circle d-inline-block mx-2" style="width: 12px; height: 12px;"></span>
                   <span class="bg-success rounded-circle d-inline-block" style="width: 12px; height: 12px;"></span>
                 </div>
-                <div class="text-muted small">https://pdfonelink.com/view?doc=DEMO_TOKEN</div>
+                <div class="text-muted small">https://onelinkpdf.com/view?doc=DEMO_TOKEN</div>
               </div>
               <div class="dropdown">
                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -175,7 +175,7 @@ include 'include/header.php';
             </div>
             
             <div class="demo-browser">
-              <iframe src="https://pdfonelink.com/view?doc=DEMO_TOKEN" title="PDFOneLink Demo Viewer" allow="clipboard-write"></iframe>
+              <iframe src="https://onelinkpdf.com/view?doc=DEMO_TOKEN" title="OneLinkPDF Demo Viewer" allow="clipboard-write"></iframe>
             </div>
             
             <div class="demo-controls">
@@ -336,7 +336,7 @@ include 'include/header.php';
     <div class="container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">Frequently asked questions</h2>
-        <p class="section-subtitle">Everything you need to know about PDFOneLink.</p>
+        <p class="section-subtitle">Everything you need to know about OneLinkPDF.</p>
       </div>
       <div class="row g-4">
         <div class="col-lg-6">

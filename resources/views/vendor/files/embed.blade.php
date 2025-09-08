@@ -3,7 +3,7 @@
 @php
   $titleText = $isImage ? 'Embed Image' : 'Embed PDF Viewer';
   $iconClass = $isImage ? 'bi-card-image text-info' : 'bi-file-earmark-pdf text-danger';
-  $embedSrc  = $url ?: 'https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN';
+  $embedSrc  = $url ?: 'https://onelinkpdf.com/view?doc=YOUR_DOC_TOKEN';
 @endphp
 
 @section('title', $titleText)
@@ -167,7 +167,7 @@
 @verbatim
 <script>
 (function(){
-  const EMBED_SRC = window.EMBED_SRC || 'https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN';
+  const EMBED_SRC = window.EMBED_SRC || 'https://onelinkpdf.com/view?doc=YOUR_DOC_TOKEN';
 
   const SNIPPETS = {
     html:

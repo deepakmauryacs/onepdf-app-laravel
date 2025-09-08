@@ -114,7 +114,7 @@
       <div class="col-md-12">
         <div class="card card-container">
           <h3 class="text-center mb-1">Create Account</h3>
-          <p class="text-center text-muted mb-4">Join PDFOneLink in minutes.</p>
+          <p class="text-center text-muted mb-4">Join OneLinkPDF in minutes.</p>
 
           <form id="registerForm" novalidate>
             @csrf

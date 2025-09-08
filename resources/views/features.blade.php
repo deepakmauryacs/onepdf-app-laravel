@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Features - PDFOneLink')
+@section('title', 'Features - OneLinkPDF')
 
 
 @section('content')
@@ -121,7 +121,7 @@
     <div class="container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">See It In Action</h2>
-        <p class="section-subtitle">Explore how PDFOneLink works with our interactive demo</p>
+        <p class="section-subtitle">Explore how OneLinkPDF works with our interactive demo</p>
       </div>
 
       <div class="demo-card">
@@ -214,7 +214,7 @@
                 <div class="border rounded-3 p-4 bg-white">
                   <h5 class="mb-3">Share Document</h5>
                   <div class="input-group mb-3">
-                    <input type="text" class="form-control" value="https://pdfonelink.com/doc/abc123" readonly>
+                    <input type="text" class="form-control" value="https://onelinkpdf.com/doc/abc123" readonly>
                     <button class="btn btn-outline-secondary" type="button"><i class="bi bi-clipboard"></i></button>
                   </div>
                   <div class="form-check form-switch mb-2">
@@ -276,7 +276,7 @@
     <div class="container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">Perfect For Every Use Case</h2>
-        <p class="section-subtitle">PDFOneLink helps professionals across industries share documents securely</p>
+        <p class="section-subtitle">OneLinkPDF helps professionals across industries share documents securely</p>
       </div>
 
       <div class="row g-4">
@@ -320,7 +320,7 @@
     <div class="container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">Works With Your Tools</h2>
-        <p class="section-subtitle">PDFOneLink integrates seamlessly with the platforms you already use</p>
+        <p class="section-subtitle">OneLinkPDF integrates seamlessly with the platforms you already use</p>
       </div>
 
       <div class="d-flex flex-wrap justify-content-center align-items-center">
@@ -343,7 +343,7 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
-          <h2 class="mb-4">Ready to try PDFOneLink?</h2>
+          <h2 class="mb-4">Ready to try OneLinkPDF?</h2>
           <p class="text-muted mb-4">Start sharing your PDFs securely today. No credit card required.</p>
           <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="{{ route('register') }}" class="btn btn-brand btn-lg">Get Started for Free</a>

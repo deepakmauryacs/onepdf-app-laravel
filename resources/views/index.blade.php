@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'PDFOneLink — Secure PDF Sharing & Analytics in One Link')
+@section('title', 'OneLinkPDF — Secure PDF Sharing & Analytics in One Link')
 
 @section('content')
 
@@ -85,7 +85,7 @@
               {{-- HTML snippet --}}
               @verbatim
 <pre class="m-0" id="snippetHtml"><code>&lt;iframe
-  src="https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN"
+  src="https://onelinkpdf.com/view?doc=YOUR_DOC_TOKEN"
   width="100%" height="600"
   style="border:none;border-radius:12px;"
   allow="clipboard-write"&gt;&lt;/iframe&gt;</code></pre>
@@ -95,14 +95,14 @@
               @verbatim
 <pre class="m-0 d-none" id="snippetReact"><code>import React from 'react';
 
-export default function PdfOneLinkEmbed() {
+export default function OneLinkPdfEmbed() {
   return (
     &lt;iframe
-      src="https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN"
+      src="https://onelinkpdf.com/view?doc=YOUR_DOC_TOKEN"
       width="100%" height="600"
       style={{ border: 'none', borderRadius: 12 }}
       allow="clipboard-write"
-      title="PDFOneLink Viewer"
+      title="OneLinkPDF Viewer"
     /&gt;
   );
 }</code></pre>
@@ -114,21 +114,21 @@ export default function PdfOneLinkEmbed() {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-pdfonelink-embed',
+  selector: 'app-onelinkpdf-embed',
   template: `
     &lt;iframe
       [src]="docUrl"
       width="100%" height="600"
       style="border:none;border-radius:12px;"
       allow="clipboard-write"
-      title="PDFOneLink Viewer"&gt;&lt;/iframe&gt;
+      title="OneLinkPDF Viewer"&gt;&lt;/iframe&gt;
   `
 })
-export class PdfOneLinkEmbedComponent {
+export class OneLinkPdfEmbedComponent {
   docUrl: SafeResourceUrl;
   constructor(private sanitizer: DomSanitizer) {
     this.docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-      'https://pdfonelink.com/view?doc=YOUR_DOC_TOKEN'
+      'https://onelinkpdf.com/view?doc=YOUR_DOC_TOKEN'
     );
   }
 }</code></pre>
@@ -200,7 +200,7 @@ export class PdfOneLinkEmbedComponent {
     <div class="container demo-container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">Live Embed Demo</h2>
-        <p class="section-subtitle">See how PDFOneLink works with this interactive demo</p>
+        <p class="section-subtitle">See how OneLinkPDF works with this interactive demo</p>
       </div>
 
       <div class="row g-5 align-items-center">
@@ -227,7 +227,7 @@ export class PdfOneLinkEmbedComponent {
             </div>
 
             <div class="demo-browser">
-              <iframe src="https://www.onelinkpdf.com/view?doc=045210e8da" title="PDFOneLink Demo Viewer" allow="clipboard-write"></iframe>
+              <iframe src="https://www.onelinkpdf.com/view?doc=045210e8da" title="OneLinkPDF Demo Viewer" allow="clipboard-write"></iframe>
             </div>
 
             <div class="demo-controls">
@@ -347,7 +347,7 @@ export class PdfOneLinkEmbedComponent {
     <div class="container">
       <div class="text-center mb-5">
         <h2 class="section-title centered">Frequently asked questions</h2>
-        <p class="section-subtitle">Everything you need to know about PDFOneLink.</p>
+        <p class="section-subtitle">Everything you need to know about OneLinkPDF.</p>
       </div>
 
       <div class="row g-4">

@@ -3,7 +3,7 @@
     <div class="row g-5">
       <div class="col-md-6 col-lg-3">
         <h5 class="mb-4 d-flex align-items-center">
-          <img src="{{ asset('assets/logo/onelinkpdf-logo.png') }}" alt="PDFOneLink Logo" class="me-2" style="height:28px;">
+          <img src="{{ asset('assets/logo/onelinkpdf-logo.png') }}" alt="OneLinkPDF Logo" class="me-2" style="height:28px;">
         </h5>
         <p class="mb-3">Secure PDF upload, sharing, permissions, and analytics — all in one link.</p>
         <p class="small text-secondary mb-4">Token-based access, view-only controls, watermarking, and detailed analytics help you share confidently.</p>
@@ -42,7 +42,7 @@
           <li><a href="{{ url('/contact') }}">General Inquiry</a></li>
         </ul>
         <address class="small text-secondary mt-3 mb-0">
-          <div>support@pdfonelink.com</div>
+          <div>support@onelinkpdf.com</div>
           <div>+1 (555) 123-4567</div>
         </address>
       </div>
@@ -61,7 +61,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p class="copyright mb-0">© {{ now()->year }} PDFOneLink. All rights reserved.</p>
+      <p class="copyright mb-0">© {{ now()->year }} OneLinkPDF. All rights reserved.</p>
       <div class="legal-links">
         <a href="{{ url('/privacy') }}">Privacy Policy</a>
         <span class="divider">•</span>
