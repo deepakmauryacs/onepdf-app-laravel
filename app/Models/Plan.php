@@ -15,3 +15,5 @@ class Plan extends Model
         'usd_price' => 'decimal:2',
     ];
 }
+
+

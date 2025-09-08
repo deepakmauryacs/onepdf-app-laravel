@@ -22,72 +22,120 @@
   {{-- PRICING --}}
   <section id="pricing" class="pricing-section">
     <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="section-title centered">Plans for Every Need</h2>
-        <p class="section-subtitle">Start free. Upgrade when you're ready.</p>
+      {{-- Title + Currency Toggle --}}
+      <div class="text-center mb-5 d-flex justify-content-between align-items-center flex-wrap">
+        <div class="w-100 w-md-auto">
+          <h2 class="section-title centered mb-0">Plans for Every Need</h2>
+          <p class="section-subtitle">Start free. Upgrade when you're ready.</p>
+        </div>
+
+        {{-- Currency Toggle --}}
+        <div class="mt-3 mt-md-0">
+          <a href="{{ route('pricing', ['currency'=>'inr']) }}" 
+             class="btn btn-sm {{ ($currency ?? 'inr')==='inr'?'btn-brand':'btn-ghost' }}">₹ INR</a>
+          <a href="{{ route('pricing', ['currency'=>'usd']) }}" 
+             class="btn btn-sm {{ ($currency ?? 'inr')==='usd'?'btn-brand':'btn-ghost' }}">$ USD</a>
+        </div>
       </div>
 
       <div class="row g-4">
-        {{-- Free --}}
-        <div class="col-md-6 col-lg-4">
-          <div class="plan">
-            <h5 class="plan-title">Free</h5>
-            <div class="plan-price">$0<span class="fs-6 text-muted">/mo</span></div>
-            <p class="text-muted">Perfect for individuals getting started</p>
-            <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>Monthly uploads: 2</li>
-              <li><i class="bi bi-check2 check"></i>Available space: 20&nbsp;MB</li>
-              <li><i class="bi bi-check2 check"></i>Embed viewer</li>
-              <li><i class="bi bi-x text-muted"></i>Permission controls</li>
-              <li><i class="bi bi-x text-muted"></i>Custom branding</li>
-              <li><i class="bi bi-x text-muted"></i>Advanced analytics</li>
-            </ul>
-            <a href="{{ url('/register') }}" class="btn btn-ghost w-100">Start free</a>
+        @php
+          $currency = in_array(($currency ?? null), ['inr','usd']) ? $currency : 'inr';
+
+          $formatPrice = function($plan) use ($currency) {
+              if (!$plan) return null;
+              $symbol = $currency==='inr' ? '₹' : '$';
+              $amount = $currency==='inr' ? $plan->inr_price : $plan->usd_price;
+              return $symbol . number_format((float)$amount, 2);
+          };
+
+          $cardOrder = ['Free','Pro','Business'];
+          $ordered = collect($cardOrder)
+            ->filter(fn($n)=> isset($plans[$n]))
+            ->map(fn($n)=> [$n, $plans[$n]]);
+          $others = isset($plans) ? $plans->keys()->diff($cardOrder)->map(fn($n)=>[$n,$plans[$n]]) : collect();
+          $displayPlans = $ordered->concat($others);
+        @endphp
+
+        @forelse($displayPlans as [$planName, $cycles])
+          @php
+            $free    = $cycles->get('free');
+            $monthly = $cycles->get('month');
+            $yearly  = $cycles->get('year');
+
+            $primary       = $monthly ?: ($yearly ?: $free);
+            $primaryCycle  = $monthly ? 'mo' : ($yearly ? 'yr' : '');
+            $primaryPrice  = $formatPrice($primary) ?? '0.00';
+            $isFeatured    = ($planName === 'Pro');
+            $ctaText       = $free ? 'Start free' : "Choose {$planName}";
+            $ctaClass      = $free ? 'btn-ghost' : 'btn-brand';
+          @endphp
+
+          <div class="col-md-6 col-lg-4">
+            <div class="plan {{ $isFeatured ? 'featured' : '' }}">
+              <h5 class="plan-title">{{ $planName }}</h5>
+
+              <div class="plan-price">
+                {{ $primaryPrice }}
+                @if($primaryCycle)
+                  <span class="fs-6 text-muted">/{{ $primaryCycle }}</span>
+                @endif
+              </div>
+
+              <p class="text-muted">
+                @switch($planName)
+                  @case('Free') Perfect for individuals getting started @break
+                  @case('Pro') Ideal for professionals and small teams @break
+                  @case('Business') For organizations with advanced needs @break
+                  @default A flexible plan for your needs
+                @endswitch
+              </p>
+
+              {{-- Feature list --}}
+              <ul class="plan-features">
+                @if($planName==='Free')
+                  <li><i class="bi bi-check2 check"></i>Monthly uploads: 2</li>
+                  <li><i class="bi bi-check2 check"></i>Available space: 20&nbsp;MB</li>
+                  <li><i class="bi bi-check2 check"></i>Embed viewer</li>
+                  <li><i class="bi bi-x text-muted"></i>Permission controls</li>
+                  <li><i class="bi bi-x text-muted"></i>Custom branding</li>
+                  <li><i class="bi bi-x text-muted"></i>Advanced analytics</li>
+                @elseif($planName==='Pro')
+                  <li><i class="bi bi-check2 check"></i>Monthly uploads: 100</li>
+                  <li><i class="bi bi-check2 check"></i>Available space: 1&nbsp;GB</li>
+                  <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
+                  <li><i class="bi bi-check2 check"></i>Disable download/print</li>
+                  <li><i class="bi bi-check2 check"></i>Custom watermark</li>
+                  <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
+                  <li><i class="bi bi-x text-muted"></i>Custom branding</li>
+                @else
+                  <li><i class="bi bi-check2 check"></i>Monthly uploads: 500</li>
+                  <li><i class="bi bi-check2 check"></i>Available space: 5&nbsp;GB</li>
+                  <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
+                  <li><i class="bi bi-check2 check"></i>Disable download/print</li>
+                  <li><i class="bi bi-check2 check"></i>Custom watermark</li>
+                  <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
+                  <li><i class="bi bi-check2 check"></i>Unlimited viewers</li>
+                  <li><i class="bi bi-check2 check"></i>SSO, API &amp; webhooks</li>
+                  <li><i class="bi bi-check2 check"></i>OCR &amp; full-text search</li>
+                  <li><i class="bi bi-check2 check"></i>Domain/IP allowlists</li>
+                  <li><i class="bi bi-check2 check"></i>Priority support</li>
+                @endif
+              </ul>
+
+              <a href="{{ url('/register') }}" class="btn {{ $ctaClass }} w-100">{{ $ctaText }}</a>
+
+              <div class="mt-3 small text-muted">
+                @if($monthly) <span class="badge bg-light text-dark me-1">Monthly: {{ $formatPrice($monthly) }}</span> @endif
+                @if($yearly)  <span class="badge bg-light text-dark me-1">Yearly: {{ $formatPrice($yearly) }}</span> @endif
+              </div>
+            </div>
           </div>
-        </div>
-
-        {{-- Pro --}}
-        <div class="col-md-6 col-lg-4">
-          <div class="plan featured">
-            <h5 class="plan-title">Pro</h5>
-            <div class="plan-price">$12<span class="fs-6 text-muted">/mo</span></div>
-            <p class="text-muted">Ideal for professionals and small teams</p>
-            <ul class="plan-features">
-              <li><i class="bi bi-check2 check"></i>Monthly uploads: 100</li>
-              <li><i class="bi bi-check2 check"></i>Available space: 1&nbsp;GB</li>
-              <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
-              <li><i class="bi bi-check2 check"></i>Disable download/print</li>
-              <li><i class="bi bi-check2 check"></i>Custom watermark</li>
-              <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
-              <li><i class="bi bi-x text-muted"></i>Custom branding</li>
-            </ul>
-            <a href="{{ url('/register') }}" class="btn btn-brand w-100">Choose Pro</a>
+        @empty
+          <div class="col-12 text-center">
+            <p class="text-muted">No plans configured yet.</p>
           </div>
-        </div>
-
-        {{-- Business --}}
-    <div class="col-md-6 col-lg-4">
-      <div class="plan">
-        <h5 class="plan-title">Business</h5>
-        <div class="plan-price">$29<span class="fs-6 text-muted">/mo</span></div>
-        <p class="text-muted">For organizations with advanced needs</p>
-        <ul class="plan-features">
-          <li><i class="bi bi-check2 check"></i>Monthly uploads: 500</li>
-          <li><i class="bi bi-check2 check"></i>Available space: 5&nbsp;GB</li>
-          <li><i class="bi bi-check2 check"></i>Advanced analytics</li>
-          <li><i class="bi bi-check2 check"></i>Disable download/print</li>
-          <li><i class="bi bi-check2 check"></i>Custom watermark</li>
-          <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
-          <li><i class="bi bi-check2 check"></i>Unlimited viewers</li>
-          <li><i class="bi bi-check2 check"></i>SSO, API &amp; webhooks</li>
-          <li><i class="bi bi-check2 check"></i>OCR &amp; full-text search</li>
-          <li><i class="bi bi-check2 check"></i>Domain/IP allowlists</li>
-          <li><i class="bi bi-check2 check"></i>Priority support</li>
-        </ul>
-        <a href="{{ url('/register') }}" class="btn btn-ghost w-100">Choose Business</a>
-      </div>
-    </div>
-
+        @endforelse
       </div>
 
       <div class="text-center mt-5">

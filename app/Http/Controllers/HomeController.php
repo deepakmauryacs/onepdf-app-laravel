@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Plan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,9 +29,23 @@ class HomeController extends Controller
     /**
      * Display the pricing page.
      */
-    public function pricing()
+    public function pricing(Request $request)
     {
-        return view('pricing');
+         // currency via query (?currency=inr|usd) with sensible default
+        $currency = in_array($request->query('currency'), ['inr','usd']) ? $request->query('currency') : 'inr';
+
+        // fetch all plans and group by name (Free / Pro / Business / etc.)
+        $plans = Plan::orderBy('name')->get()
+            ->groupBy('name')
+            ->map(function ($rows) {
+                return $rows->keyBy('billing_cycle'); // ['free'=>..., 'month'=>..., 'year'=>...]
+            });
+
+        return view('pricing', [
+            'plans'    => $plans,
+            'currency' => $currency,
+        ]);
+    
     }
 
     /**
