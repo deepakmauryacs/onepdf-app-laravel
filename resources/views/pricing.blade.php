@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pricing - PDFOneLink')
+@section('title', 'Pricing - OneLinkPDF')
 
 @section('content')
   {{-- HERO --}}
@@ -236,7 +236,7 @@
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
           <h2 class="mb-4">Ready to get started?</h2>
-          <p class="text-muted mb-4">Join thousands of professionals who trust PDFOneLink with their document sharing needs.</p>
+          <p class="text-muted mb-4">Join thousands of professionals who trust OneLinkPDF with their document sharing needs.</p>
           <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="{{ url('/register') }}" class="btn btn-brand btn-lg">Start free trial</a>
             <a href="{{ url('/contact') }}" class="btn btn-ghost btn-lg">Contact sales</a>

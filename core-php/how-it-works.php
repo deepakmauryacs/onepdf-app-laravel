@@ -1,5 +1,5 @@
 <?php
-$page_title = 'How It Works - PDFOneLink';
+$page_title = 'How It Works - OneLinkPDF';
 $page_css = 'assets/webapp/css/index.css';
 $page_js = '';
 include 'include/header.php';
@@ -9,7 +9,7 @@ include 'include/header.php';
     <div class="container position-relative">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h1 class="display-5 fw-bold mb-3">How PDFOneLink Works</h1>
+                <h1 class="display-5 fw-bold mb-3">How OneLinkPDF Works</h1>
                 <p class="lead text-muted mb-4">Set up in minutes — upload, share, and track your PDFs with ease.</p>
             </div>
         </div>
@@ -68,7 +68,7 @@ include 'include/header.php';
             <div class="col-lg-6">
                 <div class="detail-card">
                     <h3 class="mb-4">Step 1: Account Creation & Setup</h3>
-                    <p>Getting started with PDFOneLink is designed to be quick and straightforward:</p>
+                    <p>Getting started with OneLinkPDF is designed to be quick and straightforward:</p>
                     <ul class="list-unstyled">
                         <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> <strong>Sign up</strong> with your email address or social account</li>
                         <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> <strong>Verify your email</strong> to activate your account</li>

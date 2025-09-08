@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Contact Us - PDFOneLink')
+@section('title', 'Contact Us - OneLinkPDF')
 
 
 @section('content')
@@ -10,7 +10,7 @@
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
           <h1 class="display-5 fw-bold mb-3">Get in Touch</h1>
-          <p class="lead text-muted mb-4">We'd love to hear from you. Our team is always ready to help with any questions about PDFOneLink.</p>
+          <p class="lead text-muted mb-4">We'd love to hear from you. Our team is always ready to help with any questions about OneLinkPDF.</p>
         </div>
       </div>
     </div>
@@ -106,8 +106,8 @@
               <div class="contact-icon"><i class="bi bi-envelope"></i></div>
               <div>
                 <h5>Email Us</h5>
-                <p class="text-muted mb-0">support@pdfonelink.com</p>
-                <p class="text-muted">sales@pdfonelink.com</p>
+                <p class="text-muted mb-0">support@onelinkpdf.com</p>
+                <p class="text-muted">sales@onelinkpdf.com</p>
               </div>
             </div>
 

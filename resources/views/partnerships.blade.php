@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Partner With Us - PDFOneLink')
+@section('title', 'Partner With Us - OneLinkPDF')
 
 
 @section('content')

@@ -9,7 +9,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title><?= isset($page_title) ? $page_title : 'PDFOneLink'; ?></title>
+    <title><?= isset($page_title) ? $page_title : 'OneLinkPDF'; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
@@ -27,7 +27,7 @@ $current_page = basename($_SERVER['SCRIPT_NAME']);
 
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
-    <a class="navbar-brand" href="<?= $web_base_url ?>"><i class="bi bi-file-earmark-pdf"></i>PDFOneLink</a>
+    <a class="navbar-brand" href="<?= $web_base_url ?>"><i class="bi bi-file-earmark-pdf"></i>OneLinkPDF</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

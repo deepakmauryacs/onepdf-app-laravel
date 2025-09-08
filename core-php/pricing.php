@@ -1,5 +1,5 @@
 <?php
-$page_title = 'Pricing - PDFOneLink';
+$page_title = 'Pricing - OneLinkPDF';
 $page_css = 'assets/webapp/css/pricing.css';
 include 'include/header.php';
 ?>
@@ -184,14 +184,14 @@ include 'include/header.php';
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="section-title centered">Loved by Professionals</h2>
-                <p class="section-subtitle">See what our customers are saying about PDFOneLink</p>
+                <p class="section-subtitle">See what our customers are saying about OneLinkPDF</p>
             </div>
             
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
                     <div class="testimonial-card">
                         <div class="testimonial-text">
-                            <p>PDFOneLink has transformed how we share sensitive documents with clients. The analytics help us understand engagement, and the security features give us peace of mind.</p>
+                            <p>OneLinkPDF has transformed how we share sensitive documents with clients. The analytics help us understand engagement, and the security features give us peace of mind.</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="testimonial-avatar">SA</div>
@@ -221,7 +221,7 @@ include 'include/header.php';
                 <div class="col-md-6 col-lg-4">
                     <div class="testimonial-card">
                         <div class="testimonial-text">
-                            <p>We switched to PDFOneLink from another service and couldn't be happier. The embed features work seamlessly on our website, and our clients find the viewer intuitive to use.</p>
+                            <p>We switched to OneLinkPDF from another service and couldn't be happier. The embed features work seamlessly on our website, and our clients find the viewer intuitive to use.</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="testimonial-avatar">ER</div>
@@ -290,7 +290,7 @@ include 'include/header.php';
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center">
                     <h2 class="mb-4">Ready to get started?</h2>
-                    <p class="text-muted mb-4">Join thousands of professionals who trust PDFOneLink with their document sharing needs.</p>
+                    <p class="text-muted mb-4">Join thousands of professionals who trust OneLinkPDF with their document sharing needs.</p>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
                         <a href="register" class="btn btn-brand btn-lg">Start free trial</a>
                         <a href="contact" class="btn btn-ghost btn-lg">Contact sales</a>
