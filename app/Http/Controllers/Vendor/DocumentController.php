@@ -131,6 +131,25 @@ class DocumentController extends Controller
         // Capture size before move
         $size  = (int) $file->getSize();
 
+        $planRelation = \App\Models\UserPlan::with('plan')
+            ->where('user_id', $user->id)
+            ->where('status', 1)
+            ->orderByDesc('start_date')
+            ->first();
+        $planModel = $planRelation?->plan ?? \App\Models\Plan::where('billing_cycle', 'free')->first();
+
+        $usedBytes = Document::where('user_id', $user->id)->sum('size');
+        if ($planModel && ($limit = $planModel->storageBytes()) !== null && ($usedBytes + $size) > $limit) {
+            return response()->json(['message' => 'Storage limit exceeded'], 422);
+        }
+
+        $monthlyCount = Document::where('user_id', $user->id)
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->count();
+        if ($planModel && ($fileLimit = $planModel->monthlyFileLimit()) !== null && $monthlyCount >= $fileLimit) {
+            return response()->json(['message' => 'Monthly file limit reached'], 422);
+        }
+
         $dirAbs = public_path('uploads/'.$useId);
         if (!is_dir($dirAbs)) {
             mkdir($dirAbs, 0777, true);

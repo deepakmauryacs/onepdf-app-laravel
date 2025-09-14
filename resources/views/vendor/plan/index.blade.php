@@ -88,6 +88,8 @@
         @else
           <p>You are currently on the <strong>Free</strong> plan.</p>
         @endif
+        <p>Storage used: {{ $usedReadable }}@if($limitReadable) / {{ $limitReadable }} @endif</p>
+        <p>Files this month: {{ $monthlyCount }}@if($monthlyLimit) / {{ $monthlyLimit }} @endif</p>
         <button class="btn btn-outline-dark mt-3" data-bs-toggle="modal" data-bs-target="#upgradeModal">
           <i class="bi bi-arrow-up-circle me-1"></i> Upgrade Plan
         </button>

@@ -30,7 +30,21 @@ class PlanController extends Controller
         }
         $plans = $plansQuery->get();
 
-        return view('vendor.plan.index', compact('currentPlan', 'plans'));
+        $usedBytes = \App\Models\Document::where('user_id', $user->id)->sum('size');
+        $monthlyCount = \App\Models\Document::where('user_id', $user->id)
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->count();
+
+        $planModel = $currentPlan?->plan ?? Plan::where('billing_cycle', 'free')->first();
+        $storageLimitBytes = $planModel?->storageBytes();
+        $monthlyLimit = $planModel?->monthlyFileLimit();
+
+        $usedReadable = $this->formatBytes($usedBytes);
+        $limitReadable = $storageLimitBytes ? $this->formatBytes($storageLimitBytes) : null;
+
+        return view('vendor.plan.index', compact(
+            'currentPlan', 'plans', 'usedReadable', 'limitReadable', 'monthlyCount', 'monthlyLimit'
+        ));
     }
 
     /**
@@ -68,5 +82,16 @@ class PlanController extends Controller
         });
 
         return response()->json(['success' => true]);
+    }
+
+    private function formatBytes(int $bytes): string
+    {
+        $units = ['B','KB','MB','GB','TB'];
+        $i = 0;
+        while ($bytes >= 1024 && $i < count($units) - 1) {
+            $bytes /= 1024;
+            $i++;
+        }
+        return round($bytes, 2).' '.$units[$i];
     }
 }
