@@ -33,7 +33,7 @@ class LoginController extends Controller
             Session::put('user_name', $user->first_name ?? $user->name ?? '');
             Session::put('use_id', $user->use_id ?? null);
 
-            $redirect = $user->is_admin ? route('admin.dashboard') : route('dashboard');
+            $redirect = $user->is_admin ? route('admin.dashboard') : route('vendor.dashboard');
 
             return response()->json([
                 'success' => true,
