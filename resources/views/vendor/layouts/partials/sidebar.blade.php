@@ -15,7 +15,7 @@
   <!-- NEW MENU -->
   <nav class="nav flex-column gap-1" id="mainNav">
     <div class="side-title">GENERAL</div>
-    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+    <a class="nav-link {{ request()->routeIs('vendor.dashboard') ? 'active' : '' }}" href="{{ route('vendor.dashboard') }}">
       <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
     </a>
     <a class="nav-link {{ request()->routeIs('vendor.files.index') ? 'active' : '' }}" href="{{ route('vendor.files.index') }}">

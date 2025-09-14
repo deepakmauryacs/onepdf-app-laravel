@@ -101,7 +101,7 @@
     <div class="container py-3">
       <div class="d-flex align-items-center justify-content-between">
         <nav class="crumb">
-          <a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
+          <a href="{{ route('vendor.dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
           <i class="bi bi-chevron-right"></i>
           <a href="{{ route('vendor.lead_forms.index') }}">Lead Forms</a>
           <i class="bi bi-chevron-right"></i>
