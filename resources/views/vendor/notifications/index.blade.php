@@ -5,7 +5,7 @@
 @section('content')
   <div class="bw-band">
     <ol class="bw-crumb">
-      <li><a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i>Home</a></li>
+      <li><a href="{{ route('vendor.dashboard') }}"><i class="bi bi-house-door me-1"></i>Home</a></li>
       <li>Notifications</li>
     </ol>
   </div>

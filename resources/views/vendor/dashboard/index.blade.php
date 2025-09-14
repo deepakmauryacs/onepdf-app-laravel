@@ -39,9 +39,9 @@
           @endphp
           <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-clock-history me-1"></i> {{ $label }}</button>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 7]) }}">Last 7 days</a></li>
-            <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 15]) }}">Last 15 days</a></li>
-            <li><a class="dropdown-item" href="{{ route('dashboard', ['days' => 30]) }}">Last 30 days</a></li>
+            <li><a class="dropdown-item" href="{{ route('vendor.dashboard', ['days' => 7]) }}">Last 7 days</a></li>
+            <li><a class="dropdown-item" href="{{ route('vendor.dashboard', ['days' => 15]) }}">Last 15 days</a></li>
+            <li><a class="dropdown-item" href="{{ route('vendor.dashboard', ['days' => 30]) }}">Last 30 days</a></li>
           </ul>
         </div>
         <a href="{{ route('vendor.files.index') }}" class="btn btn-dark"><i class="bi bi-card-list me-1"></i> View All Time</a>
