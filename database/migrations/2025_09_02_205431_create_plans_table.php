@@ -15,6 +15,7 @@ return new class extends Migration
             $table->decimal('usd_price', 10, 2);
             $table->enum('billing_cycle', ['free','month','year']);
             $table->string('storage', 190)->nullable(); // added to match your SQL dump
+            $table->string('monthly_file', 190)->nullable(); // added to match your SQL dump
             $table->timestamps();
 
             $table->unique(['name', 'billing_cycle']);
