@@ -10,11 +10,11 @@ class PlanSeeder extends Seeder
     public function run(): void
     {
         $rows = [
-            ['id'=>1,'name'=>'Free',     'inr_price'=>'0.00',   'usd_price'=>'0.00',  'billing_cycle'=>'free'],
-            ['id'=>2,'name'=>'Pro',      'inr_price'=>'12.00',  'usd_price'=>'12.00', 'billing_cycle'=>'month'],
-            ['id'=>3,'name'=>'Pro',      'inr_price'=>'499.00', 'usd_price'=>'499.00','billing_cycle'=>'year'],
-            ['id'=>4,'name'=>'Business', 'inr_price'=>'25.00',  'usd_price'=>'25.00', 'billing_cycle'=>'month'],
-            ['id'=>5,'name'=>'Business', 'inr_price'=>'1999.00','usd_price'=>'1999.00','billing_cycle'=>'year'],
+            ['id'=>1,'name'=>'Free',     'inr_price'=>'0.00',   'usd_price'=>'0.00',  'billing_cycle'=>'free',  'storage'=>'20 MB', 'monthly_file'=>'2'],
+            ['id'=>2,'name'=>'Pro',      'inr_price'=>'12.00',  'usd_price'=>'12.00', 'billing_cycle'=>'month', 'storage'=>'1 GB',  'monthly_file'=>'100'],
+            ['id'=>3,'name'=>'Pro',      'inr_price'=>'499.00', 'usd_price'=>'499.00','billing_cycle'=>'year',  'storage'=>'1 GB',  'monthly_file'=>'100'],
+            ['id'=>4,'name'=>'Business', 'inr_price'=>'25.00',  'usd_price'=>'25.00', 'billing_cycle'=>'month', 'storage'=>'5 GB',  'monthly_file'=>'500'],
+            ['id'=>5,'name'=>'Business', 'inr_price'=>'1999.00','usd_price'=>'1999.00','billing_cycle'=>'year', 'storage'=>'5 GB',  'monthly_file'=>'500'],
         ];
 
         foreach ($rows as $data) {
