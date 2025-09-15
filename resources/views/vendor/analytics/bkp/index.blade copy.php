@@ -117,9 +117,11 @@
               <i class="bi bi-sliders"></i> Range
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              @foreach (['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'] as $option)
-                  <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
-              @endforeach
+              <li><a class="dropdown-item" href="?range=Today">Today</a></li>
+              <li><a class="dropdown-item" href="?range=Last 7 days">Last 7 days</a></li>
+              <li><a class="dropdown-item" href="?range=Last 30 days">Last 30 days</a></li>
+              <li><a class="dropdown-item" href="?range=This month">This month</a></li>
+              <li><a class="dropdown-item" href="?range=This year">This year</a></li>
             </ul>
           </div>
           <a class="btn-neutral" href="{{ route('vendor.analytics.documents') }}">
@@ -138,7 +140,7 @@
           <div class="icon"><i class="bi bi-eye"></i></div>
           <div class="meta">
             <div class="label">Visits</div>
-            <div class="value">{{ $totalVisits }}</div>
+            <div class="value">{{ number_format((int)$visits) }}</div>
             <div class="sub">Unique sessions that opened a document</div>
           </div>
         </div>
@@ -148,7 +150,7 @@
           <div class="icon"><i class="bi bi-stopwatch"></i></div>
           <div class="meta">
             <div class="label">Average Reading Time</div>
-            <div class="value">{{ $avgReadingTime }}</div>
+            <div class="value">{{ $avgTime ?? 'N/A' }}</div>
             <div class="sub">Per session</div>
           </div>
         </div>
@@ -158,7 +160,7 @@
           <div class="icon"><i class="bi bi-hourglass-split"></i></div>
           <div class="meta">
             <div class="label">Total Reading Time</div>
-            <div class="value">{{ $totalReadingTime }}</div>
+            <div class="value">{{ $totalTime ?? 'N/A' }}</div>
             <div class="sub">Across selected range</div>
           </div>
         </div>
@@ -184,21 +186,23 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse($vendorDocs as $doc)
+                  @php $maxViews = max(1, (int)($topDocs->max('views') ?? 1)); @endphp
+                  @forelse ($topDocs as $doc)
+                    @php $pct = min(100, intval(($doc->views / $maxViews) * 100)); @endphp
                     <tr>
                       <td>
                         <div class="row-title">
                           <div class="doc-ico"><i class="bi bi-file-earmark-text"></i></div>
                           <div class="d-flex flex-column">
-                            <div class="doc-name text-truncate" title="{{ $doc->document }}">{{ $doc->document }}</div>
+                            <div class="doc-name text-truncate" title="{{ $doc->filename }}">{{ $doc->filename }}</div>
                           </div>
                         </div>
                       </td>
                       <td>
-                        <span class="views-pill"><i class="bi bi-eye"></i>{{ $doc->views }}</span>
+                        <span class="views-pill"><i class="bi bi-eye"></i>{{ number_format((int)$doc->views) }}</span>
                       </td>
                       <td>
-                        <div class="bar-wrap"><div class="bar" style="width: {{ number_format($doc->engagement, 2) }}%"></div></div>
+                        <div class="bar-wrap"><div class="bar" style="width: {{ $pct }}%"></div></div>
                       </td>
                     </tr>
                   @empty
@@ -224,43 +228,11 @@
             <span class="chip"><i class="bi bi-geo-alt"></i> Locations</span>
           </div>
           <div class="card-body">
-            <div class="table-responsive">
-              <table class="table align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th>City</th>
-                    <th style="width:120px;">Visitors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse($cityVisitors as $row)
-                    <tr>
-                      <td>
-                        <div class="row-title">
-                          <div class="doc-ico"><i class="bi bi-geo-alt"></i></div>
-                          <div class="d-flex flex-column">
-                            <div title="{{ $row->city ?? 'Unknown' }}">{{ $row->city ?? 'Unknown' }}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="views-pill"><i class="bi bi-person"></i>{{ $row->visitors }}</span>
-                      </td>
-                    </tr>
-                  @empty
-                    <tr>
-                      <td colspan="3" class="empty">
-                        <div class="empty">
-                          <div class="mb-2"><span class="badge">Analytics</span></div>
-                          <div class="mb-1 fw-bold">Location insights unavailable</div>
-                          <div class="mb-3">Enable IP geolocation collection to see city-level breakdowns.</div>
-                          <a href="#" class="btn-neutral"><i class="bi bi-gear"></i> Configure</a>
-                        </div>
-                      </td>
-                    </tr>
-                  @endforelse
-                </tbody>
-              </table>
+            <div class="empty">
+              <div class="mb-2"><span class="badge">Analytics</span></div>
+              <div class="mb-1 fw-bold">Location insights unavailable</div>
+              <div class="mb-3">Enable IP geolocation collection to see city-level breakdowns.</div>
+              <a href="#" class="btn-neutral"><i class="bi bi-gear"></i> Configure</a>
             </div>
           </div>
         </div>

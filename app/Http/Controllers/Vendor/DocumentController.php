@@ -330,6 +330,7 @@ class DocumentController extends Controller
             'pdfUrl'      => $pdfUrl,
             'downloadUrl' => $downloadUrl,
             'perms'       => $perms,
+            'd_id'         => $link->document_id,
             'leadEnabled' => !empty($link->lead_form_id),
             'leadFields'  => $link->leadForm->fields ?? [],
         ]);
