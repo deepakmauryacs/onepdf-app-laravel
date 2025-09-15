@@ -21,6 +21,7 @@ class SitemapController extends Controller
             'partnerships',
             'docs',
             'integrations',
+            'blog.index',
             'terms',
             'privacy',
             'refund-policy',

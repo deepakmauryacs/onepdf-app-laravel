@@ -24,6 +24,7 @@
           <li><a href="{{ url('/features') }}">Features</a></li>
           <li><a href="{{ url('/pricing') }}">Pricing</a></li>
           <li><a href="{{ url('/how-it-works') }}">How It Works</a></li>
+          <li><a href="{{ url('/blog') }}">Blog</a></li>
         </ul>
       </div>
 
