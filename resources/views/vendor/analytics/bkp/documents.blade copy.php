@@ -1,6 +1,6 @@
 @extends('vendor.layouts.app')
 
-@section('title', 'Analytics')
+@section('title', 'All Documents Analytics')
 
 @push('styles')
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -37,18 +37,6 @@
     padding:.35rem .7rem;font-weight:600;color:var(--text);font-size:.85rem;
   }
 
-  /* Metrics */
-  .metric{display:flex;gap:14px;align-items:flex-start;padding:18px}
-  .metric .icon{
-    width:44px;height:44px;border-radius:12px;
-    display:inline-flex;align-items:center;justify-content:center;
-    background:#111;color:#fff;font-size:18px;
-  }
-  .metric .meta{flex:1}
-  .metric .label{font-size:.78rem;font-weight:700;color:#000;text-transform:uppercase}
-  .metric .value{font-size:1.8rem;font-weight:800;color:#000;margin-top:4px}
-  .metric .sub{font-size:.85rem;color:var(--muted)}
-
   /* Tables */
   .table thead th{border-bottom:1px solid var(--line);color:#222;font-weight:700}
   .table tbody td{vertical-align:middle;border-color:var(--line)}
@@ -65,8 +53,6 @@
     border:1px solid var(--line);background:#fff;border-radius:999px;
     padding:.25rem .6rem;font-weight:700;color:#000
   }
-  .bar-wrap{background:var(--bar-bg);border-radius:99px;overflow:hidden;height:8px}
-  .bar{background:var(--bar);height:100%}
 
   /* Empty state */
   .empty{padding:36px;text-align:center;color:var(--muted);font-size:.95rem}
@@ -106,7 +92,9 @@
         <nav class="crumb">
           <a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
           <i class="bi bi-chevron-right"></i>
-          <span>Analytics</span>
+          <a href="{{ route('vendor.analytics.index') }}">Analytics</a>
+          <i class="bi bi-chevron-right"></i>
+          <span>All Documents</span>
         </nav>
         <div class="toolbar">
           <div class="chip"><i class="bi bi-calendar3"></i>
@@ -117,61 +105,27 @@
               <i class="bi bi-sliders"></i> Range
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              @foreach (['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'] as $option)
-                  <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
-              @endforeach
+              <li><a class="dropdown-item" href="?range=Today">Today</a></li>
+              <li><a class="dropdown-item" href="?range=Last 7 days">Last 7 days</a></li>
+              <li><a class="dropdown-item" href="?range=Last 30 days">Last 30 days</a></li>
+              <li><a class="dropdown-item" href="?range=This month">This month</a></li>
+              <li><a class="dropdown-item" href="?range=This year">This year</a></li>
             </ul>
           </div>
-          <a class="btn-neutral" href="{{ route('vendor.analytics.documents') }}">
-            <i class="bi bi-list-ul"></i> All Documents
-          </a>
-
         </div>
       </div>
     </div>
+  </div>
 
   <div class="container py-4">
-    <!-- KPI row -->
-    <div class="row g-3 mb-3">
-      <div class="col-xl-4 col-md-6">
-        <div class="bw-card metric h-100">
-          <div class="icon"><i class="bi bi-eye"></i></div>
-          <div class="meta">
-            <div class="label">Visits</div>
-            <div class="value">{{ $totalVisits }}</div>
-            <div class="sub">Unique sessions that opened a document</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-md-6">
-        <div class="bw-card metric h-100">
-          <div class="icon"><i class="bi bi-stopwatch"></i></div>
-          <div class="meta">
-            <div class="label">Average Reading Time</div>
-            <div class="value">{{ $avgReadingTime }}</div>
-            <div class="sub">Per session</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-4 col-md-6">
-        <div class="bw-card metric h-100">
-          <div class="icon"><i class="bi bi-hourglass-split"></i></div>
-          <div class="meta">
-            <div class="label">Total Reading Time</div>
-            <div class="value">{{ $totalReadingTime }}</div>
-            <div class="sub">Across selected range</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Top Documents -->
-    <div class="row g-3">
-      <div class="col-lg-7">
+    <div class="row g-3 mt-1">
+      <div class="col-12">
         <div class="bw-card h-100">
           <div class="card-header py-3 d-flex align-items-center justify-content-between">
-            <h6 class="m-0 section-title">Top Documents</h6>
-            <span class="chip"><i class="bi bi-trophy"></i> Top 5</span>
+            <h6 class="m-0 section-title">All Documents</h6>
+            @if(isset($allDocs) && $allDocs->total())
+              <span class="chip"><i class="bi bi-list-ul"></i> Page {{ $allDocs->currentPage() }} of {{ $allDocs->lastPage() }}</span>
+            @endif
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -180,92 +134,117 @@
                   <tr>
                     <th>Document</th>
                     <th style="width:120px;">Views</th>
-                    <th style="width:160px;">Engagement</th>
+                    <th style="width:120px;">Sessions</th>
+                    <th style="width:180px;">Last View</th>
+                    <th style="width:110px;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse($vendorDocs as $doc)
+                  @forelse ($allDocs as $doc)
                     <tr>
                       <td>
                         <div class="row-title">
                           <div class="doc-ico"><i class="bi bi-file-earmark-text"></i></div>
                           <div class="d-flex flex-column">
-                            <div class="doc-name text-truncate" title="{{ $doc->document }}">{{ $doc->document }}</div>
+                            <a class="doc-name text-truncate" href="{{ route('vendor.analytics.document', $doc->id) }}"
+                               title="{{ $doc->filename }}">{{ $doc->filename }}</a>
+                            <span class="muted small">ID: {{ $doc->id }}</span>
                           </div>
                         </div>
                       </td>
+                      <td><span class="views-pill"><i class="bi bi-eye"></i>{{ number_format((int)$doc->views) }}</span></td>
+                      <td>{{ number_format((int)($doc->sessions ?? 0)) }}</td>
                       <td>
-                        <span class="views-pill"><i class="bi bi-eye"></i>{{ $doc->views }}</span>
+                        @if($doc->last_view_at)
+                          {{ \Illuminate\Support\Carbon::parse($doc->last_view_at)->format('d M Y, H:i') }}
+                        @else
+                          <span class="muted">—</span>
+                        @endif
                       </td>
                       <td>
-                        <div class="bar-wrap"><div class="bar" style="width: {{ number_format($doc->engagement, 2) }}%"></div></div>
+                        <a class="btn-neutral" href="{{ route('vendor.analytics.document', $doc->id) }}">
+                          <i class="bi bi-box-arrow-up-right"></i> View
+                        </a>
                       </td>
                     </tr>
                   @empty
                     <tr>
-                      <td colspan="3" class="empty">
+                      <td colspan="5" class="empty">
                         <div class="mb-1"><i class="bi bi-inbox"></i></div>
-                        No document analytics yet.
+                        No documents in this range.
                       </td>
                     </tr>
                   @endforelse
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Visitor Cities (placeholder) -->
-      <div class="col-lg-5">
-        <div class="bw-card h-100">
-          <div class="card-header py-3 d-flex align-items-center justify-content-between">
-            <h6 class="m-0 section-title">Visitor Cities</h6>
-            <span class="chip"><i class="bi bi-geo-alt"></i> Locations</span>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table align-middle mb-0">
-                <thead>
-                  <tr>
-                    <th>City</th>
-                    <th style="width:120px;">Visitors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse($cityVisitors as $row)
-                    <tr>
-                      <td>
-                        <div class="row-title">
-                          <div class="doc-ico"><i class="bi bi-geo-alt"></i></div>
-                          <div class="d-flex flex-column">
-                            <div title="{{ $row->city ?? 'Unknown' }}">{{ $row->city ?? 'Unknown' }}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="views-pill"><i class="bi bi-person"></i>{{ $row->visitors }}</span>
-                      </td>
-                    </tr>
-                  @empty
-                    <tr>
-                      <td colspan="3" class="empty">
-                        <div class="empty">
-                          <div class="mb-2"><span class="badge">Analytics</span></div>
-                          <div class="mb-1 fw-bold">Location insights unavailable</div>
-                          <div class="mb-3">Enable IP geolocation collection to see city-level breakdowns.</div>
-                          <a href="#" class="btn-neutral"><i class="bi bi-gear"></i> Configure</a>
-                        </div>
-                      </td>
-                    </tr>
-                  @endforelse
-                </tbody>
-              </table>
-            </div>
+            {{-- Centered pagination with bottom margin --}}
+            @if(method_exists($allDocs, 'total') && $allDocs->lastPage() > 1)
+              @php
+                $current = $allDocs->currentPage();
+                $last    = $allDocs->lastPage();
+                $perPage = $allDocs->perPage();
+                $total   = $allDocs->total();
+                $startNo = ($current - 1) * $perPage + 1;
+                $endNo   = min($total, $current * $perPage);
+
+                $maxWindow = 5;
+                $winStart = max(1, $current - intdiv($maxWindow,2));
+                $winEnd   = min($last, $winStart + $maxWindow - 1);
+                if(($winEnd - $winStart + 1) < $maxWindow){
+                  $winStart = max(1, $winEnd - $maxWindow + 1);
+                }
+                function pageUrl($n){ return request()->fullUrlWithQuery(['page'=>$n]); }
+              @endphp
+
+              <nav class="mt-3 mb-4 pagination-wrap" aria-label="All documents pagination">
+                <div class="pager-summary">Showing {{ number_format($startNo) }}–{{ number_format($endNo) }} of {{ number_format($total) }}</div>
+                <ul class="pagination pagination-modern justify-content-center mb-0">
+                  {{-- First / Prev --}}
+                  <li class="page-item {{ $current==1?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl(1) }}"><i class="bi bi-chevron-double-left"></i></a>
+                  </li>
+                  <li class="page-item {{ $current==1?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl($current-1) }}"><i class="bi bi-chevron-left"></i></a>
+                  </li>
+
+                  {{-- Left edge + ellipsis --}}
+                  @if($winStart > 1)
+                    <li class="page-item"><a class="page-link" href="{{ pageUrl(1) }}">1</a></li>
+                    @if($winStart > 2)
+                      <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
+                    @endif
+                  @endif
+
+                  {{-- Window --}}
+                  @for($i=$winStart; $i<=$winEnd; $i++)
+                    <li class="page-item {{ $i==$current?'active':'' }}">
+                      <a class="page-link" href="{{ $i==$current ? '#' : pageUrl($i) }}">{{ $i }}</a>
+                    </li>
+                  @endfor
+
+                  {{-- Right ellipsis + edge --}}
+                  @if($winEnd < $last)
+                    @if($winEnd < $last-1)
+                      <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
+                    @endif
+                    <li class="page-item"><a class="page-link" href="{{ pageUrl($last) }}">{{ $last }}</a></li>
+                  @endif
+
+                  {{-- Next / Last --}}
+                  <li class="page-item {{ $current==$last?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($current+1) }}"><i class="bi bi-chevron-right"></i></a>
+                  </li>
+                  <li class="page-item {{ $current==$last?'disabled':'' }}">
+                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($last) }}"><i class="bi bi-chevron-double-right"></i></a>
+                  </li>
+                </ul>
+              </nav>
+            @endif
           </div>
         </div>
       </div>
     </div>
-
   </div>
 @endsection

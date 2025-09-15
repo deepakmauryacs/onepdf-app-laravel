@@ -220,6 +220,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.min.js"></script>
+
+    <script>
+        window.analyticsEndpoint = "{{ route('analytics.track') }}";
+        window.csrfToken = "{{ csrf_token() }}";
+    </script>
+    <script src="{{ asset('assets/analytics.js') }}"></script>
 <script>
 (function(){
   pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -281,6 +287,10 @@
         pageCount.textContent = String(doc.numPages);
       });
     });
+
+    // Initialize analytics session for this PDF
+    initPdfAnalytics(@json($d_id), "{{ hash_hmac('sha256', (string) $d_id, config('app.key')) }}");
+
   }).catch(function(err){
     console.error(err);
     alert('Failed to load PDF.');
@@ -362,6 +372,12 @@
     var n = e.pageNumber || pdfViewer.currentPageNumber;
     selectThumb(n, true);
     pageNumber.value = String(n);
+
+    // console.log('Page change: ' + n);
+    // Send analytics
+    if (typeof onPdfPageChange === "function") {
+        onPdfPageChange(n);
+    }
   });
 
   /* Outline navigation */
