@@ -5,13 +5,13 @@
          alt="ONELINKPDF logo"
          class="brand-logo" style="height: 35px;">
   </a>
-  
+
 
   <!-- Close button for sidebar (visible on mobile) -->
   <button class="sidebar-close" id="sidebarClose">
     <i class="bi bi-x-lg"></i>
   </button>
-  
+
   <!-- NEW MENU -->
   <nav class="nav flex-column gap-1" id="mainNav">
     <div class="side-title">GENERAL</div>
@@ -23,6 +23,9 @@
     </a>
     <a class="nav-link {{ request()->routeIs('admin.user-plans.*') ? 'active' : '' }}" href="{{ route('admin.user-plans.index') }}">
       <i class="bi bi-gem"></i> <span>User Plans</span>
+    </a>
+    <a class="nav-link {{ request()->routeIs('admin.blogs.*') ? 'active' : '' }}" href="{{ route('admin.blogs.index') }}">
+      <i class="bi bi-journal-text"></i> <span>Blog</span>
     </a>
   </nav>
 

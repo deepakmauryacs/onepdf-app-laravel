@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\UserPlanController as AdminUserPlanController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadCaptureController;
+use App\Http\Controllers\BlogController as PublicBlogController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\PartnershipsController;
@@ -55,6 +57,8 @@ Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
 Route::get('/refund-policy', [HomeController::class, 'refundPolicy'])->name('refund-policy');
 Route::get('/docs', [HomeController::class, 'docs'])->name('docs');
 Route::get('/integrations', [HomeController::class, 'integrations'])->name('integrations');
+Route::get('/blog', [PublicBlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [PublicBlogController::class, 'show'])->name('blog.show');
 Route::post('/subscribe', [NewsletterSubscriptionController::class, 'store'])->name('subscribe');
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
@@ -123,6 +127,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('users/{user}/files/list', [AdminUserController::class, 'filesList'])->name('users.files.list');
     Route::post('users/{user}/files/generate-link', [AdminUserController::class, 'generateLink'])->name('users.files.generate');
     Route::get('user-plans', [AdminUserPlanController::class, 'index'])->name('user-plans.index');
+    Route::resource('blogs', AdminBlogController::class)->except(['show']);
 });
 
 /* ------------------------- Public viewer (no auth) ------------------------- */
