@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class BlogPost extends Model
 {
@@ -19,9 +20,19 @@ class BlogPost extends Model
         'title',
         'slug',
         'excerpt',
+        'featured_image_path',
         'content',
         'is_published',
         'published_at',
+    ];
+
+    /**
+     * Additional attributes that should be appended when serialising.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'featured_image_url',
     ];
 
     /**
@@ -52,5 +63,17 @@ class BlogPost extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Get a publicly accessible URL for the featured image.
+     */
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        if (! $this->featured_image_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->featured_image_path);
     }
 }
