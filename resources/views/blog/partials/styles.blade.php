@@ -25,6 +25,9 @@
     transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   }
   .blog-card:hover{transform:translateY(-6px);box-shadow:0 18px 45px rgba(15,23,42,.12);border-color:#d8dae2;}
+  .blog-card__media{margin:-24px -24px 18px;border-radius:18px 18px 0 0;overflow:hidden;display:block;aspect-ratio:16/10;height:220px;background:#e2e8f0;}
+  .blog-card__media--sm{margin:-20px -20px 16px;border-radius:16px 16px 0 0;aspect-ratio:16/9;height:160px;}
+  .blog-card__media img{width:100%;height:100%;object-fit:cover;display:block;}
   .blog-card__meta{color:var(--muted,#6b7280);font-size:.9rem;margin-bottom:12px;display:flex;align-items:center;gap:.5rem;}
   .blog-card__title{font-size:1.3rem;margin-bottom:.75rem;font-weight:700;color:var(--ink,#0b1120);}
   .blog-card__title a{color:inherit;text-decoration:none;}
@@ -49,6 +52,8 @@
 
   .blog-meta{color:var(--muted,#6b7280);font-size:.95rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
   .blog-meta .dot{width:6px;height:6px;border-radius:999px;background:var(--muted,#6b7280);display:inline-block;}
+  .blog-hero__image{border-radius:24px;overflow:hidden;border:1px solid var(--line,#e6e7eb);box-shadow:0 20px 45px rgba(15,23,42,.08);background:#f8fafc;}
+  .blog-hero__image img{display:block;width:100%;height:auto;object-fit:cover;}
 
   .blog-content{background:var(--panel,#ffffff);border-radius:20px;border:1px solid var(--line,#e6e7eb);padding:32px;box-shadow:0 20px 45px rgba(15,23,42,.08);}
   .blog-content p{font-size:1.08rem;line-height:1.75;color:var(--ink,#111827);margin-bottom:1.2rem;}
@@ -56,6 +61,7 @@
   .blog-content ul,.blog-content ol{margin-bottom:1.2rem;padding-left:1.3rem;}
   .blog-content li{margin-bottom:.5rem;}
   .blog-content a{color:#111;text-decoration:underline;}
+  .blog-content img{max-width:100%;height:auto;border-radius:18px;margin:1.5rem auto;display:block;box-shadow:0 10px 25px rgba(15,23,42,.12);}
   .blog-content blockquote{border-left:4px solid #111;padding-left:1rem;color:#0f172a;font-style:italic;margin:1.5rem 0;}
   .blog-back{display:inline-flex;align-items:center;gap:.45rem;margin-top:24px;font-weight:600;color:#0f172a;text-decoration:none;}
   .blog-back:hover{text-decoration:underline;}
@@ -67,6 +73,8 @@
   @media (max-width: 768px){
     .blog-hero{padding:56px 0 32px;text-align:center;}
     .blog-content{padding:24px;}
+    .blog-card__media{margin:-24px -24px 16px;height:200px;}
+    .blog-card__media--sm{height:150px;}
   }
 </style>
 @endpush
