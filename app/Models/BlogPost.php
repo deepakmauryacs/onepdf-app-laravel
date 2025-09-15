@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BlogPost extends Model
 {
@@ -74,6 +75,10 @@ class BlogPost extends Model
             return null;
         }
 
-        return Storage::disk('public')->url($this->featured_image_path);
+        $disk = Str::startsWith($this->featured_image_path, ['uploads/', 'uploads\\'])
+            ? 'public_assets'
+            : 'public';
+
+        return Storage::disk($disk)->url($this->featured_image_path);
     }
 }
