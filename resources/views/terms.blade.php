@@ -8,7 +8,7 @@
     <h1 class="section-title text-center mb-3">Terms of Service</h1>
     <p class="section-subtitle text-center text-muted mb-4">Effective Date: {{ now()->format('F d, Y') }}</p>
 
-    <p>Welcome to OneLinkPDF (“<strong>OneLinkPDF</strong>”, “<strong>we</strong>”, “<strong>us</strong>”, or “<strong>our</strong>”). These Terms of Service (“<strong>Terms</strong>”) govern your access to and use of our website <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a>, applications, and services (collectively, the “<strong>Services</strong>”). OneLinkPDF is owned and operated by <strong>AETHERGRID INNOVATECH PRIVATE LIMITED</strong> (“Company”).</p>
+    <p>Welcome to OneLinkPDF (“<strong>OneLinkPDF</strong>”, “<strong>we</strong>”, “<strong>us</strong>”, or “<strong>our</strong>”). These Terms of Service (“<strong>Terms</strong>”) govern your access to and use of our website <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a>, applications, and services (collectively, the “<strong>Services</strong>”). OneLinkPDF is owned and operated by <strong>OneLinkPDF.COM</strong> (“Company”).</p>
 
     <p>By accessing or using the Services, you agree to be bound by these Terms, our <a href="{{ url('privacy') }}">Privacy Policy</a>, and, where applicable, our Refund/Cancellation Policy. If you do not agree, you must not use the Services.</p>
 
@@ -129,7 +129,7 @@
     <p>You agree to use the Services in compliance with all applicable laws and regulations, including data protection, export control, and sanctions laws where relevant.</p>
 
     <h5>28) Contact</h5>
-    <p>If you have questions about these Terms, please contact us at <a href="mailto:support@onelinkpdf.com">support@onelinkpdf.com</a>. Company: AETHERGRID INNOVATECH PRIVATE LIMITED.</p>
+    <p>If you have questions about these Terms, please contact us at <a href="mailto:support@onelinkpdf.com">support@onelinkpdf.com</a></p>
 
     <h5>29) Final Provisions</h5>
     <p>Use of the Services is unauthorized in any jurisdiction that does not give effect to these Terms. We may comply with lawful requests by authorities regarding your use of the Services.</p>

@@ -142,7 +142,7 @@
               <div>
                 <h5>Visit Us</h5>
                 <p class="text-muted mb-0">A-152 Sector 53 Noida</p>
-                <p class="text-muted">Basi Bahuddin Nagar, Uttar Pradesh 201301</p>
+                <p class="text-muted">Uttar Pradesh 201301</p>
               </div>
             </div>
 

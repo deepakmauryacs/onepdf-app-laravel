@@ -10,7 +10,7 @@
       Effective Date: {{ now()->format('F d, Y') }}
     </p>
 
-    <p>Welcome to OneLinkPDF (“<strong>OneLinkPDF</strong>”, “<strong>we</strong>”, “<strong>us</strong>”, “<strong>our</strong>”). OneLinkPDF is owned and operated by <strong>AETHERGRID INNOVATECH PRIVATE LIMITED</strong> (“Company”). We value your privacy. This Privacy Policy explains what information we collect, how we use it, and when we share it while operating our website <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a>, applications, and services (collectively, the “<strong>Services</strong>”).</p>
+    <p>Welcome to OneLinkPDF (“<strong>OneLinkPDF</strong>”, “<strong>we</strong>”, “<strong>us</strong>”, “<strong>our</strong>”). OneLinkPDF is owned and operated by <strong>OneLinkPDF.COM</strong> (“Company”). We value your privacy. This Privacy Policy explains what information we collect, how we use it, and when we share it while operating our website <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a>, applications, and services (collectively, the “<strong>Services</strong>”).</p>
 
     <p>By using the Services, you agree to the practices described in this Privacy Policy and our <a href="{{ url('/terms') }}">Terms of Service</a>. We may update this Policy periodically; continued use constitutes acceptance of changes.</p>
 
@@ -21,9 +21,9 @@
     <h5>1) General Information & Controller</h5>
     <p>Personal data collected through <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a> is controlled by:</p>
     <ul>
-      <li><strong>AETHERGRID INNOVATECH PRIVATE LIMITED</strong></li>
+      <li><strong>OneLinkPDF.COM</strong></li>
       <li>Email: <a href="mailto:support@onelinkpdf.com">support@onelinkpdf.com</a></li>
-      <li>Address: A-152 Sector 53 Noida Basi Bahuddin Nagar, Uttar Pradesh 201301</li>
+      <li>Address: A-152 Sector 53 Noida, Uttar Pradesh 201301</li>
     </ul>
 
     <h5>2) Information We Collect</h5>
@@ -112,7 +112,7 @@
     <ul>
       <li>Email: <a href="mailto:support@onelinkpdf.com">support@onelinkpdf.com</a></li>
       <li>Contact page: <a href="{{ url('/contact') }}">{{ url('/contact') }}</a></li>
-      <li>Address: (Update your registered office address here)</li>
+      <li>Address: A-152,Sector 53, Noida, Uttar Pradesh 201307</li>
     </ul>
 
     <hr class="my-5"/>
