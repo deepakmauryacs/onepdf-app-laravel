@@ -75,9 +75,7 @@ class BlogController extends Controller
      */
     public function destroy(BlogPost $blog): RedirectResponse
     {
-        if ($blog->featured_image_path) {
-            Storage::disk('public')->delete($blog->featured_image_path);
-        }
+        $this->deleteFeaturedImage($blog->featured_image_path);
 
         $blog->delete();
 
@@ -118,17 +116,39 @@ class BlogController extends Controller
         }
 
         if ($request->hasFile('featured_image')) {
-            if ($blog && $blog->featured_image_path) {
-                Storage::disk('public')->delete($blog->featured_image_path);
+            if ($blog) {
+                $this->deleteFeaturedImage($blog->featured_image_path);
+            }
+
+            $disk = Storage::disk('public_assets');
+
+            if (! $disk->exists('uploads/blogs')) {
+                $disk->makeDirectory('uploads/blogs', 0755, true);
             }
 
             $validated['featured_image_path'] = $request->file('featured_image')
-                ->store('blog-images', 'public');
+                ->store('uploads/blogs', 'public_assets');
         }
 
         unset($validated['featured_image']);
 
         return $validated;
+    }
+
+    /**
+     * Remove the existing featured image from storage if it exists.
+     */
+    protected function deleteFeaturedImage(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        $disk = Str::startsWith($path, ['uploads/', 'uploads\\'])
+            ? 'public_assets'
+            : 'public';
+
+        Storage::disk($disk)->delete($path);
     }
 
     /**
