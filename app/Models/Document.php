@@ -33,6 +33,11 @@ class Document extends Model
         return $this->hasMany(Lead::class);
     }
 
+    public function analyticsEvents()
+    {
+        return $this->hasMany(AnalyticsEvent::class, 'target');
+    }
+
 
 
 }

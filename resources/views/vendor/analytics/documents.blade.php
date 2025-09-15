@@ -90,7 +90,7 @@
     <div class="container py-3">
       <div class="d-flex align-items-center justify-content-between">
         <nav class="crumb">
-          <a href="{{ route('vendor.dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
+          <a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
           <i class="bi bi-chevron-right"></i>
           <a href="{{ route('vendor.analytics.index') }}">Analytics</a>
           <i class="bi bi-chevron-right"></i>
@@ -105,11 +105,9 @@
               <i class="bi bi-sliders"></i> Range
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="?range=Today">Today</a></li>
-              <li><a class="dropdown-item" href="?range=Last 7 days">Last 7 days</a></li>
-              <li><a class="dropdown-item" href="?range=Last 30 days">Last 30 days</a></li>
-              <li><a class="dropdown-item" href="?range=This month">This month</a></li>
-              <li><a class="dropdown-item" href="?range=This year">This year</a></li>
+              @foreach (['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'] as $option)
+                  <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
+              @endforeach
             </ul>
           </div>
         </div>
@@ -140,7 +138,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($allDocs as $doc)
+                  @forelse ($documents as $doc)
                     <tr>
                       <td>
                         <div class="row-title">
@@ -155,11 +153,7 @@
                       <td><span class="views-pill"><i class="bi bi-eye"></i>{{ number_format((int)$doc->views) }}</span></td>
                       <td>{{ number_format((int)($doc->sessions ?? 0)) }}</td>
                       <td>
-                        @if($doc->last_view_at)
-                          {{ \Illuminate\Support\Carbon::parse($doc->last_view_at)->format('d M Y, H:i') }}
-                        @else
-                          <span class="muted">—</span>
-                        @endif
+                        {{ $doc->last_view ?? '-' }}
                       </td>
                       <td>
                         <a class="btn-neutral" href="{{ route('vendor.analytics.document', $doc->id) }}">
@@ -180,12 +174,12 @@
             </div>
 
             {{-- Centered pagination with bottom margin --}}
-            @if(method_exists($allDocs, 'total') && $allDocs->lastPage() > 1)
+            @if(method_exists($documents, 'total') && $documents->lastPage() > 1)
               @php
-                $current = $allDocs->currentPage();
-                $last    = $allDocs->lastPage();
-                $perPage = $allDocs->perPage();
-                $total   = $allDocs->total();
+                $current = $documents->currentPage();
+                $last    = $documents->lastPage();
+                $perPage = $documents->perPage();
+                $total   = $documents->total();
                 $startNo = ($current - 1) * $perPage + 1;
                 $endNo   = min($total, $current * $perPage);
 

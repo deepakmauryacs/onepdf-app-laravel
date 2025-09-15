@@ -20,30 +20,15 @@
   <nav class="crumb mb-2">
     <a href="{{ route('dashboard') }}"><i class="bi bi-house-door me-1"></i> Home</a>
     <i class="bi bi-chevron-right"></i>
-    <a href="{{ route('vendor.analytics.documents') }}">Analytics</a>
+    <a href="{{ route('vendor.analytics.document', $doc->id) }}">Analytics</a>
     <i class="bi bi-chevron-right"></i>
-    <span>{{ $pdf->filename }}</span>
+    <span>{{ $doc->filename }}</span>
   </nav>
 
   <div class="bw-card p-3 mb-3">
     <div class="d-flex align-items-center justify-content-between">
-      <div class="doc-title">{{ $pdf->filename }}</div>
-      <!-- <span class="chip"><i class="bi bi-calendar3"></i>{{ request('range','Last 7 days') }}</span> -->
-       <div class="toolbar">
-          <div class="chip"><i class="bi bi-calendar3"></i>
-            <span>{{ request('range','Last 7 days') }}</span>
-          </div>
-          <div class="dropdown">
-            <button class="btn-neutral dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-sliders"></i> Range
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              @foreach (['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'] as $option)
-                  <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
-              @endforeach
-            </ul>
-          </div>
-        </div>
+      <div class="doc-title">{{ $doc->filename }}</div>
+      <span class="chip"><i class="bi bi-calendar3"></i>{{ request('range','Last 7 days') }}</span>
     </div>
   </div>
 
@@ -59,11 +44,11 @@
           </tr>
         </thead>
         <tbody>
-          @forelse($trafficSources as $src)
+          @forelse ($sources as $row)
           <tr>
-            <td>{{ $src->source }}</td>
-            <td>{{ $src->views }}</td>
-            <td>{{ $src->sessions }}</td>
+            <td>{{ $row->source }}</td>
+            <td>{{ number_format((int)$row->views) }}</td>
+            <td>{{ number_format((int)($row->sessions ?? 0)) }}</td>
           </tr>
           @empty
           <tr><td colspan="3" class="text-muted">No source data in this range.</td></tr>
@@ -72,9 +57,7 @@
       </table>
     </div>
     <div class="mt-3 d-flex justify-content-end">
-      @if(0)
-      {{ $trafficSources->withQueryString()->links() }}
-      @endif
+      {{ $sources->withQueryString()->links() }}
     </div>
   </div>
 </div>

@@ -14,6 +14,7 @@ use App\Http\Controllers\BlogController as PublicBlogController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\PartnershipsController;
+use App\Http\Controllers\AnalyticsController as AnalyticsWebController;
 use App\Http\Controllers\Vendor\AnalyticsController;
 use App\Http\Controllers\Vendor\DashboardController; // files + public viewer
 use App\Http\Controllers\Vendor\DocumentController;
@@ -40,6 +41,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'reset'])->name('password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'update'])->name('password.update');
 });
+
+Route::post('/analytics/track', [AnalyticsWebController::class, 'track'])->name('analytics.track');
+
 
 /* ------------------------- Logout ------------------------- */
 Route::post('/logout', [LoginController::class, 'destroy'])
