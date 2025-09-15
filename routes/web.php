@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadCaptureController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\PartnershipsController;
 use App\Http\Controllers\Vendor\AnalyticsController;
@@ -51,9 +52,11 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/partnerships', [HomeController::class, 'partnerships'])->name('partnerships');
 Route::get('/terms', [HomeController::class, 'terms'])->name('terms');
 Route::get('/privacy', [HomeController::class, 'privacy'])->name('privacy');
+Route::get('/refund-policy', [HomeController::class, 'refundPolicy'])->name('refund-policy');
 Route::get('/docs', [HomeController::class, 'docs'])->name('docs');
 Route::get('/integrations', [HomeController::class, 'integrations'])->name('integrations');
 Route::post('/subscribe', [NewsletterSubscriptionController::class, 'store'])->name('subscribe');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 /* Contact + Partnerships (AJAX) */
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
