@@ -99,6 +99,14 @@ class HomeController extends Controller
     }
 
     /**
+     * Display the refund policy page.
+     */
+    public function refundPolicy()
+    {
+        return view('refund-policy');
+    }
+
+    /**
      * Display the documentation page.
      */
     public function docs()

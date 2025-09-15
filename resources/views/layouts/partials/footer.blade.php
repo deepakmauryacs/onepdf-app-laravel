@@ -68,6 +68,8 @@
         <span class="divider">•</span>
         <a href="{{ url('/terms') }}">Terms of Service</a>
         <span class="divider">•</span>
+        <a href="{{ url('/refund-policy') }}">Refund Policy</a>
+        <span class="divider">•</span>
         <a href="{{ url('/sitemap.xml') }}">Sitemap</a>
       </div>
     </div>
