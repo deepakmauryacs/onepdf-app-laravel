@@ -2,7 +2,6 @@
 
 @section('title', 'Features - OneLinkPDF')
 
-
 @section('content')
   {{-- HERO --}}
   <section class="features-hero">
@@ -10,7 +9,9 @@
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
           <h1 class="display-5 fw-bold mb-3">Powerful Features for Secure PDF Sharing</h1>
-          <p class="lead text-muted mb-4">Everything you need to share, protect, and track your PDF documents with confidence.</p>
+          <p class="lead text-muted mb-4">
+            Everything you need to share, protect, track — <span class="text-dark fw-semibold">and generate leads</span> — with confidence.
+          </p>
           <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="#features" class="btn btn-brand btn-lg">Explore Features</a>
             <a href="#demo" class="btn btn-ghost btn-lg">See Live Demo</a>
@@ -109,6 +110,21 @@
               <li><i class="bi bi-check2"></i>Branding options</li>
               <li><i class="bi bi-check2"></i>Domain restrictions</li>
               <li><i class="bi bi-check2"></i>IP allowlisting</li>
+            </ul>
+          </div>
+        </div>
+
+        {{-- NEW: Lead Capture feature card --}}
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="bi bi-person-lines-fill"></i></div>
+            <h3>Lead Capture & Gated PDFs</h3>
+            <p>Turn viewers into contacts by asking for details before or after viewing.</p>
+            <ul class="feature-list">
+              <li><i class="bi bi-check2"></i>Email/phone capture (pre-view gate)</li>
+              <li><i class="bi bi-check2"></i>Post-view feedback prompts</li>
+              <li><i class="bi bi-check2"></i>UTM tracking & source attribution</li>
+              <li><i class="bi bi-check2"></i>Zapier/Webhooks & CSV export</li>
             </ul>
           </div>
         </div>
