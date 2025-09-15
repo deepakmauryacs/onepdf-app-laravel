@@ -34,6 +34,7 @@
       <table class="table align-middle mb-0">
         <thead>
           <tr>
+            <th class="text-center">Image</th>
             <th>Title</th>
             <th>Slug</th>
             <th>Status</th>
@@ -45,6 +46,13 @@
         <tbody>
           @forelse ($posts as $post)
             <tr>
+              <td class="text-center">
+                @if ($post->featured_image_url)
+                  <img src="{{ $post->featured_image_url }}" alt="Thumbnail for {{ $post->title }}" class="post-thumbnail">
+                @else
+                  <div class="post-thumbnail--empty">No image</div>
+                @endif
+              </td>
               <td>
                 <div class="fw-semibold">{{ $post->title }}</div>
                 <div class="text-muted small">Created {{ $post->created_at?->format('M j, Y') }}</div>
@@ -72,7 +80,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">No posts yet. Create your first blog post.</td>
+              <td colspan="7" class="text-center text-muted py-4">No posts yet. Create your first blog post.</td>
             </tr>
           @endforelse
         </tbody>

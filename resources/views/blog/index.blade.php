@@ -24,6 +24,11 @@
         @foreach ($posts as $post)
           <div class="col-md-6 col-lg-4">
             <article class="blog-card">
+              @if ($post->featured_image_url)
+                <figure class="blog-card__media">
+                  <img src="{{ $post->featured_image_url }}" alt="Featured image for {{ $post->title }}">
+                </figure>
+              @endif
               <div class="blog-card__meta">
                 <i class="bi bi-calendar3"></i>
                 <span>{{ $post->published_at?->format('M j, Y') ?? $post->created_at?->format('M j, Y') }}</span>

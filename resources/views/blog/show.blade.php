@@ -28,6 +28,11 @@
         @if ($post->excerpt)
           <p class="lead mt-3">{{ $post->excerpt }}</p>
         @endif
+        @if ($post->featured_image_url)
+          <div class="blog-hero__image mt-4">
+            <img src="{{ $post->featured_image_url }}" alt="Featured image for {{ $post->title }}">
+          </div>
+        @endif
       </div>
     </div>
   </div>
@@ -38,7 +43,7 @@
     <div class="row g-5">
       <div class="col-lg-8">
         <article class="blog-content">
-          {!! nl2br(e($post->content)) !!}
+          {!! $post->content !!}
         </article>
         <a href="{{ route('blog.index') }}" class="blog-back"><i class="bi bi-arrow-left"></i> Back to blog</a>
       </div>
@@ -48,6 +53,11 @@
             <h5>More stories</h5>
             @foreach ($relatedPosts as $related)
               <article class="blog-card mb-3">
+                @if ($related->featured_image_url)
+                  <figure class="blog-card__media blog-card__media--sm">
+                    <img src="{{ $related->featured_image_url }}" alt="Featured image for {{ $related->title }}">
+                  </figure>
+                @endif
                 <div class="blog-card__meta">
                   <i class="bi bi-calendar3"></i>
                   <span>{{ $related->published_at?->format('M j, Y') ?? $related->created_at?->format('M j, Y') }}</span>

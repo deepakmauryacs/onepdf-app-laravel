@@ -7,6 +7,7 @@ use App\Models\BlogPost;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
@@ -74,6 +75,10 @@ class BlogController extends Controller
      */
     public function destroy(BlogPost $blog): RedirectResponse
     {
+        if ($blog->featured_image_path) {
+            Storage::disk('public')->delete($blog->featured_image_path);
+        }
+
         $blog->delete();
 
         return redirect()
@@ -92,6 +97,7 @@ class BlogController extends Controller
             'excerpt' => ['nullable', 'string'],
             'content' => ['required', 'string'],
             'is_published' => ['nullable', 'boolean'],
+            'featured_image' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $validated['is_published'] = $request->boolean('is_published');
@@ -110,6 +116,17 @@ class BlogController extends Controller
         } else {
             $validated['published_at'] = null;
         }
+
+        if ($request->hasFile('featured_image')) {
+            if ($blog && $blog->featured_image_path) {
+                Storage::disk('public')->delete($blog->featured_image_path);
+            }
+
+            $validated['featured_image_path'] = $request->file('featured_image')
+                ->store('blog-images', 'public');
+        }
+
+        unset($validated['featured_image']);
 
         return $validated;
     }
