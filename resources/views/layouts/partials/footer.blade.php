@@ -8,10 +8,13 @@
         <p class="mb-3">Secure PDF upload, sharing, permissions, and analytics — all in one link.</p>
         <p class="small text-secondary mb-4">Token-based access, view-only controls, watermarking, and detailed analytics help you share confidently.</p>
         <div class="social-links d-flex gap-2">
-          <a href="#" aria-label="Twitter" target="_blank" rel="noopener"><i class="bi bi-twitter"></i></a>
-          <a href="#" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="bi bi-linkedin"></i></a>
-          <a href="#" aria-label="GitHub" target="_blank" rel="noopener"><i class="bi bi-github"></i></a>
-          <a href="#" aria-label="Facebook" target="_blank" rel="noopener"><i class="bi bi-facebook"></i></a>
+          <a href="https://x.com/OneLinkPDF" aria-label="Twitter" target="_blank" rel="noopener"><i class="bi bi-twitter"></i></a>
+          <a href="https://www.linkedin.com/company/onelinkpdf/" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="bi bi-linkedin"></i></a>
+         <a href="https://www.instagram.com/onelinkpdf/" aria-label="Instagram" target="_blank" rel="noopener">
+            <i class="bi bi-instagram"></i>
+          </a>
+
+          <a href="https://www.facebook.com/onelinkpdf" aria-label="Facebook" target="_blank" rel="noopener"><i class="bi bi-facebook"></i></a>
         </div>
       </div>
 
@@ -27,8 +30,6 @@
       <div class="col-6 col-lg-2">
         <h6 class="mb-4">Resources</h6>
         <ul class="list-unstyled">
-          <li><a href="{{ route('docs') }}">Documentation</a></li>
-          <li><a href="{{ route('docs') }}#api">API &amp; Webhooks</a></li>
           <li><a href="{{ url('/#demo') }}">Embed Demo</a></li>
           <li><a href="{{ url('/#faq') }}">FAQ</a></li>
         </ul>
@@ -43,7 +44,7 @@
         </ul>
         <address class="small text-secondary mt-3 mb-0">
           <div>support@onelinkpdf.com</div>
-          <div>+1 (555) 123-4567</div>
+          <div>+91 7081000740</div>
         </address>
       </div>
 

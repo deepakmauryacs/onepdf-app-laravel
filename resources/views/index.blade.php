@@ -204,7 +204,7 @@ export class OneLinkPdfEmbedComponent {
       </div>
 
       <div class="row g-5 align-items-center">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
           <div class="demo-card">
             <div class="demo-header">
               <div class="d-flex align-items-center">
@@ -213,7 +213,7 @@ export class OneLinkPdfEmbedComponent {
                   <span class="bg-secondary rounded-circle d-inline-block mx-2" style="width: 12px; height: 12px;"></span>
                   <span class="bg-secondary rounded-circle d-inline-block" style="width: 12px; height: 12px;"></span>
                 </div>
-                <div class="text-muted small">https://www.onelinkpdf.com/view?doc=DEMO_TOKEN</div>
+                <div class="text-muted small">https://www.onelinkpdf.com/view?doc=045210e8da</div>
               </div>
               <div class="dropdown">
                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -233,7 +233,7 @@ export class OneLinkPdfEmbedComponent {
             <div class="demo-controls">
               <div class="input-group">
                 <span class="input-group-text">Token</span>
-                <input type="text" class="form-control token-input" value="DEMO_TOKEN" readonly>
+                <input type="text" class="form-control token-input" value="045210e8da" readonly>
                 <button class="btn btn-outline-secondary" type="button" id="copyToken"><i class="bi bi-clipboard"></i></button>
               </div>
 
@@ -247,7 +247,7 @@ export class OneLinkPdfEmbedComponent {
           </div>
         </div><!-- /left -->
 
-        <div class="col-lg-6">
+        <div class="col-lg-12">
           <h3 class="section-title">Embed anywhere in seconds</h3>
           <p class="text-muted mb-4">
             Our secure iframe embed works with any website, CMS, or application. Control access with expiring tokens,
@@ -271,7 +271,6 @@ export class OneLinkPdfEmbedComponent {
 
           <div class="d-flex gap-3 mt-4">
             <a href="{{ route('register') }}" class="btn btn-brand"><i class="bi bi-rocket-takeoff me-2"></i>Get started</a>
-            <a href="{{ route('docs') }}" class="btn btn-ghost"><i class="bi bi-journal-text me-2"></i>View docs</a>
           </div>
         </div><!-- /right -->
       </div>

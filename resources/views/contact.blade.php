@@ -2,7 +2,6 @@
 
 @section('title', 'Contact Us - OneLinkPDF')
 
-
 @section('content')
   {{-- HERO --}}
   <section class="contact-hero">
@@ -10,7 +9,9 @@
       <div class="row justify-content-center">
         <div class="col-lg-8 text-center">
           <h1 class="display-5 fw-bold mb-3">Get in Touch</h1>
-          <p class="lead text-muted mb-4">We'd love to hear from you. Our team is always ready to help with any questions about OneLinkPDF.</p>
+          <p class="lead text-muted mb-4">
+            We'd love to hear from you. Our team is always ready to help with any questions about OneLinkPDF.
+          </p>
         </div>
       </div>
     </div>
@@ -20,6 +21,7 @@
   <section class="contact-section">
     <div class="container">
       <div class="row g-5">
+        
         {{-- Form --}}
         <div class="col-lg-7">
           <div class="contact-card">
@@ -30,17 +32,23 @@
 
             <form id="contactForm" novalidate action="{{ route('contact.store') }}" method="POST">
               @csrf
+
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-floating mb-1">
-                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" id="firstName" name="firstName" placeholder="First Name" value="{{ old('firstName') }}">
+                    <input type="text" class="form-control @error('firstName') is-invalid @enderror" 
+                           id="firstName" name="firstName" placeholder="First Name" 
+                           value="{{ old('firstName') }}">
                     <label for="firstName">First Name</label>
                   </div>
                   <div id="firstName_error" class="error-message">@error('firstName'){{ $message }}@enderror</div>
                 </div>
+
                 <div class="col-md-6">
                   <div class="form-floating mb-1">
-                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" id="lastName" name="lastName" placeholder="Last Name" value="{{ old('lastName') }}">
+                    <input type="text" class="form-control @error('lastName') is-invalid @enderror" 
+                           id="lastName" name="lastName" placeholder="Last Name" 
+                           value="{{ old('lastName') }}">
                     <label for="lastName">Last Name</label>
                   </div>
                   <div id="lastName_error" class="error-message">@error('lastName'){{ $message }}@enderror</div>
@@ -48,13 +56,17 @@
               </div>
 
               <div class="form-floating mb-1">
-                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" placeholder="Email Address" value="{{ old('email') }}">
+                <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                       id="email" name="email" placeholder="Email Address" 
+                       value="{{ old('email') }}">
                 <label for="email">Email Address</label>
               </div>
               <div id="email_error" class="error-message">@error('email'){{ $message }}@enderror</div>
 
               <div class="form-floating mb-1">
-                <input type="text" class="form-control @error('company') is-invalid @enderror" id="company" name="company" placeholder="Company (Optional)" value="{{ old('company') }}">
+                <input type="text" class="form-control @error('company') is-invalid @enderror" 
+                       id="company" name="company" placeholder="Company (Optional)" 
+                       value="{{ old('company') }}">
                 <label for="company">Company (Optional)</label>
               </div>
               <div id="company_error" class="error-message">@error('company'){{ $message }}@enderror</div>
@@ -73,15 +85,19 @@
               <div id="subject_error" class="error-message">@error('subject'){{ $message }}@enderror</div>
 
               <div class="form-floating mb-1">
-                <textarea class="form-control @error('message') is-invalid @enderror" id="message" name="message" placeholder="Message" style="height: 150px">{{ old('message') }}</textarea>
+                <textarea class="form-control @error('message') is-invalid @enderror" 
+                          id="message" name="message" placeholder="Message" style="height: 150px">{{ old('message') }}</textarea>
                 <label for="message">Message</label>
               </div>
               <div id="message_error" class="error-message mb-4">@error('message'){{ $message }}@enderror</div>
 
               <div class="mb-3">
-                <label for="captcha" id="captcha_label" class="form-label">What is {{ $captcha_a }} + {{ $captcha_b }}?</label>
+                <label for="captcha" id="captcha_label" class="form-label">
+                  What is {{ $captcha_a }} + {{ $captcha_b }}?
+                </label>
                 <div class="input-group">
-                  <input type="text" class="form-control @error('captcha') is-invalid @enderror" id="captcha" name="captcha">
+                  <input type="text" class="form-control @error('captcha') is-invalid @enderror" 
+                         id="captcha" name="captcha">
                   <button type="button" class="btn btn-outline-secondary" id="refreshCaptcha" aria-label="Refresh captcha">
                     <i class="bi bi-arrow-clockwise"></i>
                   </button>
@@ -90,7 +106,9 @@
               </div>
 
               <button type="submit" class="btn btn-brand btn-lg w-100">Send Message</button>
-              <div id="form_success" class="mt-3 form-success" @if(!session('contact_success'))style="display:none;"@endif>
+
+              <div id="form_success" class="mt-3 form-success" 
+                   @if(!session('contact_success'))style="display:none;"@endif>
                 {{ session('contact_success') ?? 'Thank you for your message! We will get back to you soon.' }}
               </div>
             </form>
@@ -107,7 +125,7 @@
               <div>
                 <h5>Email Us</h5>
                 <p class="text-muted mb-0">support@onelinkpdf.com</p>
-                <p class="text-muted">sales@onelinkpdf.com</p>
+                <p class="text-muted">inquiry@onelinkpdf.com</p>
               </div>
             </div>
 
@@ -115,8 +133,7 @@
               <div class="contact-icon"><i class="bi bi-telephone"></i></div>
               <div>
                 <h5>Call Us</h5>
-                <p class="text-muted mb-0">+1 (555) 123-4567 (Sales)</p>
-                <p class="text-muted">+1 (555) 987-6543 (Support)</p>
+                <p class="text-muted mb-0">+91 7081000740 (Sales/Support)</p>
               </div>
             </div>
 
@@ -124,8 +141,8 @@
               <div class="contact-icon"><i class="bi bi-geo-alt"></i></div>
               <div>
                 <h5>Visit Us</h5>
-                <p class="text-muted mb-0">123 Tech Boulevard</p>
-                <p class="text-muted">San Francisco, CA 94107</p>
+                <p class="text-muted mb-0">A-152 Sector 53 Noida</p>
+                <p class="text-muted">Basi Bahuddin Nagar, Uttar Pradesh 201301</p>
               </div>
             </div>
 
@@ -140,11 +157,19 @@
 
             <div class="mt-4">
               <h5 class="mb-3">Follow Us</h5>
-              <div class="social-links">
-                <a href="#"><i class="bi bi-twitter"></i></a>
-                <a href="#"><i class="bi bi-linkedin"></i></a>
-                <a href="#"><i class="bi bi-facebook"></i></a>
-                <a href="#"><i class="bi bi-instagram"></i></a>
+              <div class="social-links d-flex gap-2">
+                <a href="https://x.com/OneLinkPDF" aria-label="Twitter" target="_blank" rel="noopener">
+                  <i class="bi bi-twitter"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/onelinkpdf/" aria-label="LinkedIn" target="_blank" rel="noopener">
+                  <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="https://www.instagram.com/onelinkpdf/" aria-label="Instagram" target="_blank" rel="noopener">
+                  <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://www.facebook.com/onelinkpdf" aria-label="Facebook" target="_blank" rel="noopener">
+                  <i class="bi bi-facebook"></i>
+                </a>
               </div>
             </div>
 
@@ -154,7 +179,6 @@
       </div>
     </div>
   </section>
-
 @endsection
 
 @push('scripts')
@@ -207,7 +231,7 @@
         });
       }
 
-      // If you want AJAX submit, uncomment below and ensure route returns JSON.
+      // AJAX submit
       form.addEventListener('submit', async function(e){
         e.preventDefault();
         clearErrors();
@@ -217,12 +241,15 @@
 
         if (!data.get('firstName')) { setFieldError('firstName','First name is required.'); ok=false; }
         if (!data.get('lastName'))  { setFieldError('lastName','Last name is required.'); ok=false; }
+
         const email=data.get('email');
         if (!email){ setFieldError('email','Email is required.'); ok=false; }
         else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ setFieldError('email','Please enter a valid email.'); ok=false; }
+
         if (!data.get('subject')) { setFieldError('subject','Subject is required.'); ok=false; }
         if (!data.get('message')) { setFieldError('message','Message is required.'); ok=false; }
         if (!data.get('captcha')) { setFieldError('captcha','Captcha is required.'); ok=false; }
+
         if (!ok) return;
 
         try{
@@ -246,9 +273,7 @@
             form.reset();
             if (json.captcha_a && json.captcha_b) {
               const label = document.getElementById('captcha_label');
-              if (label) {
-                label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
-              }
+              if (label) label.textContent = `What is ${json.captcha_a} + ${json.captcha_b}?`;
             }
             if (successMsg) {
               successMsg.textContent = json.message || 'Thank you for your message! We will get back to you soon.';
