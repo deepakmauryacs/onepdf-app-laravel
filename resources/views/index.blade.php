@@ -19,11 +19,16 @@
           <h1 class="display-5 fw-bold mb-3">
             Share &amp; track PDFs with <span class="text-gradient">one secure link</span>
           </h1>
+          
 
           <p class="lead text-muted mb-4">
             Upload PDFs, control permissions (view-only, watermark, expiry), and get real-time analytics on opens,
             location, device, and time-on-page. Embed anywhere with a simple iframe.
           </p>
+          <p class="lead fw-semibold text-primary mb-4">
+            Capture leads before access — turn every PDF view into a new business opportunity.
+          </p>
+
 
           <div class="d-flex flex-wrap gap-3 mb-2">
             <a href="{{ url('/register') }}" class="btn btn-brand btn-lg">
