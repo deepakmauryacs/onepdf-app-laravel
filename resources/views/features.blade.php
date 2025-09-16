@@ -347,10 +347,6 @@
         <img src="{{ asset('assets/brand-svg/wordpress-original.svg') }}" class="integration-logo" alt="WordPress">
         <img src="{{ asset('assets/brand-svg/zapier-icon.svg') }}" class="integration-logo" alt="Zapier">
       </div>
-
-      <div class="text-center mt-5">
-        <a href="{{ route('integrations') }}" class="btn btn-brand">View All Integrations</a>
-      </div>
     </div>
   </section>
 
@@ -363,7 +359,7 @@
           <p class="text-muted mb-4">Start sharing your PDFs securely today. No credit card required.</p>
           <div class="d-flex justify-content-center gap-3 flex-wrap">
             <a href="{{ route('register') }}" class="btn btn-brand btn-lg">Get Started for Free</a>
-            <a href="javascript:void(0)" class="btn btn-ghost btn-lg">Schedule a Demo</a>
+            <a href="{{ route('contact') }}" class="btn btn-ghost btn-lg">Schedule a Demo</a>
           </div>
         </div>
       </div>
