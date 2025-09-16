@@ -18,6 +18,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-nice-select@1.1.0/css/nice-select.css">
 
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -64,6 +65,165 @@
     .form-control:focus, .form-select:focus{
       border-color:#111;
       box-shadow:0 0 0 .2rem rgba(255,255,255,.08);
+    }
+
+    .nice-select-floating{
+      position:relative;
+      --select-icon:none;
+      --select-arrow:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2716%27%20height%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23111%27%20stroke-width%3D%271.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%206l4%204%204-4%27/%3E%3C/svg%3E");
+    }
+    .nice-select-floating select.form-select{
+      appearance:none;
+      border-radius:12px;
+      border:1px solid var(--line);
+      padding:1.2rem 3.2rem .55rem 3.2rem;
+      background-color:#f9fafb;
+      background-image:var(--select-icon), var(--select-arrow);
+      background-position:left 1rem center, right 1rem center;
+      background-repeat:no-repeat;
+      background-size:20px 20px, 14px 14px;
+      transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+    .nice-select-floating select.form-select:focus{
+      background-color:#fff;
+      border-color:#111;
+      box-shadow:0 0 0 .25rem rgba(17,17,17,.08);
+    }
+    .nice-select-floating.nice-select-ready .nice-select{
+      position:relative;
+      display:block;
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#f9fafb;
+      padding:1.2rem 3.2rem .55rem 3.2rem;
+      font-size:1rem;
+      line-height:1.45;
+      color:var(--ink);
+      transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+      min-height:3.25rem;
+    }
+    .nice-select-floating.nice-select-ready .nice-select.open,
+    .nice-select-floating.nice-select-ready .nice-select:focus{
+      border-color:#111;
+      box-shadow:0 0 0 .25rem rgba(17,17,17,.08);
+      background:#fff;
+      outline:none;
+    }
+    .nice-select-floating.nice-select-ready .nice-select:after{
+      border-color:#111;
+      right:1.1rem;
+      margin-top:-3px;
+      width:10px;
+      height:10px;
+      border-width:2px 2px 0 0;
+    }
+    .nice-select-floating.nice-select-ready .nice-select::before{
+      content:'';
+      position:absolute;
+      left:1rem;
+      top:50%;
+      width:20px;
+      height:20px;
+      transform:translateY(-50%);
+      background-image:var(--select-icon);
+      background-repeat:no-repeat;
+      background-size:contain;
+      opacity:.75;
+      pointer-events:none;
+      transition:opacity .2s ease;
+    }
+    .nice-select-floating.nice-select-ready .nice-select.open::before,
+    .nice-select-floating.nice-select-ready .nice-select:focus::before{
+      opacity:1;
+    }
+    .nice-select-floating.nice-select-ready .nice-select .current{
+      display:block;
+      font-weight:500;
+      color:var(--ink);
+    }
+    .nice-select-floating.nice-select-ready:not(.is-filled) .nice-select .current{
+      color:var(--muted);
+      font-weight:400;
+    }
+    .nice-select-floating.nice-select-ready .nice-select .list{
+      width:calc(100% + 2px);
+      left:-1px;
+      margin-top:.75rem;
+      border-radius:12px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+      padding:.5rem 0;
+      max-height:240px;
+      overflow:auto;
+      background:#fff;
+    }
+    .nice-select-floating.nice-select-ready .nice-select .option{
+      padding:.55rem 1.25rem;
+      font-weight:500;
+      color:var(--ink);
+      transition:background .15s ease, color .15s ease;
+    }
+    .nice-select-floating.nice-select-ready .nice-select .option.disabled{
+      color:var(--muted);
+      cursor:default;
+    }
+    .nice-select-floating.nice-select-ready .nice-select .option:hover,
+    .nice-select-floating.nice-select-ready .nice-select .option.focus,
+    .nice-select-floating.nice-select-ready .nice-select .option.selected{
+      background:#111;
+      color:#fff;
+    }
+    .nice-select-floating.nice-select-ready > label{
+      position:absolute;
+      left:3.2rem;
+      top:1.2rem;
+      color:var(--muted);
+      font-weight:600;
+      transition:transform .2s ease, top .2s ease, color .2s ease, letter-spacing .2s ease;
+      pointer-events:none;
+    }
+    .nice-select-floating.nice-select-ready.is-focused > label,
+    .nice-select-floating.nice-select-ready.is-filled > label{
+      top:.52rem;
+      transform:scale(.82);
+      color:#111;
+      letter-spacing:.01em;
+    }
+    .nice-select-floating.nice-select-ready.has-error .nice-select{
+      border-color:#dc2626;
+      box-shadow:0 0 0 .25rem rgba(220,38,38,.12);
+      background:#fff;
+    }
+    .nice-select-floating.nice-select-ready.has-error > label{
+      color:#dc2626;
+    }
+    .nice-select-floating.has-error select.form-select{
+      border-color:#dc2626;
+      box-shadow:0 0 0 .25rem rgba(220,38,38,.12);
+      background-color:#fff;
+    }
+    .nice-select-floating.has-error > label{
+      color:#dc2626;
+    }
+    .nice-select-floating.nice-select-ready .nice-select.is-invalid{
+      border-color:#dc2626;
+    }
+    .nice-select-floating:not(.nice-select-ready) > label{
+      padding-left:3.2rem;
+    }
+    .nice-select-country{
+      --select-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2720%27%20height%3D%2720%27%20fill%3D%27none%27%20stroke%3D%27%239ca3af%27%20stroke-width%3D%271.3%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Ccircle%20cx%3D%2710%27%20cy%3D%2710%27%20r%3D%277.2%27/%3E%3Cpath%20d%3D%27M2.8%2010h14.4M10%202.8c2.4%202.1%202.4%2012.3%200%2014.4M5.5%205.1c1%20.5%208%20.8%209%200M5.5%2014.9c1-.5%208-.8%209%200%27/%3E%3C/svg%3E");
+    }
+    .nice-select-plan{
+      --select-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2720%27%20height%3D%2720%27%20fill%3D%27none%27%20stroke%3D%27%239ca3af%27%20stroke-width%3D%271.3%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M10%202.8l7%203.6-7%203.6-7-3.6%207-3.6zM17%2010.4l-7%203.6-7-3.6M17%2014.8l-7%203.4-7-3.4%27/%3E%3C/svg%3E");
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .nice-select-floating.nice-select-ready .nice-select,
+      .nice-select-floating.nice-select-ready > label{
+        transition:none;
+      }
     }
     .is-invalid{ border-color:#dc2626 !important; }
 
@@ -135,7 +295,7 @@
               </div>
             </div>
 
-            <div class="form-floating mb-1">
+            <div class="form-floating mb-1 nice-select-floating nice-select-country">
               <select name="country" class="form-select" id="country" required>
                 <option value="" disabled selected>Select Country</option>
                 @foreach($countries as $country)
@@ -152,7 +312,7 @@
             </div>
             <div id="company_error" class="error-message"></div>
 
-            <div class="form-floating mb-1">
+            <div class="form-floating mb-1 nice-select-floating nice-select-plan">
               <select name="plan_id" class="form-select" id="plan" required>
                 @if($plans->isNotEmpty())
                   <option value="" selected>Select Plan</option>
@@ -248,6 +408,7 @@
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-nice-select@1.1.0/js/jquery.nice-select.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
@@ -299,16 +460,75 @@
       el.addEventListener('hidden.bs.toast', () => el.remove());
     }
 
+    let niceSelectReady = false;
+
+    if (window.jQuery && typeof window.jQuery.fn.niceSelect === 'function') {
+      window.jQuery(function($){
+        const $niceTargets = $('#country, #plan');
+        if(!$niceTargets.length) return;
+
+        $niceTargets.niceSelect();
+        niceSelectReady = true;
+
+        function syncWrapper(selectEl){
+          const wrapper = selectEl.closest('.nice-select-floating');
+          if (wrapper) {
+            wrapper.classList.toggle('is-filled', !!selectEl.value);
+          }
+        }
+
+        $niceTargets.each(function(){
+          const selectEl = this;
+          const $select = $(selectEl);
+          const $wrapper = $select.closest('.nice-select-floating');
+          const wrapperEl = $wrapper.get(0);
+          const $nice = $wrapper.find('.nice-select');
+
+          if (wrapperEl) {
+            wrapperEl.classList.add('nice-select-ready');
+          }
+
+          syncWrapper(selectEl);
+
+          $nice.on('focusin', () => $wrapper.addClass('is-focused'));
+          $nice.on('focusout', () => $wrapper.removeClass('is-focused'));
+          $select.on('change', () => syncWrapper(selectEl));
+        });
+      });
+    }
+
+    function refreshNiceSelect(selectEl){
+      if (!niceSelectReady || !selectEl || !window.jQuery) return;
+      const $select = window.jQuery(selectEl);
+      if ($select.length && typeof $select.niceSelect === 'function') {
+        $select.niceSelect('update');
+      }
+      const wrapper = selectEl.closest('.nice-select-floating');
+      if (wrapper) {
+        wrapper.classList.toggle('is-filled', !!selectEl.value);
+      }
+    }
+
     // Validation helpers
     function setErr(inputId, errorId, msg){
       const i = document.getElementById(inputId);
       const e = document.getElementById(errorId);
-      if(i) i.classList.add('is-invalid');
+      if(i){
+        i.classList.add('is-invalid');
+        const wrapper = i.closest('.nice-select-floating');
+        if (wrapper) {
+          wrapper.classList.add('has-error');
+          const nice = wrapper.querySelector('.nice-select');
+          if (nice) nice.classList.add('is-invalid');
+        }
+      }
       if(e) e.textContent = msg || '';
     }
     function clearAllErrors(){
       document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
       document.querySelectorAll('.form-control, .form-select, .form-check-input').forEach(el => el.classList.remove('is-invalid'));
+      document.querySelectorAll('.nice-select-floating').forEach(el => el.classList.remove('has-error'));
+      document.querySelectorAll('.nice-select').forEach(el => el.classList.remove('is-invalid'));
     }
 
     const countrySelect = document.getElementById('country');
@@ -354,6 +574,8 @@
           option.textContent = name + ' - Free';
         }
       });
+
+      refreshNiceSelect(planSelect);
     }
 
     if (countrySelect && planSelect) {
