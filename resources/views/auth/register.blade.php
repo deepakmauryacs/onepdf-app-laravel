@@ -65,6 +65,50 @@
       border-color:#111;
       box-shadow:0 0 0 .2rem rgba(255,255,255,.08);
     }
+
+    .modern-select{
+      position:relative;
+      --select-arrow:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2716%27%20height%3D%2716%27%20fill%3D%27none%27%20stroke%3D%27%23111%27%20stroke-width%3D%271.5%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M4%206l4%204%204-4%27/%3E%3C/svg%3E");
+      --select-icon:none;
+    }
+    .modern-select .form-select{
+      appearance:none;
+      padding-left:3.2rem;
+      padding-right:3.2rem;
+      background-color:#f9fafb;
+      background-image:var(--select-icon), var(--select-arrow);
+      background-position:left 1rem center, right 1rem center;
+      background-repeat:no-repeat;
+      background-size:20px 20px, 14px 14px;
+      border:1px solid var(--line);
+      transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+    .modern-select .form-select:hover{
+      background-color:#fff;
+    }
+    .modern-select .form-select:focus{
+      background-color:#fff;
+      border-color:#111;
+      box-shadow:0 0 0 .25rem rgba(17,17,17,.08);
+    }
+    .modern-select label{
+      padding-left:3.2rem;
+    }
+    .modern-select-country{
+      --select-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2720%27%20height%3D%2720%27%20fill%3D%27none%27%20stroke%3D%27%239ca3af%27%20stroke-width%3D%271.3%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Ccircle%20cx%3D%2710%27%20cy%3D%2710%27%20r%3D%277.2%27/%3E%3Cpath%20d%3D%27M2.8%2010h14.4M10%202.8c2.4%202.1%202.4%2012.3%200%2014.4M5.5%205.1c1%20.5%208%20.8%209%200M5.5%2014.9c1-.5%208-.8%209%200%27/%3E%3C/svg%3E");
+    }
+    .modern-select-plan{
+      --select-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%2720%27%20height%3D%2720%27%20fill%3D%27none%27%20stroke%3D%27%239ca3af%27%20stroke-width%3D%271.3%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M10%202.8l7%203.6-7%203.6-7-3.6%207-3.6zM17%2010.4l-7%203.6-7-3.6M17%2014.8l-7%203.4-7-3.4%27/%3E%3C/svg%3E");
+    }
+    .modern-select .form-select:focus-visible{
+      outline:none;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .modern-select .form-select{
+        transition:none;
+      }
+    }
     .is-invalid{ border-color:#dc2626 !important; }
 
     .btn-primary{
@@ -135,7 +179,7 @@
               </div>
             </div>
 
-            <div class="form-floating mb-1">
+            <div class="form-floating mb-1 modern-select modern-select-country">
               <select name="country" class="form-select" id="country" required>
                 <option value="" disabled selected>Select Country</option>
                 @foreach($countries as $country)
@@ -152,7 +196,7 @@
             </div>
             <div id="company_error" class="error-message"></div>
 
-            <div class="form-floating mb-1">
+            <div class="form-floating mb-1 modern-select modern-select-plan">
               <select name="plan_id" class="form-select" id="plan" required>
                 @if($plans->isNotEmpty())
                   <option value="" selected>Select Plan</option>
