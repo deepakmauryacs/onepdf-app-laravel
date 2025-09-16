@@ -186,14 +186,14 @@
 
             <div class="form-floating mb-1 with-icon">
               <i class="bi bi-envelope fi"></i>
-              <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required>
+              <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required autocomplete="off">
               <label for="email">Email address</label>
             </div>
             <div id="email_error" class="error-message"></div>
 
             <div class="form-floating mb-1 position-relative password-floating with-icon">
               <i class="bi bi-lock fi"></i>
-              <input type="password" name="password" class="form-control" id="password" placeholder="Password" required minlength="6">
+              <input type="password" name="password" class="form-control" id="password" placeholder="Password" required minlength="6" autocomplete="off">
               <label for="password">Password</label>
               <i class="bi bi-eye toggle-password" id="togglePassword" aria-label="Show/Hide password" role="button" tabindex="0"></i>
             </div>
