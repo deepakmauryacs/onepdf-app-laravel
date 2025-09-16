@@ -139,7 +139,7 @@
               <select name="country" class="form-select" id="country" required>
                 <option value="" disabled selected>Select Country</option>
                 @foreach($countries as $country)
-                  <option value="{{ $country->name }}">{{ $country->name }}</option>
+                  <option value="{{ $country->name }}" data-iso="{{ $country->iso }}">{{ $country->name }}</option>
                 @endforeach
               </select>
               <label for="country">Country</label>
@@ -154,12 +154,35 @@
 
             <div class="form-floating mb-1">
               <select name="plan_id" class="form-select" id="plan" required>
-                <option value="" selected>Select Plan</option>
-                <option value="1">Free - $0</option>
-                <option value="2">Pro - $12/month</option>
-                <option value="3">Pro - $499/year</option>
-                <option value="4">Business - $25/month</option>
-                <option value="5">Business - $1999/year</option>
+                @if($plans->isNotEmpty())
+                  <option value="" selected>Select Plan</option>
+                  @foreach($plans as $plan)
+                    @php
+                      $usdString = (string) $plan->usd_price;
+                      $decimalPart = '';
+                      if (str_contains($usdString, '.')) {
+                          $decimalPart = rtrim(substr($usdString, strpos($usdString, '.') + 1), '0');
+                      }
+                      $decimalCount = $decimalPart !== '' ? 2 : 0;
+                      $usdValue = (float) $plan->usd_price;
+                      $suffixMap = ['month' => '/month', 'year' => '/year'];
+                      $suffix = $suffixMap[$plan->billing_cycle] ?? '';
+                      $defaultLabel = $usdValue > 0
+                          ? $plan->name . ' - $' . number_format($usdValue, $decimalCount) . $suffix
+                          : $plan->name . ' - Free';
+                    @endphp
+                    <option value="{{ $plan->id }}"
+                            data-plan="true"
+                            data-name="{{ $plan->name }}"
+                            data-billing="{{ $plan->billing_cycle }}"
+                            data-inr-price="{{ $plan->inr_price }}"
+                            data-usd-price="{{ $plan->usd_price }}">
+                      {{ $defaultLabel }}
+                    </option>
+                  @endforeach
+                @else
+                  <option value="" selected disabled>No plans available</option>
+                @endif
               </select>
               <label for="plan">Plan</label>
             </div>
@@ -286,6 +309,56 @@
     function clearAllErrors(){
       document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
       document.querySelectorAll('.form-control, .form-select, .form-check-input').forEach(el => el.classList.remove('is-invalid'));
+    }
+
+    const countrySelect = document.getElementById('country');
+    const planSelect = document.getElementById('plan');
+
+    function updatePlanOptions(){
+      if (!planSelect) return;
+
+      let iso = '';
+      if (countrySelect) {
+        const selectedOption = countrySelect.options[countrySelect.selectedIndex];
+        if (selectedOption && selectedOption.dataset && selectedOption.dataset.iso) {
+          iso = selectedOption.dataset.iso.toUpperCase();
+        }
+      }
+
+      const countryValue = countrySelect ? countrySelect.value.trim().toLowerCase() : '';
+      const isIndia = iso === 'IN' || countryValue.indexOf('india') !== -1;
+      const locale = isIndia ? 'en-IN' : 'en-US';
+      const currency = isIndia ? 'INR' : 'USD';
+
+      planSelect.querySelectorAll('option[data-plan]').forEach(function(option){
+        const name = option.dataset.name || option.textContent;
+        const billing = option.dataset.billing || '';
+        const priceValue = isIndia ? option.dataset.inrPrice : option.dataset.usdPrice;
+        const priceNumber = parseFloat(priceValue);
+
+        let suffix = '';
+        if (billing === 'month') suffix = '/month';
+        else if (billing === 'year') suffix = '/year';
+
+        if (isFinite(priceNumber) && priceNumber > 0) {
+          const hasCents = Math.abs(priceNumber - Math.round(priceNumber)) > 0.001;
+          const fractionDigits = hasCents ? 2 : 0;
+          const formattedPrice = priceNumber.toLocaleString(locale, {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: fractionDigits,
+            maximumFractionDigits: fractionDigits
+          });
+          option.textContent = name + ' - ' + formattedPrice + suffix;
+        } else {
+          option.textContent = name + ' - Free';
+        }
+      });
+    }
+
+    if (countrySelect && planSelect) {
+      countrySelect.addEventListener('change', updatePlanOptions);
+      updatePlanOptions();
     }
 
     const refreshBtn = document.getElementById('refreshCaptcha');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Country;
+use App\Models\Plan;
 use App\Rules\Captcha;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,11 +21,13 @@ class RegisterController extends Controller
         session(['captcha_answer' => $a + $b]);
 
         $countries = Country::orderBy('name')->get();
+        $plans = Plan::orderBy('id')->get();
 
         return view('auth.register', [
             'captcha_a' => $a,
             'captcha_b' => $b,
             'countries' => $countries,
+            'plans' => $plans,
         ]);
     }
 
@@ -36,7 +39,7 @@ class RegisterController extends Controller
             'last_name'    => ['required','string','max:255'],
             'country'      => ['required','string','max:255','exists:countries,name'],
             'company'      => ['required','string','max:255'],
-            'plan_id'      => ['required','in:1,2,3,4,5'],
+            'plan_id'      => ['required','exists:plans,id'],
             'email'        => ['required','email','max:255','unique:users,email'],
             'password'     => ['required','string','min:6'],
             'agreed_terms' => ['accepted'], // checkbox must be checked
@@ -64,18 +67,24 @@ class RegisterController extends Controller
             ]);
 
             $planId = (int) $validated['plan_id'];
-            $start  = Carbon::today();
-            $end    = null;
+            $plan = Plan::find($planId);
 
-            if (in_array($planId, [2,4], true)) {
-                $end = $start->copy()->addMonth()->toDateString();
-            } elseif (in_array($planId, [3,5], true)) {
-                $end = $start->copy()->addYear()->toDateString();
+            if (! $plan) {
+                throw ValidationException::withMessages([
+                    'plan_id' => 'Selected plan is no longer available.',
+                ]);
             }
+
+            $start = Carbon::today();
+            $end = match ($plan->billing_cycle) {
+                'month' => $start->copy()->addMonth()->toDateString(),
+                'year'  => $start->copy()->addYear()->toDateString(),
+                default => null,
+            };
 
             DB::table('user_plans')->insert([
                 'user_id'    => $user->id,
-                'plan_id'    => $planId,
+                'plan_id'    => $plan->id,
                 'start_date' => $start->toDateString(),
                 'end_date'   => $end,
                 'status'     => 1,
