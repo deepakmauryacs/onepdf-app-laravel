@@ -139,10 +139,13 @@
     // Centralize your base URL here (same as Login)
     const BASE = "{{ url('/') }}";
 
-    // Wire up nav links
-    document.getElementById('backLogin').href = BASE + '/login';
-    document.getElementById('backHomeTop').href = BASE + '/';
-    document.getElementById('backHomeBottom').href = BASE + '/';
+    // Wire up nav links (guarding if elements are missing)
+    const backLoginLink = document.getElementById('backLogin');
+    if (backLoginLink) backLoginLink.href = BASE + '/login';
+    ['backHomeTop', 'backHomeBottom'].forEach(id => {
+      const link = document.getElementById(id);
+      if (link) link.href = BASE + '/';
+    });
 
     // Keyboard shortcuts: Esc or Alt+H => Home
     document.addEventListener('keydown', (e) => {
@@ -175,25 +178,106 @@
       toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
     }
 
-    // Server feedback -> toast
+    // Forgot password resend cooldown timer (2 minutes)
+    const COOLDOWN_STORAGE_KEY = 'forgot-password:cooldownUntil';
+    const COOLDOWN_MS = 2 * 60 * 1000;
+    const forgotForm = document.getElementById('forgotForm');
+    const submitButton = forgotForm?.querySelector('button[type="submit"]');
+    const defaultButtonText = submitButton ? submitButton.textContent.trim() : '';
+    const sendingButtonText = 'Sending…';
+    let cooldownIntervalId = null;
+
+    function formatRemaining(ms){
+      const totalSeconds = Math.max(0, Math.ceil(ms / 1000));
+      const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+      return `${minutes}:${seconds}`;
+    }
+
+    function clearCooldown(){
+      if (!submitButton) return;
+      submitButton.disabled = false;
+      submitButton.textContent = defaultButtonText;
+      if (cooldownIntervalId){
+        clearInterval(cooldownIntervalId);
+        cooldownIntervalId = null;
+      }
+      localStorage.removeItem(COOLDOWN_STORAGE_KEY);
+    }
+
+    function applyCooldown(untilTimestamp){
+      if (!submitButton) return;
+      const update = () => {
+        const remaining = untilTimestamp - Date.now();
+        if (remaining <= 0){
+          clearCooldown();
+          return;
+        }
+        submitButton.disabled = true;
+        submitButton.textContent = `Resend in ${formatRemaining(remaining)}`;
+      };
+
+      if (cooldownIntervalId){
+        clearInterval(cooldownIntervalId);
+      }
+      update();
+      cooldownIntervalId = setInterval(update, 1000);
+    }
+
+    function resumeCooldownFromStorage(){
+      if (!submitButton) return;
+      const stored = Number(localStorage.getItem(COOLDOWN_STORAGE_KEY));
+      if (stored && stored > Date.now()){
+        applyCooldown(stored);
+      } else {
+        clearCooldown();
+      }
+    }
+
+    function startCooldown(durationMs){
+      const until = Date.now() + durationMs;
+      localStorage.setItem(COOLDOWN_STORAGE_KEY, String(until));
+      applyCooldown(until);
+    }
+
+    resumeCooldownFromStorage();
+
+    // Server feedback -> toast + cooldown
     const serverStatus = @json(session('status'));
     const serverErrors = @json($errors->all());
-    if (serverStatus) showToast(serverStatus, 'Success', 'success');
-    if (serverErrors && serverErrors.length) showToast('Please correct the highlighted errors.', 'Validation Error', 'danger', 5000);
+    if (serverStatus) {
+      showToast(serverStatus, 'Success', 'success');
+      startCooldown(COOLDOWN_MS);
+    }
+    if (serverErrors && serverErrors.length){
+      showToast('Please correct the highlighted errors.', 'Validation Error', 'danger', 5000);
+    }
 
-    // Client-side validation (email format)
-    document.getElementById('forgotForm').addEventListener('submit', function(e){
-      const emailEl = document.getElementById('email');
-      document.getElementById('email_error').textContent = '';
-      emailEl.classList.remove('is-invalid');
+    // Client-side validation (email format) + optimistic button state
+    if (forgotForm){
+      forgotForm.addEventListener('submit', function(e){
+        const emailEl = document.getElementById('email');
+        document.getElementById('email_error').textContent = '';
+        emailEl.classList.remove('is-invalid');
 
-      if (!emailEl.value || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailEl.value)){
-        e.preventDefault();
-        document.getElementById('email_error').textContent = 'A valid email is required.';
-        emailEl.classList.add('is-invalid');
-        showToast('Please correct the errors above.', 'Validation Error', 'danger');
-      }
-    });
+        if (!emailEl.value || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emailEl.value)){
+          e.preventDefault();
+          document.getElementById('email_error').textContent = 'A valid email is required.';
+          emailEl.classList.add('is-invalid');
+          showToast('Please correct the errors above.', 'Validation Error', 'danger');
+          if (submitButton){
+            submitButton.disabled = false;
+            submitButton.textContent = defaultButtonText;
+          }
+          return;
+        }
+
+        if (submitButton && !submitButton.disabled){
+          submitButton.disabled = true;
+          submitButton.textContent = sendingButtonText;
+        }
+      });
+    }
   </script>
 </body>
 </html>
