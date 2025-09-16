@@ -47,7 +47,6 @@
     .is-invalid{ border-color:#dc2626 !important; }
     .error-message{ color:#dc2626; font-size:.875rem; margin-top:.25rem; min-height:1rem; }
 
-    /* Left icons inside floating fields */
     .with-icon{ position:relative; }
     .with-icon .fi{
       position:absolute; left:12px; top:50%; transform:translateY(-50%);
@@ -57,22 +56,12 @@
     .with-icon .form-select{ padding-left:2.6rem; }
     .with-icon > label{ padding-left:2.6rem; color:var(--muted); }
 
-    /* Select arrow (native) */
     .form-select{
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230a0a0a' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12L8 12z'/%3E%3C/svg%3E");
       background-repeat:no-repeat; background-position:right 1rem center; background-size:16px 12px;
       -webkit-appearance:none; -moz-appearance:none; appearance:none; padding-right:2.5rem; cursor:pointer;
     }
-    .form-select option{ padding:12px; }
-    .form-select option:checked{ background:#f5f5f5; font-weight:600; }
-    .form-floating>.form-select{ padding-top:1.625rem; padding-bottom:.625rem; }
-    .form-floating>.form-select~label{
-      opacity:.65; transform:scale(.85) translateY(-.5rem) translateX(.15rem);
-    }
-    .form-floating>.form-select:focus~label,
-    .form-floating>.form-select:not(:placeholder-shown)~label{ opacity:1; color:#111; font-weight:600; }
 
-    /* Password field: keep right-eye space */
     .password-floating .form-control{ padding-right:2.25rem; }
     .password-floating .toggle-password{
       position:absolute; right:12px; top:50%; transform:translateY(-50%);
@@ -97,6 +86,23 @@
 
     .toast-container{ z-index:1080; }
     @keyframes fadeIn{ from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+
+    /* Free-plan reassurance pill */
+    .free-pill{
+      display:inline-block;
+      padding:.45rem 1rem;
+      border-radius:9999px;
+      background:#dcfce7;
+      color:#14532d;
+      border:1px solid #bbf7d0;
+      font-weight:500;
+      font-size:12px;
+      line-height:1;
+    }
+    .free-pill-wrapper{
+      text-align:center;
+      margin:0.75rem 0 1.25rem 0;
+    }
   </style>
 </head>
 <body class="d-flex align-items-center min-vh-100">
@@ -105,7 +111,12 @@
       <div class="col-md-12">
         <div class="card card-container">
           <h3 class="text-center mb-1">Create Account</h3>
-          <p class="text-center text-muted mb-4">Join OneLinkPDF in minutes.</p>
+          <p class="text-center text-muted mb-2">Join OneLinkPDF in minutes.</p>
+
+          <!-- Centered Free Plan Message -->
+          <div class="free-pill-wrapper">
+            <span class="free-pill">No credit card or payment required for the Free plan</span>
+          </div>
 
           <form id="registerForm" novalidate>
             @csrf
@@ -221,7 +232,7 @@
             <div class="mb-3">
               <label for="captcha" id="captcha_label" class="form-label">What is {{ $captcha_a }} + {{ $captcha_b }}?</label>
               <div class="input-group">
-                <span class="input-group-text bg-white"><i class="bi bi-shield-lock"></i></span>
+                <!-- Removed the left icon addon -->
                 <input type="text" class="form-control" id="captcha" name="captcha" aria-label="Captcha">
                 <button type="button" class="btn btn-outline-secondary" id="refreshCaptcha" aria-label="Refresh captcha">
                   <i class="bi bi-arrow-clockwise"></i>
