@@ -89,13 +89,6 @@
 <body class="d-flex align-items-center min-vh-100">
   <div class="container py-5">
 
-    <!-- Back to website (top) -->
-    <div class="toplinks mb-3 text-center">
-      <a id="backHomeTop" href="#" title="Go to main website (Esc or Alt+H)">
-        <i class="bi bi-arrow-left-circle me-1"></i> Back to Website
-      </a>
-    </div>
-
     <div class="card-container">
       <h3 class="text-center mb-3">Forgot your password?</h3>
       <p class="text-center text-muted mb-4">Enter your email and we'll send you a reset link.</p>
@@ -130,11 +123,6 @@
 
         <div class="text-center mt-3">
           <a id="backLogin" href="#" class="fw-semibold">← Back to login</a>
-        </div>
-
-        <!-- Back to website (bottom helper link) -->
-        <div class="text-center mt-3">
-          <a id="backHomeBottom" href="#" class="text-decoration-underline">← Back to Website</a>
         </div>
       </form>
     </div>

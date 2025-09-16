@@ -68,7 +68,7 @@
                   <option value="{{ $country->name }}" data-iso="{{ $country->iso }}">{{ $country->name }}</option>
                 @endforeach
               </select>
-              <label for="country">Country</label>
+              <!-- <label for="country">Country</label> -->
             </div>
             <div id="country_error" class="error-message"></div>
 
@@ -112,7 +112,7 @@
                   <option value="" selected disabled>No plans available</option>
                 @endif
               </select>
-              <label for="plan">Plan</label>
+              <!-- <label for="plan">Plan</label> -->
             </div>
             <div id="plan_id_error" class="error-message"></div>
 

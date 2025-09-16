@@ -6,6 +6,10 @@
   --radius: 14px;
   --shadow: 0 6px 24px rgba(0, 0, 0, .20);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, .35);
+  --primary: #111;
+  --success: #dcfce7;
+  --success-text: #14532d;
+  --success-border: #bbf7d0;
 }
 
 * {
@@ -16,6 +20,8 @@ body.auth-page {
   background: #000;
   color: var(--ink);
   min-height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .auth-page .card-container {
@@ -26,20 +32,23 @@ body.auth-page {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
-  padding: 2.25rem;
+  padding: 2.5rem;
   animation: fadeIn .6s ease;
-}
-
-.login-page .card-container {
-  max-width: 520px;
 }
 
 .auth-page h3 {
   font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.auth-page .subtitle {
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .auth-page a {
-  color: #111;
+  color: var(--primary);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -56,22 +65,14 @@ body.auth-page {
 .auth-page .form-select {
   border-radius: 12px;
   border: 1px solid var(--line);
-}
-
-.register-page .form-control,
-.register-page .form-select {
   padding: 1rem 1rem;
   height: calc(3.5rem + 2px);
   transition: all .2s ease;
 }
 
-.register-page .form-select {
-  padding-top: 25px;
-}
-
 .auth-page .form-control:focus,
 .auth-page .form-select:focus {
-  border-color: #111;
+  border-color: var(--primary);
   box-shadow: 0 0 0 .2rem rgba(17, 17, 17, .08);
 }
 
@@ -111,45 +112,45 @@ body.auth-page {
   color: var(--muted);
 }
 
-.register-page .floating-select .form-select {
-  padding-top: 25px;
+.auth-page .floating-select .form-select {
+  padding-top: 1.125rem;
   padding-bottom: .625rem;
   color: var(--muted);
 }
 
-.register-page .floating-select .form-select option {
+.auth-page .floating-select .form-select option {
   color: var(--ink);
 }
 
-.register-page .floating-select .form-select option[value=""] {
+.auth-page .floating-select .form-select option[value=""] {
   color: var(--muted);
 }
 
-.register-page .floating-select .form-select:focus,
-.register-page .floating-select .form-select:valid {
+.auth-page .floating-select .form-select:focus,
+.auth-page .floating-select .form-select:valid {
   color: var(--ink);
 }
 
-.register-page .floating-select .form-select:disabled {
+.auth-page .floating-select .form-select:disabled {
   color: var(--muted);
   background-color: #f9fafb;
 }
 
-.register-page .floating-select .form-select:required:invalid ~ label,
-.register-page .floating-select .form-select:disabled ~ label {
+.auth-page .floating-select .form-select:required:invalid ~ label,
+.auth-page .floating-select .form-select:disabled ~ label {
   opacity: 1;
   transform: translateY(.55rem);
   font-size: 1rem;
 }
 
-.register-page .floating-select .form-select:focus ~ label,
-.register-page .floating-select .form-select:valid ~ label {
+.auth-page .floating-select .form-select:focus ~ label,
+.auth-page .floating-select .form-select:valid ~ label {
   color: var(--muted);
   transform: scale(.85) translateY(-.5rem) translateX(.15rem);
 }
 
-.register-page .floating-select .form-select:focus ~ label {
-  color: #111;
+.auth-page .floating-select .form-select:focus ~ label {
+  color: var(--primary);
 }
 
 .auth-page .password-floating .form-control {
@@ -167,14 +168,15 @@ body.auth-page {
 }
 
 .auth-page .password-floating .toggle-password:hover {
-  color: #111;
+  color: var(--primary);
 }
 
 .auth-page .btn-primary {
-  background: #111;
-  border-color: #111;
+  background: var(--primary);
+  border-color: var(--primary);
   font-weight: 700;
   border-radius: 12px;
+  padding: 0.875rem 1.5rem;
   transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
 }
 
@@ -185,80 +187,68 @@ body.auth-page {
   box-shadow: var(--shadow);
 }
 
-.register-page .form-check-input {
+.auth-page .form-check-input {
   border-radius: 6px;
 }
 
-.register-page .form-check-input:focus {
+.auth-page .form-check-input:focus {
   box-shadow: 0 0 0 .2rem rgba(17, 17, 17, .08);
-  border-color: #111;
+  border-color: var(--primary);
 }
 
-.register-page .form-check-input:checked {
-  background-color: #111;
-  border-color: #111;
+.auth-page .form-check-input:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
-.register-page #password-strength {
+.auth-page #password-strength {
   margin-top: 8px;
   display: flex;
   align-items: center;
   gap: .5rem;
 }
 
-.register-page .progress {
+.auth-page .progress {
   height: 8px;
   background: #f1f1f1;
   flex: 1;
+  border-radius: 4px;
 }
 
-.register-page .progress-bar {
-  background: #111 !important;
+.auth-page .progress-bar {
+  background: var(--primary) !important;
+  border-radius: 4px;
 }
 
-.register-page #strength-text {
-  color: #6b7280;
+.auth-page #strength-text {
+  color: var(--muted);
   min-width: 64px;
   text-align: right;
+  font-size: 0.875rem;
 }
 
-.register-page .free-pill {
+.auth-page .free-pill {
   display: inline-block;
   padding: .45rem 1rem;
   border-radius: 9999px;
-  background: #dcfce7;
-  color: #14532d;
-  border: 1px solid #bbf7d0;
+  background: var(--success);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
   font-weight: 500;
   font-size: 12px;
   line-height: 1;
 }
 
-.register-page .free-pill-wrapper {
+.auth-page .free-pill-wrapper {
   text-align: center;
-  margin: .75rem 0 1.25rem 0;
+  margin: 1rem 0 1.5rem 0;
 }
 
 .auth-page .toast-container {
   z-index: 1080;
 }
 
-.login-page .toplinks a {
-  color: #f5f5f5;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-page .toplinks a .bi {
-  vertical-align: -2px;
-}
-
-.login-page .toplinks a:hover {
-  opacity: .85;
-  text-decoration: underline;
-}
-
-.register-page .form-select {
+.auth-page .form-select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230a0a0a' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12L8 12z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 1rem center;
@@ -270,6 +260,27 @@ body.auth-page {
   cursor: pointer;
 }
 
+.auth-page .input-group .btn {
+  border-radius: 0 12px 12px 0;
+  border: 1px solid var(--line);
+  background: #f9fafb;
+}
+
+.auth-page .input-group .form-control {
+  border-radius: 12px 0 0 12px;
+}
+
+.form-section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 1.5rem 0 0.75rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -278,5 +289,13 @@ body.auth-page {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-page .card-container {
+    padding: 1.5rem;
+    margin: 1rem;
+    width: calc(100% - 2rem);
   }
 }
