@@ -65,6 +65,10 @@ body.auth-page {
   transition: all .2s ease;
 }
 
+.register-page .form-select {
+  padding-top: 25px;
+}
+
 .auth-page .form-control:focus,
 .auth-page .form-select:focus {
   border-color: #111;
@@ -108,7 +112,7 @@ body.auth-page {
 }
 
 .register-page .floating-select .form-select {
-  padding-top: 1.125rem;
+  padding-top: 25px;
   padding-bottom: .625rem;
   color: var(--muted);
 }
