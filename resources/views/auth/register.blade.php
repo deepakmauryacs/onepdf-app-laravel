@@ -60,7 +60,7 @@
               </div>
             </div>
 
-            <div class="form-floating mb-1 with-icon">
+            <div class="form-floating mb-1 with-icon floating-select">
               <i class="bi bi-globe fi"></i>
               <select name="country" class="form-select" id="country" required>
                 <option value="" disabled selected>Select Country</option>
@@ -79,7 +79,7 @@
             </div>
             <div id="company_error" class="error-message"></div>
 
-            <div class="form-floating mb-1 with-icon">
+            <div class="form-floating mb-1 with-icon floating-select">
               <i class="bi bi-layers fi"></i>
               <select name="plan_id" class="form-select" id="plan" required disabled aria-disabled="true">
                 @if($plans->isNotEmpty())
