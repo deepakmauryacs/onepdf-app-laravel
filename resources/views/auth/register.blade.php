@@ -149,7 +149,7 @@
 
             <div class="form-floating mb-1 with-icon">
               <i class="bi bi-layers fi"></i>
-              <select name="plan_id" class="form-select" id="plan" required>
+              <select name="plan_id" class="form-select" id="plan" required disabled aria-disabled="true">
                 @if($plans->isNotEmpty())
                   <option value="" selected>Select Plan</option>
                   @foreach($plans as $plan)
@@ -295,14 +295,25 @@
     function updatePlanOptions(){
       if(!planSelect) return;
 
+      const hasCountry=countrySelect && countrySelect.value.trim()!=='';
+      planSelect.disabled=!hasCountry;
+      planSelect.setAttribute('aria-disabled', planSelect.disabled ? 'true' : 'false');
+      if(!hasCountry){
+        planSelect.value='';
+        planSelect.classList.remove('is-invalid');
+        const planError=document.getElementById('plan_id_error');
+        if(planError) planError.textContent='';
+      }
+
       let iso='';
-      if(countrySelect){
+      let countryValue='';
+      if(hasCountry && countrySelect){
         const selectedOption=countrySelect.options[countrySelect.selectedIndex];
         if(selectedOption && selectedOption.dataset && selectedOption.dataset.iso){
           iso=selectedOption.dataset.iso.toUpperCase();
         }
+        countryValue=countrySelect.value.trim().toLowerCase();
       }
-      const countryValue=countrySelect?countrySelect.value.trim().toLowerCase():'';
       const isIndia = iso==='IN' || countryValue.includes('india');
       const locale = isIndia ? 'en-IN' : 'en-US';
       const currency = isIndia ? 'INR' : 'USD';
@@ -326,6 +337,7 @@
     if(countrySelect && planSelect){
       countrySelect.addEventListener('change', updatePlanOptions);
       document.addEventListener('DOMContentLoaded', updatePlanOptions);
+      updatePlanOptions();
     }
 
     // Captcha refresh
@@ -359,7 +371,8 @@
       if(!data.get('last_name')) { setErr('lastName','last_name_error','Last name is required.'); valid=false; }
       if(!data.get('country'))   { setErr('country','country_error','Country is required.'); valid=false; }
       if(!data.get('company'))   { setErr('company','company_error','Company is required.'); valid=false; }
-      if(!data.get('plan_id'))   { setErr('plan','plan_id_error','Plan is required.'); valid=false; }
+      const isPlanDisabled = planSelect ? planSelect.disabled : false;
+      if(!isPlanDisabled && !data.get('plan_id'))   { setErr('plan','plan_id_error','Plan is required.'); valid=false; }
 
       const email=data.get('email');
       if(!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
