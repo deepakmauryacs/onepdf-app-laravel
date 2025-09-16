@@ -107,6 +107,47 @@ body.auth-page {
   color: var(--muted);
 }
 
+.register-page .floating-select .form-select {
+  padding-top: 1.125rem;
+  padding-bottom: .625rem;
+  color: var(--muted);
+}
+
+.register-page .floating-select .form-select option {
+  color: var(--ink);
+}
+
+.register-page .floating-select .form-select option[value=""] {
+  color: var(--muted);
+}
+
+.register-page .floating-select .form-select:focus,
+.register-page .floating-select .form-select:valid {
+  color: var(--ink);
+}
+
+.register-page .floating-select .form-select:disabled {
+  color: var(--muted);
+  background-color: #f9fafb;
+}
+
+.register-page .floating-select .form-select:required:invalid ~ label,
+.register-page .floating-select .form-select:disabled ~ label {
+  opacity: 1;
+  transform: translateY(.55rem);
+  font-size: 1rem;
+}
+
+.register-page .floating-select .form-select:focus ~ label,
+.register-page .floating-select .form-select:valid ~ label {
+  color: var(--muted);
+  transform: scale(.85) translateY(-.5rem) translateX(.15rem);
+}
+
+.register-page .floating-select .form-select:focus ~ label {
+  color: #111;
+}
+
 .auth-page .password-floating .form-control {
   padding-right: 2.25rem;
 }
