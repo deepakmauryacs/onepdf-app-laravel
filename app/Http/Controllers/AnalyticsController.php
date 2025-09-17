@@ -29,33 +29,50 @@ class AnalyticsController extends Controller
         ]);
 
         // If geolocation event with lat/lon → reverse geocode
-        $city = null; $state = null; $country = null;
+        $city = null; $state = null; $country = null; $geo_json = null;
         if ($request->event_type === 'geolocation' && $request->location) {
             $lat = $request->location['latitude'];
             $lon = $request->location['longitude'];
 
             // Example using OpenStreetMap Nominatim (free)
-            $response = Http::get("https://nominatim.openstreetmap.org/reverse", [
+            $response = Http::withHeaders([
+                'User-Agent' => 'OnePDFApp/1.0 (contact@yourdomain.com)'
+            ])->get("https://nominatim.openstreetmap.org/reverse", [
                 'lat' => $lat,
                 'lon' => $lon,
                 'format' => 'json',
             ]);
-
             if ($response->ok()) {
                 $data = $response->json();
-                $city = $data['address']['city'] ?? ($data['address']['town'] ?? null);
+                $city = $data['address']['city']
+                        ?? $data['address']['town']
+                        ?? $data['address']['village']
+                        ?? $data['address']['hamlet']
+                        ?? $data['address']['county']
+                        ?? null;
                 $state = $data['address']['state'] ?? null;
                 $country = $data['address']['country'] ?? null;
+                // Store only the required subset of the response
+                $geo_json = json_encode([
+                    'lat' => $data['lat'] ?? null,
+                    'lon' => $data['lon'] ?? null,
+                    'class' => $data['class'] ?? null,
+                    'type' => $data['type'] ?? null,
+                    'addresstype' => $data['addresstype'] ?? null,
+                    'name' => $data['name'] ?? null,
+                    'display_name' => $data['display_name'] ?? null,
+                    'address' => $data['address'] ?? null,
+                ]);
             }
         }
 
         // If no geolocation → fallback to IP
-        if (!$city) {
-            $geo = geoip()->getLocation($request->ip());
-            $city = $geo->city;
-            $state = $geo->state_name;
-            $country = $geo->country;
-        }
+        // if (!$city) {
+        //     $geo = geoip()->getLocation($request->ip());
+        //     $city = $geo->city;
+        //     $state = $geo->state_name;
+        //     $country = $geo->country;
+        // }
 
         // Verify PDF signature if event relates to PDFs
         if (in_array($request->event_type, ['pdf_open', 'pdf_page_view'])) {
@@ -66,59 +83,40 @@ class AnalyticsController extends Controller
             }
         }
 
-        // 🔹 Detect IP
-        // $ip = $request->ip();
-
-        // // 🔹 Lookup location (skip if localhost)
-        // $geo = null;
-        // if ($ip !== '127.0.0.1' && $ip !== '::1') {
-        //     try {
-        //         $geo = Http::timeout(3)->get("https://ipapi.co/{$ip}/json/")->json();
-        //     } catch (\Exception $e) {
-        //         $geo = [];
-        //     }
-        // }
-
-        // $location = geoip($request->ip()); // ← lookup city/country
-        // $location = geoip("139.5.1.192"); // ← lookup city/country
-        // $location = geoip("1110.226.231.85"); // ← lookup city/country
-
         $referer = $request->headers->get('referer'); // HTTP referer
 
         // Find or create analytics session
-        $session = AnalyticsSession::firstOrCreate(
-            ['session_id' => $sessionId],
-            [
+        $session = AnalyticsSession::where('session_id', $sessionId)->first();
+        if (!$session) {
+            $session = AnalyticsSession::create([
+                'session_id' => $sessionId,
                 'user_id'   => auth()->id(),
                 'ip'        => $request->ip(),
                 'city'      => $city ?? null,
+                'state'     => $state ?? null,
                 'country'   => $country ?? null,
+                'geo_json'  => $geo_json ?? null,
                 'device'    => $request->userAgent(),
                 'platform'  => $request->input('platform'),
                 'browser'   => $request->input('browser'),
                 'referer'   => $referer
-            ]
-        );
-
-        // Create or update session
-        // $session = AnalyticsSession::firstOrCreate(
-        //     ['session_id' => $sessionId],
-        //     [
-        //         'user_id' => auth()->id(),
-        //         'ip' => $request->ip(),
-        //         'device' => $request->userAgent(),
-        //         'platform'  => $request->input('platform'),
-        //         'browser'   => $request->input('browser'),
-        //     ]
-        // );
-
-        // $session->update([
-        //     'location' => json_encode([
-        //         'city' => $city,
-        //         // 'state' => $state,
-        //         'country' => $country,
-        //     ])
-        // ]);
+            ]);
+        } else {
+            // Only update city/state/country/geo_json if not already set
+            $updateData = [
+                'user_id'   => auth()->id(),
+                'ip'        => $request->ip(),
+                'device'    => $request->userAgent(),
+                'platform'  => $request->input('platform'),
+                'browser'   => $request->input('browser'),
+                'referer'   => $referer
+            ];
+            if (empty($session->city) && $city) $updateData['city'] = $city;
+            if (empty($session->state) && $state) $updateData['state'] = $state;
+            if (empty($session->country) && $country) $updateData['country'] = $country;
+            if (empty($session->geo_json) && $geo_json) $updateData['geo_json'] = $geo_json;
+            $session->update($updateData);
+        }
 
         // Store event
         AnalyticsEvent::create([
@@ -129,7 +127,7 @@ class AnalyticsController extends Controller
             'duration'   => $request->duration ?? 0,
         ]);
 
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true]);//, 'session_id' => $session->toArray()
     }
 
     /*

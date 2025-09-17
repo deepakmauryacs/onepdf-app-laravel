@@ -17,7 +17,9 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // nullable for guests
             $table->string('ip')->nullable();
             $table->string('city')->nullable();
+            $table->string('state')->nullable();
             $table->string('country')->nullable();
+            $table->text('geo_json')->nullable();
             $table->string('device')->nullable();
             $table->string('platform')->nullable();
             $table->string('browser')->nullable();
@@ -35,14 +37,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Schema::create('pdf_documents', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->foreignId('vendor_id')->constrained('users')->onDelete('cascade');
-        //     $table->string('title');
-        //     $table->string('file_path');
-        //     $table->integer('total_pages');
-        //     $table->timestamps();
-        // });
     }
 
     /**
