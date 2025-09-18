@@ -248,6 +248,20 @@
       });
     };
 
+    const isValidMobileNumber = (value, { allowEmpty = false } = {}) => {
+      const trimmed = (value || '').trim();
+      if (trimmed === '') {
+        return allowEmpty;
+      }
+
+      if (!/^[0-9+()\-\s]{6,20}$/.test(trimmed)) {
+        return false;
+      }
+
+      const digitCount = trimmed.replace(/\D/g, '').length;
+      return digitCount >= 6 && digitCount <= 15;
+    };
+
     const formatCurrency = (amount, currency) => {
       const numeric = Number.parseFloat(amount);
       if (!Number.isFinite(numeric)) {
@@ -562,6 +576,9 @@
       const firstName = registerForm.querySelector('input[name="first_name"]')?.value.trim();
       const lastName = registerForm.querySelector('input[name="last_name"]')?.value.trim();
       const email = registerForm.querySelector('input[name="email"]')?.value.trim();
+      const mobileInput = document.getElementById('mobile');
+      const mobileError = document.getElementById('mobile_error');
+      const mobile = mobileInput?.value.trim() || '';
       const company = registerForm.querySelector('input[name="company"]')?.value.trim();
       const countryValue = countrySelect?.value || '';
 
@@ -581,6 +598,22 @@
         return;
       }
 
+      if (mobileInput) {
+        mobileInput.classList.remove('is-invalid');
+      }
+      if (mobileError) {
+        mobileError.textContent = '';
+      }
+
+      if (!mobile || !isValidMobileNumber(mobile)) {
+        setError('mobile', 'mobile_error', 'A valid mobile number is required to continue with payment.');
+        showToast('Please provide a valid mobile number before initiating payment.', {
+          title: 'Mobile number required',
+          variant: 'warning',
+        });
+        return;
+      }
+
       const button = Array.from(cashfreeButtons).find((btn) => (btn.dataset.cashfreeCurrency || '').toUpperCase() === currency);
       if (button) {
         button.disabled = true;
@@ -596,6 +629,7 @@
           first_name: firstName,
           last_name: lastName,
           email,
+          mobile,
           country: countryValue,
           company,
         });
@@ -827,6 +861,20 @@
         valid = false;
       }
 
+      const mobile = (data.get('mobile') || '').trim();
+      if (paymentRequired) {
+        if (!mobile) {
+          setError('mobile', 'mobile_error', 'Mobile number is required for paid plans.');
+          valid = false;
+        } else if (!isValidMobileNumber(mobile)) {
+          setError('mobile', 'mobile_error', 'Please enter a valid mobile number.');
+          valid = false;
+        }
+      } else if (mobile && !isValidMobileNumber(mobile, { allowEmpty: false })) {
+        setError('mobile', 'mobile_error', 'Please enter a valid mobile number.');
+        valid = false;
+      }
+
       const password = data.get('password');
       if (!password || password.length < 6) {
         setError('password', 'password_error', 'Password must be at least 6 characters.');
@@ -893,6 +941,7 @@
             company: 'company',
             plan_id: 'plan',
             email: 'email',
+            mobile: 'mobile',
             password: 'password',
             agreed_terms: 'terms',
             captcha: 'captcha'

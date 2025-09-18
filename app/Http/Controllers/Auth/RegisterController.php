@@ -54,6 +54,7 @@ class RegisterController extends Controller
             'company'      => ['required','string','max:255'],
             'plan_id'      => ['required','exists:plans,id'],
             'email'        => ['required','email','max:255','unique:users,email'],
+            'mobile'       => ['nullable','string','max:20','regex:/^[0-9+()\-\s]{6,20}$/'],
             'password'     => ['required','string','min:6'],
             'agreed_terms' => ['accepted'], // checkbox must be checked
             'captcha'      => ['required', new Captcha()],
@@ -89,6 +90,23 @@ class RegisterController extends Controller
                 throw ValidationException::withMessages([
                     'plan_id' => 'Selected plan is no longer available.',
                 ]);
+            }
+
+            $mobile = trim((string) ($validated['mobile'] ?? ''));
+            if ($plan->requiresCashfreePayment() && $cashfree->enabled() && $mobile === '') {
+                throw ValidationException::withMessages([
+                    'mobile' => 'Mobile number is required to complete payment for this plan.',
+                ]);
+            }
+
+            if ($mobile !== '') {
+                $digits = preg_replace('/\D+/', '', $mobile);
+                $length = is_string($digits) ? strlen($digits) : 0;
+                if ($length < 6 || $length > 15) {
+                    throw ValidationException::withMessages([
+                        'mobile' => 'Please provide a valid mobile number.',
+                    ]);
+                }
             }
 
             $requiresCashfree = $plan->requiresCashfreePayment();

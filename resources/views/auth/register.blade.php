@@ -153,6 +153,13 @@
             </div>
             <div id="email_error" class="error-message"></div>
 
+            <div class="form-floating mb-1 with-icon">
+              <i class="bi bi-telephone fi"></i>
+              <input type="tel" name="mobile" class="form-control" id="mobile" placeholder="Mobile number" inputmode="tel" autocomplete="tel">
+              <label for="mobile">Mobile number</label>
+            </div>
+            <div id="mobile_error" class="error-message"></div>
+
             <div class="form-floating mb-1 position-relative password-floating with-icon">
               <i class="bi bi-lock fi"></i>
               <input type="password" name="password" class="form-control" id="password" placeholder="Password" required minlength="6" autocomplete="off">
