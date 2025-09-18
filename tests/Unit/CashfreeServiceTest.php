@@ -3,12 +3,16 @@
 namespace Tests\Unit;
 
 use App\Services\CashfreeService;
-use Illuminate\Support\Facades\Http;
+use Cashfree\Cashfree as CashfreeClient;
 use Tests\TestCase;
+
+if (! class_exists('Cashfree\\GuzzleHttp\\Client')) {
+    class_alias(\GuzzleHttp\Client::class, 'Cashfree\\GuzzleHttp\\Client');
+}
 
 class CashfreeServiceTest extends TestCase
 {
-    public function test_create_order_uses_trimmed_credentials_and_basic_authentication(): void
+    public function test_create_order_configures_sdk_and_filters_payload(): void
     {
         config([
             'cashfree.enabled' => true,
@@ -18,41 +22,62 @@ class CashfreeServiceTest extends TestCase
             'cashfree.api_version' => '2027-03-15',
         ]);
 
-        $capturedRequest = null;
-
-        Http::fake([
-            'https://sandbox.cashfree.com/pg/orders' => function ($request) use (&$capturedRequest) {
-                $capturedRequest = $request;
-
-                return Http::response([
+        $client = new class ([
+            'create' => [
+                [
                     'order_id' => 'ORD123',
                     'payment_session_id' => 'SESSION123',
-                ], 200);
-            },
-        ]);
+                    'order_currency' => 'INR',
+                ],
+                200,
+                [],
+            ],
+        ]) extends CashfreeClient {
+            public array $calls = [];
 
-        $service = new CashfreeService();
+            public function __construct(private array $responses)
+            {
+            }
+
+            public function PGCreateOrder($payload, $x_request_id = null, $x_idempotency_key = null, ?\Cashfree\GuzzleHttp\Client $http_client = null)
+            {
+                $this->calls[] = ['method' => 'PGCreateOrder', 'payload' => $payload];
+
+                return $this->responses['create'];
+            }
+        };
+
+        $service = new CashfreeService($client);
 
         $payload = [
             'order_id' => 'ORD123',
             'order_amount' => 10,
             'order_currency' => 'INR',
-            'customer_details' => ['customer_id' => 'customer-1'],
+            'customer_details' => [
+                'customer_id' => 'customer-1',
+                'customer_phone' => '9999999999',
+                'optional' => null,
+            ],
+            'unused' => null,
         ];
 
         $response = $service->createOrder($payload);
 
         $this->assertSame('ORD123', $response['order_id']);
-        $this->assertNotNull($capturedRequest, 'Cashfree request was not captured.');
+        $this->assertSame('test-app', $client->XClientId);
+        $this->assertSame('test-secret', $client->XClientSecret);
+        $this->assertSame($client->SANDBOX, $client->XEnvironment);
+        $this->assertSame('2027-03-15', $client->XApiVersion);
 
-        $this->assertTrue($capturedRequest->hasHeader('x-client-id', 'test-app'));
-        $this->assertTrue($capturedRequest->hasHeader('x-client-secret', 'test-secret'));
-        $this->assertTrue($capturedRequest->hasHeader('x-api-version', '2027-03-15'));
-
-        $this->assertTrue($capturedRequest->hasHeader('Content-Type', 'application/json'));
-        $this->assertTrue($capturedRequest->hasHeader('Accept', 'application/json'));
-
-        Http::assertSentCount(1);
+        $this->assertSame([
+            'order_id' => 'ORD123',
+            'order_amount' => 10,
+            'order_currency' => 'INR',
+            'customer_details' => [
+                'customer_id' => 'customer-1',
+                'customer_phone' => '9999999999',
+            ],
+        ], $client->calls[0]['payload']);
     }
 
     public function test_create_order_uses_minimum_supported_api_version_when_configured_value_is_outdated(): void
@@ -65,20 +90,31 @@ class CashfreeServiceTest extends TestCase
             'cashfree.api_version' => '2022-09-01',
         ]);
 
-        $capturedRequest = null;
-
-        Http::fake([
-            'https://sandbox.cashfree.com/pg/orders' => function ($request) use (&$capturedRequest) {
-                $capturedRequest = $request;
-
-                return Http::response([
+        $client = new class ([
+            'create' => [
+                [
                     'order_id' => 'ORD123',
                     'payment_session_id' => 'SESSION123',
-                ], 200);
-            },
-        ]);
+                ],
+                200,
+                [],
+            ],
+        ]) extends CashfreeClient {
+            public array $calls = [];
 
-        $service = new CashfreeService();
+            public function __construct(private array $responses)
+            {
+            }
+
+            public function PGCreateOrder($payload, $x_request_id = null, $x_idempotency_key = null, ?\Cashfree\GuzzleHttp\Client $http_client = null)
+            {
+                $this->calls[] = ['method' => 'PGCreateOrder', 'payload' => $payload];
+
+                return $this->responses['create'];
+            }
+        };
+
+        $service = new CashfreeService($client);
 
         $service->createOrder([
             'order_id' => 'ORD123',
@@ -87,9 +123,6 @@ class CashfreeServiceTest extends TestCase
             'customer_details' => ['customer_id' => 'customer-1'],
         ]);
 
-        $this->assertNotNull($capturedRequest, 'Cashfree request was not captured.');
-        $this->assertTrue($capturedRequest->hasHeader('x-api-version', '2025-01-01'));
-
-        Http::assertSentCount(1);
+        $this->assertSame('2025-01-01', $client->XApiVersion);
     }
 }
