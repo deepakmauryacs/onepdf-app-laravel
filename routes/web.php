@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\UserPlanController as AdminUserPlanController;
+use App\Http\Controllers\Auth\CashfreeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -32,6 +33,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
     Route::post('/register/captcha', [ContactController::class, 'refreshCaptcha'])->name('register.captcha');
+    Route::post('/register/cashfree/order', [CashfreeController::class, 'createOrder'])->name('register.cashfree.order');
+    Route::post('/register/cashfree/verify', [CashfreeController::class, 'verifyOrder'])->name('register.cashfree.verify');
 
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');

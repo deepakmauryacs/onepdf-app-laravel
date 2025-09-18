@@ -23,6 +23,15 @@
 
   <link rel="stylesheet" href="{{ asset('assets/assets-auth/css/auth-style.css') }}">
 </head>
+@php
+  $cashfree = array_merge([
+    'enabled' => false,
+    'mode' => 'sandbox',
+    'order_url' => null,
+    'verify_url' => null,
+  ], $cashfree ?? []);
+@endphp
+
 <body class="auth-page register-page d-flex align-items-center min-vh-100">
   <div class="container py-5">
     <div class="row justify-content-center">
@@ -39,7 +48,11 @@
           <form id="registerForm" method="POST" novalidate
                 data-store-url="{{ route('register.store') }}"
                 data-captcha-url="{{ route('register.captcha') }}"
-                data-login-url="{{ route('login') }}">
+                data-login-url="{{ route('login') }}"
+                data-cashfree-enabled="{{ $cashfree['enabled'] ? '1' : '0' }}"
+                data-cashfree-mode="{{ $cashfree['mode'] }}"
+                data-cashfree-order-url="{{ $cashfree['order_url'] ?? '' }}"
+                data-cashfree-verify-url="{{ $cashfree['verify_url'] ?? '' }}">
             @csrf
             <div class="row g-3">
               <div class="col-md-6">
@@ -116,6 +129,39 @@
             </div>
             <div id="plan_id_error" class="error-message"></div>
 
+            <input type="hidden" name="cashfree_order_id" id="cashfreeOrderId">
+            <input type="hidden" name="cashfree_payment_currency" id="cashfreeCurrency">
+            <input type="hidden" name="cashfree_payment_amount" id="cashfreeAmount">
+
+            <div id="cashfreePaymentSection" class="card border-0 shadow-sm mt-2 d-none">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-credit-card-2-front text-primary fs-4 me-2"></i>
+                  <div>
+                    <h5 class="mb-0" style="font-weight:600;">Complete your payment</h5>
+                    <small class="text-muted">Pro and Business monthly plans require a secure Cashfree checkout. Choose INR or USD below to activate your subscription.</small>
+                  </div>
+                </div>
+                <p id="cashfreePlanSummary" class="small text-muted mb-3 d-none" aria-live="polite"></p>
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                  <button type="button" class="btn btn-outline-primary" data-cashfree-currency="INR">
+                    <span class="d-flex align-items-center">
+                      <span>Pay with Cashfree (INR)</span>
+                      <span class="cashfree-amount badge bg-light text-dark ms-2" data-amount-currency="INR"></span>
+                    </span>
+                  </button>
+                  <button type="button" class="btn btn-outline-primary" data-cashfree-currency="USD">
+                    <span class="d-flex align-items-center">
+                      <span>Pay with Cashfree (USD)</span>
+                      <span class="cashfree-amount badge bg-light text-dark ms-2" data-amount-currency="USD"></span>
+                    </span>
+                  </button>
+                </div>
+                <p id="cashfreePaymentStatus" class="small text-muted mb-1"></p>
+                <div id="cashfree_error" class="error-message"></div>
+              </div>
+            </div>
+
             <div class="form-floating mb-1 with-icon">
               <i class="bi bi-envelope fi"></i>
               <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" required autocomplete="off">
@@ -181,6 +227,9 @@
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  @if($cashfree['enabled'])
+    <script src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.js"></script>
+  @endif
   <script src="{{ asset('assets/assets-auth/js/auth-main.js') }}"></script>
 </body>
 </html>
