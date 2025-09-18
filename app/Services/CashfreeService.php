@@ -95,7 +95,7 @@ class CashfreeService
      */
     public function createOrder(array $payload): array
     {
-        $response = $this->client()->post('/orders', $payload);
+        $response = $this->client()->post('orders', $payload);
 
         if ($response->failed()) {
             $message = $this->extractErrorMessage($response->json(), $response->body());
@@ -110,7 +110,7 @@ class CashfreeService
      */
     public function getOrder(string $orderId): array
     {
-        $response = $this->client()->get("/orders/{$orderId}");
+        $response = $this->client()->get("orders/{$orderId}");
 
         if ($response->failed()) {
             $message = $this->extractErrorMessage($response->json(), $response->body());
