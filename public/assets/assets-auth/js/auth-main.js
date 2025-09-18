@@ -226,6 +226,7 @@
       orderId: '',
       currency: '',
       amount: 0,
+      preferredCurrency: '',
     };
 
     const setError = (inputId, errorId, message) => {
@@ -300,14 +301,57 @@
       return (Number.isFinite(inr) && inr > 0) || (Number.isFinite(usd) && usd > 0);
     };
 
-    const resetCashfreeFields = () => {
-      cashfreeState = {
-        planId: null,
-        paid: false,
-        orderId: '',
-        currency: '',
-        amount: 0,
-      };
+    const getSelectedCountryIso = () => {
+      if (!countrySelect) {
+        return '';
+      }
+      const option = countrySelect.options[countrySelect.selectedIndex];
+      if (option && option.dataset && option.dataset.iso) {
+        return option.dataset.iso.toUpperCase();
+      }
+      return '';
+    };
+
+    const determineCashfreeCurrency = () => {
+      const option = getSelectedPlanOption();
+      if (!option) {
+        return '';
+      }
+
+      if (cashfreeState.preferredCurrency) {
+        return cashfreeState.preferredCurrency.toUpperCase();
+      }
+
+      const inrPrice = Number.parseFloat(option.dataset.inrPrice || '0');
+      const usdPrice = Number.parseFloat(option.dataset.usdPrice || '0');
+      const hasInr = Number.isFinite(inrPrice) && inrPrice > 0;
+      const hasUsd = Number.isFinite(usdPrice) && usdPrice > 0;
+
+      const iso = getSelectedCountryIso();
+      if (iso === 'IN' && hasInr) {
+        return 'INR';
+      }
+      if (iso && iso !== 'IN' && hasUsd) {
+        return 'USD';
+      }
+
+      if (hasInr) {
+        return 'INR';
+      }
+      if (hasUsd) {
+        return 'USD';
+      }
+      return '';
+    };
+
+    const resetCashfreeFields = ({ keepPreference = true } = {}) => {
+      const preferred = keepPreference ? (cashfreeState.preferredCurrency || '') : '';
+      cashfreeState.planId = null;
+      cashfreeState.paid = false;
+      cashfreeState.orderId = '';
+      cashfreeState.currency = '';
+      cashfreeState.amount = 0;
+      cashfreeState.preferredCurrency = preferred;
       if (cashfreeOrderInput) {
         cashfreeOrderInput.value = '';
       }
@@ -430,7 +474,7 @@
 
       if (!needsPayment) {
         cashfreeSection.classList.add('d-none');
-        resetCashfreeFields();
+        resetCashfreeFields({ keepPreference: false });
         setCashfreeStatus('');
         if (cashfreeError) {
           cashfreeError.textContent = '';
@@ -444,7 +488,7 @@
 
       const planId = option ? option.value : null;
       if (cashfreeState.planId !== planId) {
-        resetCashfreeFields();
+        resetCashfreeFields({ keepPreference: false });
         cashfreeState.planId = planId;
       }
 
@@ -501,13 +545,12 @@
     };
 
     const handleCashfreeSuccess = (planId, orderId, currency, amount) => {
-      cashfreeState = {
-        planId,
-        paid: true,
-        orderId,
-        currency,
-        amount,
-      };
+      cashfreeState.planId = planId;
+      cashfreeState.paid = true;
+      cashfreeState.orderId = orderId;
+      cashfreeState.currency = currency;
+      cashfreeState.amount = amount;
+      cashfreeState.preferredCurrency = currency;
 
       if (cashfreeOrderInput) {
         cashfreeOrderInput.value = orderId;
@@ -547,15 +590,25 @@
     };
 
     const initiateCashfreePayment = async (currency) => {
+      const normalizedCurrency = (currency || '').toUpperCase();
       const option = getSelectedPlanOption();
       if (!option) {
-        showToast('Please select a plan before initiating payment.', { title: 'Select plan', variant: 'warning' });
-        return;
+        const message = 'Please select a plan before initiating payment.';
+        showToast(message, { title: 'Select plan', variant: 'warning' });
+        return { success: false, error: message };
       }
 
       if (!requiresCashfreePayment(option)) {
-        showToast('The selected plan does not require a payment.', { title: 'Payment not required', variant: 'info' });
-        return;
+        const message = 'The selected plan does not require a payment.';
+        showToast(message, { title: 'Payment not required', variant: 'info' });
+        return { success: false, error: message };
+      }
+
+      if (!normalizedCurrency) {
+        const message = 'Select a payment currency to continue.';
+        setCashfreeStatus(message, 'danger');
+        showToast(message, { title: 'Payment required', variant: 'warning' });
+        return { success: false, error: message };
       }
 
       const planId = option.value;
@@ -566,33 +619,36 @@
       const countryValue = countrySelect?.value || '';
 
       if (!firstName || !lastName || !email) {
-        showToast('Please fill in your name and email before proceeding to payment.', {
+        const message = 'Please fill in your name and email before proceeding to payment.';
+        showToast(message, {
           title: 'Details required',
           variant: 'warning',
         });
-        return;
+        return { success: false, error: message };
       }
 
       if (!cashfreeEnabled || !cashfreeOrderUrl) {
-        showToast('Cashfree payments are currently unavailable.', {
+        const message = 'Cashfree payments are currently unavailable.';
+        showToast(message, {
           title: 'Payment unavailable',
           variant: 'danger',
         });
-        return;
+        return { success: false, error: message };
       }
 
-      const button = Array.from(cashfreeButtons).find((btn) => (btn.dataset.cashfreeCurrency || '').toUpperCase() === currency);
+      const button = Array.from(cashfreeButtons).find((btn) => (btn.dataset.cashfreeCurrency || '').toUpperCase() === normalizedCurrency);
       if (button) {
         button.disabled = true;
         button.classList.add('disabled');
       }
 
+      cashfreeState.preferredCurrency = normalizedCurrency;
       setCashfreeStatus('Redirecting to secure Cashfree checkout...', 'info');
 
       try {
         const { response, json } = await requestJson(cashfreeOrderUrl, {
           plan_id: planId,
-          currency,
+          currency: normalizedCurrency,
           first_name: firstName,
           last_name: lastName,
           email,
@@ -607,27 +663,31 @@
             || 'Unable to initiate Cashfree payment.';
           setCashfreeStatus(message, 'danger');
           showToast(message, { title: 'Payment failed', variant: 'danger' });
-          return;
+          return { success: false, error: message };
         }
 
         const { payment_session_id: sessionId, order_id: orderId, order_amount: orderAmount } = json;
         const instance = ensureCashfreeInstance();
 
         if (!instance || !sessionId || !orderId) {
-          setCashfreeStatus('Unable to open Cashfree checkout. Please try again.', 'danger');
-          showToast('Unable to open Cashfree checkout. Please try again.', {
+          const message = 'Unable to open Cashfree checkout. Please try again.';
+          setCashfreeStatus(message, 'danger');
+          showToast(message, {
             title: 'Payment error',
             variant: 'danger',
           });
-          return;
+          return { success: false, error: message };
         }
 
+        let checkoutCancelled = false;
         await instance.checkout({
           paymentSessionId: sessionId,
           redirectTarget: '_modal',
         }).catch((error) => {
+          checkoutCancelled = true;
+          const message = error?.message || 'Payment was cancelled.';
           setCashfreeStatus('Payment window was closed before completion.', 'danger');
-          showToast(error?.message || 'Payment was cancelled.', {
+          showToast(message, {
             title: 'Payment cancelled',
             variant: 'danger',
           });
@@ -643,29 +703,40 @@
             const confirmedAmount = Number.isFinite(amountFromVerification)
               ? amountFromVerification
               : (Number.isFinite(amountFromResponse) ? amountFromResponse : 0);
-            const finalCurrency = (verification.order_currency || currency || '').toUpperCase() || currency;
+            const finalCurrency = (verification.order_currency || normalizedCurrency || '').toUpperCase() || normalizedCurrency;
             handleCashfreeSuccess(planId, orderId, finalCurrency, confirmedAmount);
-            return;
+            return { success: true };
           }
 
           if (['FAILED', 'CANCELLED'].includes(status)) {
-            handleCashfreeFailure('Payment was not completed. Please try again.');
+            const message = 'Payment was not completed. Please try again.';
+            handleCashfreeFailure(message);
             showToast('Cashfree reported the payment as incomplete.', { title: 'Payment incomplete', variant: 'danger' });
-            return;
+            return { success: false, error: message };
           }
         }
 
-        handleCashfreeFailure('Payment could not be verified yet. Please try again in a moment.');
+        if (checkoutCancelled) {
+          const message = 'Payment was not completed. Please try again.';
+          handleCashfreeFailure(message);
+          return { success: false, error: message };
+        }
+
+        const message = 'Payment could not be verified yet. Please try again in a moment.';
+        handleCashfreeFailure(message);
         showToast('We could not confirm the payment. If the amount was deducted, please contact support.', {
           title: 'Verification pending',
           variant: 'warning',
         });
+        return { success: false, error: message };
       } catch (error) {
-        handleCashfreeFailure('Unable to process the payment right now.');
+        const message = 'Unable to process the payment right now.';
+        handleCashfreeFailure(message);
         showToast('Unable to reach the payment gateway. Please try again.', {
           title: 'Payment error',
           variant: 'danger',
         });
+        return { success: false, error: message };
       } finally {
         if (button) {
           button.disabled = false;
@@ -757,6 +828,7 @@
         button.addEventListener('click', () => {
           const currency = (button.dataset.cashfreeCurrency || '').toUpperCase();
           if (currency) {
+            cashfreeState.preferredCurrency = currency;
             void initiateCashfreePayment(currency);
           }
         });
@@ -792,28 +864,28 @@
       event.preventDefault();
       clearErrors();
 
-      const data = new FormData(registerForm);
+      let formData = new FormData(registerForm);
       let valid = true;
 
-      if (!data.get('first_name')) {
+      if (!formData.get('first_name')) {
         setError('firstName', 'first_name_error', 'First name is required.');
         valid = false;
       }
-      if (!data.get('last_name')) {
+      if (!formData.get('last_name')) {
         setError('lastName', 'last_name_error', 'Last name is required.');
         valid = false;
       }
-      if (!data.get('country')) {
+      if (!formData.get('country')) {
         setError('country', 'country_error', 'Country is required.');
         valid = false;
       }
-      if (!data.get('company')) {
+      if (!formData.get('company')) {
         setError('company', 'company_error', 'Company is required.');
         valid = false;
       }
 
       const isPlanDisabled = planSelect ? planSelect.disabled : false;
-      if (!isPlanDisabled && !data.get('plan_id')) {
+      if (!isPlanDisabled && !formData.get('plan_id')) {
         setError('plan', 'plan_id_error', 'Plan is required.');
         valid = false;
       }
@@ -821,34 +893,68 @@
       const selectedPlanOption = getSelectedPlanOption();
       const paymentRequired = requiresCashfreePayment(selectedPlanOption);
 
-      if (paymentRequired && !cashfreeState.paid) {
-        setError('plan', 'cashfree_error', 'Please complete the Cashfree payment to continue.');
-        valid = false;
-      }
-
-      const email = data.get('email');
+      const email = formData.get('email');
       if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
         setError('email', 'email_error', 'A valid email is required.');
         valid = false;
       }
 
-      const password = data.get('password');
+      const password = formData.get('password');
       if (!password || password.length < 6) {
         setError('password', 'password_error', 'Password must be at least 6 characters.');
         valid = false;
       }
 
-      if (!data.get('agreed_terms')) {
+      if (!formData.get('agreed_terms')) {
         setError('terms', 'agreed_terms_error', 'You must agree to the terms.');
         valid = false;
       }
 
-      if (!data.get('captcha')) {
+      if (!formData.get('captcha')) {
         setError('captcha', 'captcha_error', 'Captcha is required.');
         valid = false;
       }
 
-      if (paymentRequired && cashfreeState.paid) {
+      if (!valid) {
+        showToast('Please correct the errors above.', {
+          title: 'Validation Error',
+          variant: 'danger'
+        });
+        return;
+      }
+
+      if (paymentRequired) {
+        if (cashfreeError) {
+          cashfreeError.textContent = '';
+        }
+
+        if (!cashfreeState.paid) {
+          let chosenCurrency = determineCashfreeCurrency();
+          if (!chosenCurrency) {
+            const message = 'Unable to determine the payment currency for this plan. Please try again.';
+            setError('plan', 'cashfree_error', message);
+            showToast(message, {
+              title: 'Payment required',
+              variant: 'danger',
+            });
+            return;
+          }
+
+          cashfreeState.preferredCurrency = chosenCurrency;
+          const paymentResult = await initiateCashfreePayment(chosenCurrency);
+          if (!paymentResult || !paymentResult.success) {
+            const message = paymentResult?.error || 'Please complete the Cashfree payment to continue.';
+            setError('plan', 'cashfree_error', message);
+            return;
+          }
+        }
+
+        if (!cashfreeState.paid) {
+          const message = 'Payment verification is required before completing registration.';
+          setError('plan', 'cashfree_error', message);
+          return;
+        }
+
         if (cashfreeOrderInput) {
           cashfreeOrderInput.value = cashfreeState.orderId;
         }
@@ -860,17 +966,11 @@
             ? cashfreeState.amount.toFixed(2)
             : cashfreeState.amount || '';
         }
-      } else if (!paymentRequired) {
-        resetCashfreeFields();
+      } else {
+        resetCashfreeFields({ keepPreference: false });
       }
 
-      if (!valid) {
-        showToast('Please correct the errors above.', {
-          title: 'Validation Error',
-          variant: 'danger'
-        });
-        return;
-      }
+      formData = new FormData(registerForm);
 
       if (!storeUrl) {
         return;
@@ -880,7 +980,7 @@
         const response = await fetch(storeUrl, {
           method: 'POST',
           headers: Object.assign({}, csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}, { Accept: 'application/json' }),
-          body: data
+          body: formData
         });
 
         let result = {};
