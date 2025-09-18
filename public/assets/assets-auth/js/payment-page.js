@@ -9,6 +9,7 @@
     firstName = '',
     lastName = '',
     email = '',
+    mobile = '',
     company = '',
     country = '',
     cashfreeEnabled = '0',
@@ -117,6 +118,7 @@
 
     toggleButtons(true, button);
     setStatus('Preparing secure payment...', 'info');
+    const sanitizedMobile = (mobile || '').trim();
 
     try {
       const { response, json } = await requestJson(cashfreeOrderUrl, {
@@ -125,6 +127,7 @@
         first_name: firstName,
         last_name: lastName,
         email,
+        mobile: sanitizedMobile,
         country,
         company,
       });
