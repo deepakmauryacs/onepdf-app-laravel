@@ -29,9 +29,8 @@ class CashfreeController extends Controller
         ]);
 
         $plan = Plan::findOrFail($validated['plan_id']);
-        $planName = strtolower($plan->name);
 
-        if ($plan->billing_cycle !== 'month' || ! in_array($planName, ['pro', 'business'], true)) {
+        if (! $plan->isCashfreeEligible()) {
             throw ValidationException::withMessages([
                 'plan_id' => 'The selected plan does not support Cashfree payments.',
             ]);

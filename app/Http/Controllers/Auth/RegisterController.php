@@ -87,9 +87,7 @@ class RegisterController extends Controller
                 ]);
             }
 
-            $requiresCashfree = $plan->billing_cycle === 'month'
-                && in_array(strtolower($plan->name), ['pro', 'business'], true)
-                && ((float) $plan->inr_price > 0 || (float) $plan->usd_price > 0);
+            $requiresCashfree = $plan->requiresCashfreePayment();
 
             $paymentData = [
                 'provider' => null,
