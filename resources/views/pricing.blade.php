@@ -116,7 +116,7 @@
                   <li><i class="bi bi-check2 check"></i>Custom watermark</li>
                   <li><i class="bi bi-check2 check"></i>Link expiry &amp; revocation</li>
                   <li><i class="bi bi-check2 check"></i>Unlimited viewers</li>
-                  <li><i class="bi bi-check2 check"></i>SSO, API &amp; webhooks</li>
+                  <li><i class="bi bi-check2 check"></i>API &amp; webhooks</li>
                   <li><i class="bi bi-check2 check"></i>OCR &amp; full-text search</li>
                   <li><i class="bi bi-check2 check"></i>Domain/IP allowlists</li>
                   <li><i class="bi bi-check2 check"></i>Priority support</li>

@@ -7,7 +7,7 @@
   <div class="container">
     <h1 class="section-title text-center mb-2">Privacy Policy</h1>
     <p class="section-subtitle text-center text-muted mb-4">
-      Effective Date: {{ now()->format('F d, Y') }}
+      Effective Date: September 1, 2025
     </p>
 
     <p>Welcome to OneLinkPDF (“<strong>OneLinkPDF</strong>”, “<strong>we</strong>”, “<strong>us</strong>”, “<strong>our</strong>”). OneLinkPDF is owned and operated by <strong>OneLinkPDF.COM</strong> (“Company”). We value your privacy. This Privacy Policy explains what information we collect, how we use it, and when we share it while operating our website <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a>, applications, and services (collectively, the “<strong>Services</strong>”).</p>

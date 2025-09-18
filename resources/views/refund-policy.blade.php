@@ -7,7 +7,7 @@
   <div class="container">
     <h1 class="section-title text-center mb-2">Refund Policy</h1>
     <p class="section-subtitle text-center text-muted mb-4">
-      Effective Date: {{ now()->format('F d, Y') }}
+      Effective Date: September 1, 2025
     </p>
 
     <p>This Refund Policy is an agreement between you (“<strong>Customer</strong>”) and <strong>OneLinkPDF </strong> (“<strong>OneLinkPDF</strong>”, “we”, “us”, “our”), owner and operator of

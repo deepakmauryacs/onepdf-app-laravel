@@ -218,7 +218,7 @@ export class OneLinkPdfEmbedComponent {
                   <span class="bg-secondary rounded-circle d-inline-block mx-2" style="width: 12px; height: 12px;"></span>
                   <span class="bg-secondary rounded-circle d-inline-block" style="width: 12px; height: 12px;"></span>
                 </div>
-                <div class="text-muted small">https://www.onelinkpdf.com/view?doc=045210e8da</div>
+                <div class="text-muted small">https://www.onelinkpdf.com/view?doc=8245e57883</div>
               </div>
               <div class="dropdown">
                 <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -226,19 +226,19 @@ export class OneLinkPdfEmbedComponent {
                 </button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="{{ url('/') }}">Refresh</a></li>
-                  <li><a class="dropdown-item" href="https://www.onelinkpdf.com/view?doc=045210e8da" target="_blank">Open in new tab</a></li>
+                  <li><a class="dropdown-item" href="https://www.onelinkpdf.com/view?doc=8245e57883" target="_blank">Open in new tab</a></li>
                 </ul>
               </div>
             </div>
 
             <div class="demo-browser">
-              <iframe src="https://www.onelinkpdf.com/view?doc=045210e8da" title="OneLinkPDF Demo Viewer" allow="clipboard-write"></iframe>
+              <iframe src="https://www.onelinkpdf.com/view?doc=8245e57883" title="OneLinkPDF Demo Viewer" allow="clipboard-write"></iframe>
             </div>
 
             <div class="demo-controls">
               <div class="input-group">
                 <span class="input-group-text">Token</span>
-                <input type="text" class="form-control token-input" value="045210e8da" readonly>
+                <input type="text" class="form-control token-input" value="8245e57883" readonly>
                 <button class="btn btn-outline-secondary" type="button" id="copyToken"><i class="bi bi-clipboard"></i></button>
               </div>
 

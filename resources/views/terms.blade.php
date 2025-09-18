@@ -6,7 +6,7 @@
 <section class="section py-5">
   <div class="container">
     <h1 class="section-title text-center mb-3">Terms of Service</h1>
-    <p class="section-subtitle text-center text-muted mb-4">Effective Date: {{ now()->format('F d, Y') }}</p>
+    <p class="section-subtitle text-center text-muted mb-4">Effective Date: September 1, 2025</p>
 
     <p>Welcome to OneLinkPDF (“<strong>OneLinkPDF</strong>”, “<strong>we</strong>”, “<strong>us</strong>”, or “<strong>our</strong>”). These Terms of Service (“<strong>Terms</strong>”) govern your access to and use of our website <a href="https://www.onelinkpdf.com" rel="nofollow">https://www.onelinkpdf.com</a>, applications, and services (collectively, the “<strong>Services</strong>”). OneLinkPDF is owned and operated by <strong>OneLinkPDF.COM</strong> (“Company”).</p>
 
