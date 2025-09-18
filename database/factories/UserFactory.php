@@ -31,6 +31,7 @@ class UserFactory extends Factory
             'last_name' => $last,
             'country' => fake()->country(),
             'company' => fake()->company(),
+            'mobile' => fake()->numerify('##########'),
             'name' => "$first $last",
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
