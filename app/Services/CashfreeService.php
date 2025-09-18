@@ -70,7 +70,8 @@ class CashfreeService
 
         $this->client = Http::baseUrl($this->baseUrl())
             ->withHeaders($this->authenticationHeaders($appId, $secret))
-            ->acceptJson();
+            ->acceptJson()
+            ->asJson();
 
         return $this->client;
     }
@@ -89,15 +90,12 @@ class CashfreeService
 
     protected function authenticationHeaders(string $appId, string $secret): array
     {
-        $headers = [
+        return [
             'x-client-id' => $appId,
             'x-client-secret' => $secret,
             'x-api-version' => $this->apiVersion(),
+            'Content-Type' => 'application/json',
         ];
-
-        $headers['Authorization'] = 'Basic ' . base64_encode("{$appId}:{$secret}");
-
-        return $headers;
     }
 
     /**
