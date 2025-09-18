@@ -821,11 +821,6 @@
       const selectedPlanOption = getSelectedPlanOption();
       const paymentRequired = requiresCashfreePayment(selectedPlanOption);
 
-      if (paymentRequired && !cashfreeState.paid) {
-        setError('plan', 'cashfree_error', 'Please complete the Cashfree payment to continue.');
-        valid = false;
-      }
-
       const email = data.get('email');
       if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
         setError('email', 'email_error', 'A valid email is required.');
@@ -917,13 +912,17 @@
         }
 
         if (response.ok && result.success) {
-          showToast('Registration successful. Redirecting to login...', {
+          const redirectTarget = result.redirect_url || loginUrl;
+          const message = redirectTarget && redirectTarget !== loginUrl
+            ? 'Registration successful. Redirecting to payment...'
+            : 'Registration successful. Redirecting to login...';
+          showToast(message, {
             title: 'Success',
             variant: 'success'
           });
-          if (loginUrl) {
+          if (redirectTarget) {
             setTimeout(() => {
-              window.location = loginUrl;
+              window.location = redirectTarget;
             }, 1200);
           }
         } else {

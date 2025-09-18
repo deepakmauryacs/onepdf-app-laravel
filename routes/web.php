@@ -32,6 +32,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
     Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
+    Route::get('/register/payment/{user}', [RegisterController::class, 'payment'])
+        ->middleware('signed')
+        ->name('register.payment');
+    Route::post('/register/payment/{user}/{plan}/complete', [RegisterController::class, 'completePayment'])
+        ->middleware('signed')
+        ->name('register.payment.complete');
     Route::post('/register/captcha', [ContactController::class, 'refreshCaptcha'])->name('register.captcha');
     Route::post('/register/cashfree/order', [CashfreeController::class, 'createOrder'])->name('register.cashfree.order');
     Route::post('/register/cashfree/verify', [CashfreeController::class, 'verifyOrder'])->name('register.cashfree.verify');
