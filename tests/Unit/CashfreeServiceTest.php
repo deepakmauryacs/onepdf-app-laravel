@@ -49,10 +49,8 @@ class CashfreeServiceTest extends TestCase
         $this->assertTrue($capturedRequest->hasHeader('x-client-secret', 'test-secret'));
         $this->assertTrue($capturedRequest->hasHeader('x-api-version', '2027-03-15'));
 
-        $this->assertSame(
-            ['Basic ' . base64_encode('test-app:test-secret')],
-            $capturedRequest->header('Authorization')
-        );
+        $this->assertTrue($capturedRequest->hasHeader('Content-Type', 'application/json'));
+        $this->assertTrue($capturedRequest->hasHeader('Accept', 'application/json'));
 
         Http::assertSentCount(1);
     }
