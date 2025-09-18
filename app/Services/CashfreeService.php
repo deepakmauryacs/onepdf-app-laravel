@@ -2,15 +2,24 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Support\Facades\Http;
+use Cashfree\ApiException;
+use Cashfree\Cashfree as CashfreeClient;
+use Cashfree\Model\ModelInterface;
+use Cashfree\ObjectSerializer;
+use JsonSerializable;
 use RuntimeException;
+use Throwable;
 
 class CashfreeService
 {
     protected const MINIMUM_API_VERSION = '2025-01-01';
 
-    protected ?PendingRequest $client = null;
+    protected ?CashfreeClient $sdk = null;
+
+    public function __construct(?CashfreeClient $sdk = null)
+    {
+        $this->sdk = $sdk;
+    }
 
     public function enabled(): bool
     {
@@ -60,22 +69,6 @@ class CashfreeService
             : $configured;
     }
 
-    protected function client(): PendingRequest
-    {
-        if ($this->client instanceof PendingRequest) {
-            return $this->client;
-        }
-
-        [$appId, $secret] = $this->credentials(true);
-
-        $this->client = Http::baseUrl($this->baseUrl())
-            ->withHeaders($this->authenticationHeaders($appId, $secret))
-            ->acceptJson()
-            ->asJson();
-
-        return $this->client;
-    }
-
     protected function credentials(bool $strict = false): array
     {
         $appId = trim((string) config('cashfree.app_id'));
@@ -88,29 +81,32 @@ class CashfreeService
         return [$appId, $secret];
     }
 
-    protected function authenticationHeaders(string $appId, string $secret): array
-    {
-        return [
-            'x-client-id' => $appId,
-            'x-client-secret' => $secret,
-            'x-api-version' => $this->apiVersion(),
-            'Content-Type' => 'application/json',
-        ];
-    }
-
     /**
      * Create a payment order with Cashfree.
      */
     public function createOrder(array $payload): array
     {
-        $response = $this->client()->post('orders', $payload);
+        $client = $this->client();
 
-        if ($response->failed()) {
-            $message = $this->extractErrorMessage($response->json(), $response->body());
+        try {
+            $result = $client->PGCreateOrder($this->preparePayload($payload));
+        } catch (ApiException $exception) {
+            $message = $this->messageFromSdkException($exception, 'Failed to create Cashfree order.');
+
+            throw new RuntimeException($message ?: 'Failed to create Cashfree order.', 0, $exception);
+        } catch (Throwable $throwable) {
+            throw new RuntimeException($throwable->getMessage() ?: 'Failed to create Cashfree order.', 0, $throwable);
+        }
+
+        [$order, $status] = [$result[0] ?? [], (int) ($result[1] ?? 0)];
+
+        if ($status < 200 || $status >= 300) {
+            $message = $this->extractErrorMessage($this->convertToArray($order), 'Failed to create Cashfree order.');
+
             throw new RuntimeException($message ?: 'Failed to create Cashfree order.');
         }
 
-        return $response->json();
+        return $this->convertToArray($order);
     }
 
     /**
@@ -118,14 +114,147 @@ class CashfreeService
      */
     public function getOrder(string $orderId): array
     {
-        $response = $this->client()->get("orders/{$orderId}");
+        $client = $this->client();
 
-        if ($response->failed()) {
-            $message = $this->extractErrorMessage($response->json(), $response->body());
+        try {
+            $result = $client->PGFetchOrder(trim($orderId));
+        } catch (ApiException $exception) {
+            $message = $this->messageFromSdkException($exception, 'Failed to fetch Cashfree order details.');
+
+            throw new RuntimeException($message ?: 'Failed to fetch Cashfree order details.', 0, $exception);
+        } catch (Throwable $throwable) {
+            throw new RuntimeException($throwable->getMessage() ?: 'Failed to fetch Cashfree order details.', 0, $throwable);
+        }
+
+        [$order, $status] = [$result[0] ?? [], (int) ($result[1] ?? 0)];
+
+        if ($status < 200 || $status >= 300) {
+            $message = $this->extractErrorMessage($this->convertToArray($order), 'Failed to fetch Cashfree order details.');
+
             throw new RuntimeException($message ?: 'Failed to fetch Cashfree order details.');
         }
 
-        return $response->json();
+        return $this->convertToArray($order);
+    }
+
+    protected function client(): CashfreeClient
+    {
+        [$appId, $secret] = $this->credentials(true);
+        $environment = $this->mode() === 'production' ? 1 : 0;
+
+        if (! $this->sdk instanceof CashfreeClient) {
+            $this->sdk = new CashfreeClient(
+                $environment,
+                $appId,
+                $secret,
+                '',
+                '',
+                '',
+                false
+            );
+        }
+
+        $this->sdk->XClientId = $appId;
+        $this->sdk->XClientSecret = $secret;
+        $this->sdk->XEnvironment = $environment;
+        $this->sdk->XApiVersion = $this->apiVersion();
+        $this->sdk->XEnableErrorAnalytics = false;
+
+        return $this->sdk;
+    }
+
+    protected function preparePayload(array $payload): array
+    {
+        return $this->filterNullValues($payload);
+    }
+
+    protected function filterNullValues(array $data): array
+    {
+        $filtered = [];
+
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+
+            if (is_array($value)) {
+                $value = $this->filterNullValues($value);
+
+                if ($value === []) {
+                    continue;
+                }
+            }
+
+            $filtered[$key] = $value;
+        }
+
+        return $filtered;
+    }
+
+    protected function convertToArray(mixed $response): array
+    {
+        if ($response instanceof ModelInterface) {
+            $sanitized = ObjectSerializer::sanitizeForSerialization($response);
+            $decoded = json_decode(json_encode($sanitized), true);
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        if ($response instanceof JsonSerializable) {
+            $encoded = json_encode($response);
+            $decoded = is_string($encoded) ? json_decode($encoded, true) : null;
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        if ($response instanceof \stdClass) {
+            $decoded = json_decode(json_encode($response), true);
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        if (is_array($response)) {
+            return $response;
+        }
+
+        if (is_string($response)) {
+            $decoded = json_decode($response, true);
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return [];
+    }
+
+    protected function messageFromSdkException(ApiException $exception, string $fallback): string
+    {
+        $responseObject = $exception->getResponseObject();
+
+        if ($responseObject !== null) {
+            $message = $this->extractErrorMessage($this->convertToArray($responseObject), '');
+
+            if ($message !== '') {
+                return $message;
+            }
+        }
+
+        $responseBody = $exception->getResponseBody();
+
+        if ($responseBody !== null) {
+            $message = $this->extractErrorMessage($this->convertToArray($responseBody), '');
+
+            if ($message !== '') {
+                return $message;
+            }
+
+            if (is_string($responseBody) && trim($responseBody) !== '') {
+                return $responseBody;
+            }
+        }
+
+        $message = $exception->getMessage();
+
+        return is_string($message) && trim($message) !== '' ? $message : $fallback;
     }
 
     protected function extractErrorMessage(?array $json, string $fallback = ''): string
