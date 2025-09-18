@@ -16,7 +16,9 @@ class CashfreeService
             return false;
         }
 
-        return filled(config('cashfree.app_id')) && filled(config('cashfree.secret_key'));
+        [$appId, $secret] = $this->credentials();
+
+        return $appId !== '' && $secret !== '';
     }
 
     public function mode(): string
@@ -54,22 +56,38 @@ class CashfreeService
             return $this->client;
         }
 
-        $appId = config('cashfree.app_id');
-        $secret = config('cashfree.secret_key');
-
-        if (! $appId || ! $secret) {
-            throw new RuntimeException('Cashfree credentials are missing.');
-        }
+        [$appId, $secret] = $this->credentials(true);
 
         $this->client = Http::baseUrl($this->baseUrl())
-            ->withHeaders([
-                'x-client-id' => $appId,
-                'x-client-secret' => $secret,
-                'x-api-version' => $this->apiVersion(),
-            ])
+            ->withHeaders($this->authenticationHeaders($appId, $secret))
             ->acceptJson();
 
         return $this->client;
+    }
+
+    protected function credentials(bool $strict = false): array
+    {
+        $appId = trim((string) config('cashfree.app_id'));
+        $secret = trim((string) config('cashfree.secret_key'));
+
+        if ($strict && ($appId === '' || $secret === '')) {
+            throw new RuntimeException('Cashfree credentials are missing.');
+        }
+
+        return [$appId, $secret];
+    }
+
+    protected function authenticationHeaders(string $appId, string $secret): array
+    {
+        $headers = [
+            'x-client-id' => $appId,
+            'x-client-secret' => $secret,
+            'x-api-version' => $this->apiVersion(),
+        ];
+
+        $headers['Authorization'] = 'Basic ' . base64_encode("{$appId}:{$secret}");
+
+        return $headers;
     }
 
     /**
