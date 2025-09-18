@@ -116,9 +116,14 @@
       return;
     }
 
+    const sanitizedMobile = (mobile || '').replace(/\D+/g, '').slice(0, 15);
+    if (sanitizedMobile.length < 6) {
+      setStatus('A valid mobile number is required before continuing to payment.', 'danger');
+      return;
+    }
+
     toggleButtons(true, button);
     setStatus('Preparing secure payment...', 'info');
-    const sanitizedMobile = (mobile || '').trim();
 
     try {
       const { response, json } = await requestJson(cashfreeOrderUrl, {

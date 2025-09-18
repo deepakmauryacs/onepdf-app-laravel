@@ -66,7 +66,7 @@
                data-first-name="{{ $user->first_name }}"
                data-last-name="{{ $user->last_name }}"
                data-email="{{ $user->email }}"
-               data-mobile="{{ $user->mobile ?? '' }}"
+               data-mobile="{{ $paymentMobile ?? '' }}"
                data-company="{{ $user->company ?? '' }}"
                data-country="{{ $user->country ?? '' }}"
                data-cashfree-enabled="{{ $cashfree['enabled'] ? '1' : '0' }}"

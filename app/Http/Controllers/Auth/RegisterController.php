@@ -72,7 +72,13 @@ class RegisterController extends Controller
             $useId = str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT)
                    . str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
 
-            $mobile = trim((string) ($validated['mobile'] ?? ''));
+            $rawMobile = trim((string) ($validated['mobile'] ?? ''));
+            $numericMobile = '';
+
+            if ($rawMobile !== '') {
+                $numericMobile = preg_replace('/\D+/', '', $rawMobile);
+                $numericMobile = is_string($numericMobile) ? $numericMobile : '';
+            }
 
             $user = User::create([
                 'use_id'       => $useId,
@@ -81,7 +87,7 @@ class RegisterController extends Controller
                 'last_name'    => $validated['last_name'],
                 'company'      => $validated['company'],
                 'email'        => $validated['email'],
-                'mobile'       => $mobile !== '' ? $mobile : null,
+                'mobile'       => $numericMobile !== '' ? $numericMobile : null,
                 'password'     => $validated['password'],
                 'agreed_terms' => true,
             ]);
@@ -95,15 +101,14 @@ class RegisterController extends Controller
                 ]);
             }
 
-            if ($plan->requiresCashfreePayment() && $cashfree->enabled() && $mobile === '') {
+            if ($plan->requiresCashfreePayment() && $cashfree->enabled() && $numericMobile === '') {
                 throw ValidationException::withMessages([
                     'mobile' => 'Mobile number is required to complete payment for this plan.',
                 ]);
             }
 
-            if ($mobile !== '') {
-                $digits = preg_replace('/\D+/', '', $mobile);
-                $length = is_string($digits) ? strlen($digits) : 0;
+            if ($numericMobile !== '') {
+                $length = strlen($numericMobile);
                 if ($length < 6 || $length > 15) {
                     throw ValidationException::withMessages([
                         'mobile' => 'Please provide a valid mobile number.',
@@ -270,6 +275,17 @@ class RegisterController extends Controller
             );
         }
 
+        $paymentMobile = '';
+        if ($user->mobile) {
+            $digits = preg_replace('/\D+/', '', (string) $user->mobile);
+            $digits = is_string($digits) ? $digits : '';
+            $length = strlen($digits);
+
+            if ($length >= 6 && $length <= 15) {
+                $paymentMobile = $digits;
+            }
+        }
+
         return view('auth.payment', [
             'user' => $user,
             'plan' => $plan,
@@ -277,6 +293,7 @@ class RegisterController extends Controller
             'requiresPayment' => $paymentPending,
             'cashfree' => $cashfreeConfig,
             'completeUrl' => $completeUrl,
+            'paymentMobile' => $paymentMobile,
         ]);
     }
 
