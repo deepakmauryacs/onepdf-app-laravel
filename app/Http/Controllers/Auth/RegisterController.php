@@ -10,7 +10,9 @@ use App\Models\UserPlan;
 use App\Rules\Captcha;
 use App\Services\CashfreeService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
@@ -175,6 +177,13 @@ class RegisterController extends Controller
             ]);
 
             DB::commit();
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            Session::put('user_id', $user->id);
+            Session::put('user_name', $user->first_name ?? $user->name ?? '');
+            Session::put('use_id', $user->use_id ?? null);
 
             $a = random_int(1, 9);
             $b = random_int(1, 9);
