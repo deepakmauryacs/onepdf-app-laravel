@@ -55,7 +55,7 @@ class Plan extends Model
     {
         $name = strtolower(trim((string) $this->name));
 
-        return $this->billing_cycle === 'month'
+        return in_array($this->billing_cycle, ['month', 'year'], true)
             && in_array($name, ['pro', 'business'], true);
     }
 
