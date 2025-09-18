@@ -287,11 +287,11 @@
         return option.dataset.cashfreeRequired === '1';
       }
 
-      const billing = option.dataset.billing || '';
+      const billing = (option.dataset.billing || '').toLowerCase();
       const name = (option.dataset.name || '').toLowerCase().trim();
       const inr = Number.parseFloat(option.dataset.inrPrice || '0');
       const usd = Number.parseFloat(option.dataset.usdPrice || '0');
-      if (billing !== 'month') {
+      if (!['month', 'year'].includes(billing)) {
         return false;
       }
       if (!['pro', 'business'].includes(name)) {
