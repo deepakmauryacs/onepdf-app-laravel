@@ -151,12 +151,27 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  @if(($cashfree['enabled'] ?? false) && $requiresPayment)
-    <script src="https://sdk.cashfree.com/js/ui/2.0.0/cashfree.js"></script>
-  @endif
-  <script src="{{ asset('assets/assets-auth/js/payment-page.js') }}"></script>
+    @if(($cashfree['enabled'] ?? false) && $requiresPayment)
+     <script src="https://sdk.cashfree.com/js/v3/cashfree.js" onload="console.log('Cashfree SDK loaded')" onerror="console.error('Cashfree SDK failed to load')"></script>
+    @endif
+    <script src="{{ asset('assets/assets-auth/js/payment-page.js') }}?v={{ filemtime(public_path('assets/assets-auth/js/payment-page.js')) }}"></script>
+    
+    <script>
+      // Add global error handler for Cashfree
+      window.addEventListener('error', function(e) {
+        if (e.filename && e.filename.includes('cashfree')) {
+          console.error('Cashfree SDK loading error:', e.error);
+          const statusEl = document.querySelector('[data-payment-status]');
+          if (statusEl) {
+            statusEl.textContent = 'Payment gateway failed to load. Please refresh the page.';
+            statusEl.className = 'alert alert-danger mt-3';
+            statusEl.classList.remove('d-none');
+          }
+        }
+      });
+    </script>
 </body>
 </html>

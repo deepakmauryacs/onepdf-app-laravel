@@ -219,9 +219,7 @@
     const cashfreeCurrencyInput = document.getElementById('cashfreeCurrency');
     const cashfreeAmountInput = document.getElementById('cashfreeAmount');
     const cashfreeError = document.getElementById('cashfree_error');
-    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     let cashfreeInstance = null;
-    let cashfreeInstancePromise = null;
     let cashfreeState = {
       planId: null,
       paid: false,
@@ -350,92 +348,21 @@
       cashfreeStatus.classList.add(toneClass);
     };
 
-    const resolveCashfreeConstructor = () => {
-      if (typeof window === 'undefined') {
-        return null;
-      }
-
-      let ctor = window.Cashfree || window.cashfree || null;
-      if (ctor && typeof ctor === 'object' && typeof ctor.Cashfree === 'function') {
-        ctor = ctor.Cashfree;
-      }
-
-      return typeof ctor === 'function' ? ctor : null;
-    };
-
-    const attemptInstantiateCashfree = async () => {
-      const ctor = resolveCashfreeConstructor();
-      if (!ctor) {
-        return null;
-      }
-
-      const options = { mode: cashfreeMode === 'production' ? 'production' : 'sandbox' };
-
-      const tryBuild = (factory, useNew = false) => {
-        try {
-          const instance = useNew ? new factory(options) : factory(options);
-          return instance;
-        } catch (error) {
-          const message = typeof error?.message === 'string' ? error.message : '';
-          if (!useNew && /class constructor/i.test(message)) {
-            return tryBuild(factory, true);
-          }
-
-          return null;
-        }
-      };
-
-      let candidate = tryBuild(ctor, false);
-      if (!candidate) {
-        candidate = tryBuild(ctor, true);
-      }
-
-      if (candidate && typeof candidate.then === 'function') {
-        try {
-          const awaited = await candidate;
-          return awaited && typeof awaited.checkout === 'function' ? awaited : null;
-        } catch (error) {
-          return null;
-        }
-      }
-
-      return candidate && typeof candidate.checkout === 'function' ? candidate : null;
-    };
-
-    const ensureCashfreeInstance = async () => {
+    const ensureCashfreeInstance = () => {
       if (!cashfreeEnabled) {
         return null;
       }
-
-      if (cashfreeInstance && typeof cashfreeInstance.checkout === 'function') {
+      if (cashfreeInstance) {
         return cashfreeInstance;
       }
-
-      if (cashfreeInstancePromise) {
-        return cashfreeInstancePromise;
-      }
-
-      const loadInstance = async () => {
-        for (let attempt = 0; attempt < 4; attempt += 1) {
-          const instance = await attemptInstantiateCashfree();
-          if (instance && typeof instance.checkout === 'function') {
-            return instance;
-          }
-
-          await wait(200 * (attempt + 1));
+      if (window.Cashfree) {
+        try {
+          cashfreeInstance = new window.Cashfree({ mode: cashfreeMode === 'production' ? 'production' : 'sandbox' });
+        } catch (error) {
+          cashfreeInstance = null;
         }
-
-        return null;
-      };
-
-      cashfreeInstancePromise = loadInstance().then((instance) => {
-        cashfreeInstance = instance && typeof instance.checkout === 'function' ? instance : null;
-        return cashfreeInstance;
-      }).finally(() => {
-        cashfreeInstancePromise = null;
-      });
-
-      return cashfreeInstancePromise;
+      }
+      return cashfreeInstance;
     };
 
     const updateCashfreePlanSummary = (option, needsPayment) => {
@@ -718,11 +645,11 @@
         }
 
         const { payment_session_id: sessionId, order_id: orderId, order_amount: orderAmount } = json;
-        const instance = await ensureCashfreeInstance();
+        const instance = ensureCashfreeInstance();
 
         if (!instance || !sessionId || !orderId) {
-          setCashfreeStatus('Unable to load Cashfree checkout right now. Please refresh and try again.', 'danger');
-          showToast('Unable to load Cashfree checkout right now. Please refresh and try again.', {
+          setCashfreeStatus('Unable to open Cashfree checkout. Please try again.', 'danger');
+          showToast('Unable to open Cashfree checkout. Please try again.', {
             title: 'Payment error',
             variant: 'danger',
           });
