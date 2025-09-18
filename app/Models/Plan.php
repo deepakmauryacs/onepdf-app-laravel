@@ -47,6 +47,32 @@ class Plan extends Model
     {
         return $this->monthly_file !== null ? (int) $this->monthly_file : null;
     }
+
+    /**
+     * Determine if the plan can be purchased through Cashfree.
+     */
+    public function isCashfreeEligible(): bool
+    {
+        $name = strtolower(trim((string) $this->name));
+
+        return $this->billing_cycle === 'month'
+            && in_array($name, ['pro', 'business'], true);
+    }
+
+    /**
+     * Check whether Cashfree payment is required for the plan.
+     */
+    public function requiresCashfreePayment(): bool
+    {
+        if (! $this->isCashfreeEligible()) {
+            return false;
+        }
+
+        $inr = (float) $this->inr_price;
+        $usd = (float) $this->usd_price;
+
+        return $inr > 0 || $usd > 0;
+    }
 }
 
 

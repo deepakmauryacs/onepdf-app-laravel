@@ -116,6 +116,7 @@
                             data-plan="true"
                             data-name="{{ $plan->name }}"
                             data-billing="{{ $plan->billing_cycle }}"
+                            data-cashfree-required="{{ $plan->requiresCashfreePayment() ? '1' : '0' }}"
                             data-inr-price="{{ $plan->inr_price }}"
                             data-usd-price="{{ $plan->usd_price }}">
                       {{ $defaultLabel }}
