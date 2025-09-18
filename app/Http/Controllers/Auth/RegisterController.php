@@ -72,6 +72,8 @@ class RegisterController extends Controller
             $useId = str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT)
                    . str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
 
+            $mobile = trim((string) ($validated['mobile'] ?? ''));
+
             $user = User::create([
                 'use_id'       => $useId,
                 'country'      => $validated['country'],
@@ -93,7 +95,6 @@ class RegisterController extends Controller
                 ]);
             }
 
-            $mobile = trim((string) ($validated['mobile'] ?? ''));
             if ($plan->requiresCashfreePayment() && $cashfree->enabled() && $mobile === '') {
                 throw ValidationException::withMessages([
                     'mobile' => 'Mobile number is required to complete payment for this plan.',
