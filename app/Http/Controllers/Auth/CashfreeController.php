@@ -24,6 +24,7 @@ class CashfreeController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
+            'mobile' => ['required', 'string', 'max:20', 'regex:/^[0-9+()\-\s]{6,20}$/'],
             'country' => ['nullable', 'string', 'max:255'],
             'company' => ['nullable', 'string', 'max:255'],
         ]);
@@ -60,6 +61,13 @@ class CashfreeController extends Controller
         }
 
         $customerName = trim($validated['first_name'] . ' ' . $validated['last_name']);
+        $phoneDigits = preg_replace('/\D+/', '', $validated['mobile']);
+        $digitLength = is_string($phoneDigits) ? strlen($phoneDigits) : 0;
+        if ($digitLength < 6 || $digitLength > 15) {
+            throw ValidationException::withMessages([
+                'mobile' => 'Please provide a valid mobile number.',
+            ]);
+        }
         $payload = [
             'order_id' => $orderId,
             'order_amount' => round($amount, 2),
@@ -68,6 +76,7 @@ class CashfreeController extends Controller
                 'customer_id' => $customerId,
                 'customer_name' => $customerName,
                 'customer_email' => $validated['email'],
+                'customer_phone' => $phoneDigits !== '' ? substr($phoneDigits, 0, 15) : null,
             ]),
             'order_note' => sprintf('OneLinkPDF %s (%s)', $plan->name, strtoupper($plan->billing_cycle)),
         ];
