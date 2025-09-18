@@ -380,8 +380,8 @@
       }
 
       const amountText = amounts.length > 0
-        ? `Complete the payment of ${amounts.join(' or ')} via Cashfree.`
-        : 'Continue to Cashfree to complete your activation.';
+        ? `You'll complete the payment of ${amounts.join(' or ')} on the next page.`
+        : 'After registration, you will be redirected to Cashfree to finish your activation.';
 
       const parts = [];
       if (planName) {
@@ -462,7 +462,7 @@
         const message = `Payment confirmed (${formatCurrency(cashfreeState.amount, cashfreeState.currency)}).`;
         setCashfreeStatus(message, 'success');
       } else {
-        setCashfreeStatus('Please complete your Cashfree payment to activate this plan.', 'muted');
+        setCashfreeStatus('After submitting the form you will be redirected to a secure payment page to finish activation.', 'muted');
       }
     };
 

@@ -134,32 +134,15 @@
             <input type="hidden" name="cashfree_payment_currency" id="cashfreeCurrency">
             <input type="hidden" name="cashfree_payment_amount" id="cashfreeAmount">
 
-            <div id="cashfreePaymentSection" class="card border-0 shadow-sm mt-2 d-none">
-              <div class="card-body">
-                <div class="d-flex align-items-center mb-2">
-                  <i class="bi bi-credit-card-2-front text-primary fs-4 me-2"></i>
-                  <div>
-                    <h5 class="mb-0" style="font-weight:600;">Complete your payment</h5>
-                    <small class="text-muted">Pro and Business monthly plans require a secure Cashfree checkout. Choose INR or USD below to activate your subscription.</small>
-                  </div>
+            <div id="cashfreePaymentSection" class="alert alert-info d-none mt-2" role="alert">
+              <div class="d-flex align-items-start">
+                <i class="bi bi-credit-card-2-front text-primary fs-4 me-2"></i>
+                <div>
+                  <h5 class="mb-1" style="font-weight:600;">Payment required after registration</h5>
+                  <p id="cashfreePlanSummary" class="small text-muted mb-2 d-none" aria-live="polite"></p>
+                  <p id="cashfreePaymentStatus" class="small text-muted mb-0"></p>
+                  <div id="cashfree_error" class="error-message mt-2"></div>
                 </div>
-                <p id="cashfreePlanSummary" class="small text-muted mb-3 d-none" aria-live="polite"></p>
-                <div class="d-flex flex-wrap gap-2 mb-2">
-                  <button type="button" class="btn btn-outline-primary" data-cashfree-currency="INR">
-                    <span class="d-flex align-items-center">
-                      <span>Pay with Cashfree (INR)</span>
-                      <span class="cashfree-amount badge bg-light text-dark ms-2" data-amount-currency="INR"></span>
-                    </span>
-                  </button>
-                  <button type="button" class="btn btn-outline-primary" data-cashfree-currency="USD">
-                    <span class="d-flex align-items-center">
-                      <span>Pay with Cashfree (USD)</span>
-                      <span class="cashfree-amount badge bg-light text-dark ms-2" data-amount-currency="USD"></span>
-                    </span>
-                  </button>
-                </div>
-                <p id="cashfreePaymentStatus" class="small text-muted mb-1"></p>
-                <div id="cashfree_error" class="error-message"></div>
               </div>
             </div>
 
