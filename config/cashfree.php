@@ -5,7 +5,7 @@ return [
     'app_id' => env('CASHFREE_APP_ID'),
     'secret_key' => env('CASHFREE_SECRET_KEY'),
     'environment' => env('CASHFREE_ENV', 'sandbox'),
-    'api_version' => env('CASHFREE_API_VERSION', '2022-09-01'),
+    'api_version' => env('CASHFREE_API_VERSION', '2025-01-01'),
     'base_urls' => [
         'sandbox' => 'https://sandbox.cashfree.com/pg',
         'production' => 'https://api.cashfree.com/pg',

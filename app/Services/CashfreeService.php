@@ -8,6 +8,8 @@ use RuntimeException;
 
 class CashfreeService
 {
+    protected const MINIMUM_API_VERSION = '2025-01-01';
+
     protected ?PendingRequest $client = null;
 
     public function enabled(): bool
@@ -47,7 +49,15 @@ class CashfreeService
 
     protected function apiVersion(): string
     {
-        return (string) config('cashfree.api_version', '2022-09-01');
+        $configured = trim((string) config('cashfree.api_version', ''));
+
+        if ($configured === '') {
+            return static::MINIMUM_API_VERSION;
+        }
+
+        return version_compare($configured, static::MINIMUM_API_VERSION, '<')
+            ? static::MINIMUM_API_VERSION
+            : $configured;
     }
 
     protected function client(): PendingRequest
@@ -95,7 +105,7 @@ class CashfreeService
      */
     public function createOrder(array $payload): array
     {
-        $response = $this->client()->post('/orders', $payload);
+        $response = $this->client()->post('orders', $payload);
 
         if ($response->failed()) {
             $message = $this->extractErrorMessage($response->json(), $response->body());
@@ -110,7 +120,7 @@ class CashfreeService
      */
     public function getOrder(string $orderId): array
     {
-        $response = $this->client()->get("/orders/{$orderId}");
+        $response = $this->client()->get("orders/{$orderId}");
 
         if ($response->failed()) {
             $message = $this->extractErrorMessage($response->json(), $response->body());

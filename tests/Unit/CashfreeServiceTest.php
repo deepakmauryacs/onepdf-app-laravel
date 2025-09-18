@@ -15,7 +15,7 @@ class CashfreeServiceTest extends TestCase
             'cashfree.app_id' => ' test-app ',
             'cashfree.secret_key' => " test-secret \n",
             'cashfree.environment' => 'sandbox',
-            'cashfree.api_version' => '2022-09-01',
+            'cashfree.api_version' => '2027-03-15',
         ]);
 
         $capturedRequest = null;
@@ -47,12 +47,50 @@ class CashfreeServiceTest extends TestCase
 
         $this->assertTrue($capturedRequest->hasHeader('x-client-id', 'test-app'));
         $this->assertTrue($capturedRequest->hasHeader('x-client-secret', 'test-secret'));
-        $this->assertTrue($capturedRequest->hasHeader('x-api-version', '2022-09-01'));
+        $this->assertTrue($capturedRequest->hasHeader('x-api-version', '2027-03-15'));
 
         $this->assertSame(
             ['Basic ' . base64_encode('test-app:test-secret')],
             $capturedRequest->header('Authorization')
         );
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_create_order_uses_minimum_supported_api_version_when_configured_value_is_outdated(): void
+    {
+        config([
+            'cashfree.enabled' => true,
+            'cashfree.app_id' => 'app',
+            'cashfree.secret_key' => 'secret',
+            'cashfree.environment' => 'sandbox',
+            'cashfree.api_version' => '2022-09-01',
+        ]);
+
+        $capturedRequest = null;
+
+        Http::fake([
+            'https://sandbox.cashfree.com/pg/orders' => function ($request) use (&$capturedRequest) {
+                $capturedRequest = $request;
+
+                return Http::response([
+                    'order_id' => 'ORD123',
+                    'payment_session_id' => 'SESSION123',
+                ], 200);
+            },
+        ]);
+
+        $service = new CashfreeService();
+
+        $service->createOrder([
+            'order_id' => 'ORD123',
+            'order_amount' => 10,
+            'order_currency' => 'INR',
+            'customer_details' => ['customer_id' => 'customer-1'],
+        ]);
+
+        $this->assertNotNull($capturedRequest, 'Cashfree request was not captured.');
+        $this->assertTrue($capturedRequest->hasHeader('x-api-version', '2025-01-01'));
 
         Http::assertSentCount(1);
     }
