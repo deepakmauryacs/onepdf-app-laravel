@@ -81,6 +81,14 @@
   .pagination-modern .page-item.disabled .page-link{opacity:.45;cursor:not-allowed}
   .pagination-modern .ellipsis > .page-link{pointer-events:none}
   .pagination-modern .page-link .bi{margin:0;font-size:16px}
+
+  .mf-header{ display:flex; align-items:center; gap:12px; }
+  .mf-actions{ margin-left:auto; display:flex; align-items:center; gap:12px; }
+  .mf-search{ position:relative; min-width:260px; flex:1; }
+  .mf-search-input{ height:40px; padding:.45rem .75rem .45rem 2.1rem; border-radius:10px; border:1px solid #e5e7eb; }
+  .mf-search-icon{ position:absolute; left:10px; top:50%; transform:translateY(-50%); pointer-events:none; color:#6b7280; font-size:14px; }
+  .badge-secure{ background:#16a34a; color:#fff; border-radius:999px; padding:.2rem .5rem; font-weight:600; }
+
 </style>
 @endpush
 
@@ -105,9 +113,19 @@
               <i class="bi bi-sliders"></i> Range
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              @foreach (['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'] as $option)
-                  <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
+              @php
+                $staticRanges = ['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'];
+                $userId = auth()->id();
+                $firstDoc = \App\Models\Document::where('user_id', $userId)->orderBy('created_at')->first();
+                $firstYear = $firstDoc ? (int)($firstDoc->created_at->format('Y')) : (int)date('Y');
+                $currentYear = (int)date('Y');
+              @endphp
+              @foreach ($staticRanges as $option)
+                <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
               @endforeach
+              @for ($y = $currentYear - 1; $y >= $firstYear; $y--)
+                <li><a class="dropdown-item {{ $range == $y ? 'active' : '' }}" href="?range={{$y}}">{{$y}}</a></li>
+              @endfor
             </ul>
           </div>
         </div>
@@ -120,10 +138,25 @@
       <div class="col-12">
         <div class="bw-card h-100">
           <div class="card-header py-3 d-flex align-items-center justify-content-between">
-            <h6 class="m-0 section-title">All Documents</h6>
+            <div class="mf-header">
+              <div class="mf-left">
+                <i class="bi bi-folder2-open me-2"></i>
+                <span class="fw-bold">All Documents</span>
+                @if(isset($documents) && $documents->total())
+                  <span class="chip" id="current-and-total-pages"><i class="bi bi-list-ul"></i> Page {{ $documents->currentPage() }} of {{ $documents->lastPage() }}</span>
+                @endif
+              </div>
+              <div class="mf-actions">
+                <div class="mf-search">
+                  <i class="bi bi-search mf-search-icon"></i>
+                  <input id="searchInput" type="text" class="form-control mf-search-input" placeholder="Search files..." autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <!-- <h6 class="m-0 section-title">All Documents</h6>
             @if(isset($allDocs) && $allDocs->total())
               <span class="chip"><i class="bi bi-list-ul"></i> Page {{ $allDocs->currentPage() }} of {{ $allDocs->lastPage() }}</span>
-            @endif
+            @endif -->
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -192,20 +225,20 @@
                 function pageUrl($n){ return request()->fullUrlWithQuery(['page'=>$n]); }
               @endphp
 
-              <nav class="mt-3 mb-4 pagination-wrap" aria-label="All documents pagination">
-                <div class="pager-summary">Showing {{ number_format($startNo) }}–{{ number_format($endNo) }} of {{ number_format($total) }}</div>
-                <ul class="pagination pagination-modern justify-content-center mb-0">
+              <nav class="mt-3 mb-4 pagination-wrap" aria-label="All documents pagination" id="ajaxPagination">
+                <!-- <div class="pager-summary" id="pagerSummary">Showing {{ number_format($startNo) }}–{{ number_format($endNo) }} of {{ number_format($total) }}</div> -->
+                <ul class="pagination pagination-modern justify-content-center mb-0" id="paginationLinks">
                   {{-- First / Prev --}}
                   <li class="page-item {{ $current==1?'disabled':'' }}">
-                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl(1) }}"><i class="bi bi-chevron-double-left"></i></a>
+                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl(1) }}" data-page="1"><i class="bi bi-chevron-double-left"></i></a>
                   </li>
                   <li class="page-item {{ $current==1?'disabled':'' }}">
-                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl($current-1) }}"><i class="bi bi-chevron-left"></i></a>
+                    <a class="page-link" href="{{ $current==1 ? '#' : pageUrl($current-1) }}" data-page="{{ $current-1 }}"><i class="bi bi-chevron-left"></i></a>
                   </li>
 
                   {{-- Left edge + ellipsis --}}
                   @if($winStart > 1)
-                    <li class="page-item"><a class="page-link" href="{{ pageUrl(1) }}">1</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ pageUrl(1) }}" data-page="1">1</a></li>
                     @if($winStart > 2)
                       <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
                     @endif
@@ -214,7 +247,7 @@
                   {{-- Window --}}
                   @for($i=$winStart; $i<=$winEnd; $i++)
                     <li class="page-item {{ $i==$current?'active':'' }}">
-                      <a class="page-link" href="{{ $i==$current ? '#' : pageUrl($i) }}">{{ $i }}</a>
+                      <a class="page-link" href="{{ $i==$current ? '#' : pageUrl($i) }}" data-page="{{ $i }}">{{ $i }}</a>
                     </li>
                   @endfor
 
@@ -223,15 +256,15 @@
                     @if($winEnd < $last-1)
                       <li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>
                     @endif
-                    <li class="page-item"><a class="page-link" href="{{ pageUrl($last) }}">{{ $last }}</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ pageUrl($last) }}" data-page="{{ $last }}">{{ $last }}</a></li>
                   @endif
 
                   {{-- Next / Last --}}
                   <li class="page-item {{ $current==$last?'disabled':'' }}">
-                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($current+1) }}"><i class="bi bi-chevron-right"></i></a>
+                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($current+1) }}" data-page="{{ $current+1 }}"><i class="bi bi-chevron-right"></i></a>
                   </li>
                   <li class="page-item {{ $current==$last?'disabled':'' }}">
-                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($last) }}"><i class="bi bi-chevron-double-right"></i></a>
+                    <a class="page-link" href="{{ $current==$last ? '#' : pageUrl($last) }}" data-page="{{ $last }}"><i class="bi bi-chevron-double-right"></i></a>
                   </li>
                 </ul>
               </nav>
@@ -242,3 +275,155 @@
     </div>
   </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.getElementById('searchInput');
+  let timer = null;
+
+  function getRange() {
+    const active = document.querySelector('.dropdown-menu .active');
+    return active ? active.textContent.trim() : 'Last 7 days';
+  }
+
+  // Attach AJAX to pagination links
+  function attachAjaxPagination() {
+    const pagination = document.getElementById('paginationLinks');
+    if (!pagination) return;
+    pagination.querySelectorAll('a[data-page]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        const page = parseInt(this.getAttribute('data-page'));
+        if (!isNaN(page) && page > 0 && !this.closest('.page-item').classList.contains('disabled') && !this.closest('.page-item').classList.contains('active')) {
+          e.preventDefault();
+          fetchDocuments(searchInput.value, getRange(), page);
+        } else if (this.closest('.page-item').classList.contains('disabled') || this.closest('.page-item').classList.contains('active')) {
+          e.preventDefault();
+        }
+      });
+    });
+  }
+
+  // Render and replace pagination nav based on AJAX data (no server HTML fetch)
+  function renderAjaxPagination(current, last, total) {
+    const pagination = document.getElementById('paginationLinks');
+    const pagerSummary = document.getElementById('pagerSummary');
+    if (!pagination) return;
+    let perPage = 10;
+    let startNo = total === 0 ? 0 : (current - 1) * perPage + 1;
+    let endNo = Math.min(total, current * perPage);
+    pagerSummary.textContent = `Showing ${startNo.toLocaleString()}–${endNo.toLocaleString()} of ${total.toLocaleString()}`;
+
+    let maxWindow = 5;
+    let html = '';
+
+    // First & Prev
+    html += `<li class="page-item ${current==1?'disabled':''}"><a class="page-link" href="#" data-page="1"><i class="bi bi-chevron-double-left"></i></a></li>`;
+    html += `<li class="page-item ${current==1?'disabled':''}"><a class="page-link" href="#" data-page="${current-1}"><i class="bi bi-chevron-left"></i></a></li>`;
+
+    // Calculate window
+    let winStart = Math.max(1, current - Math.floor(maxWindow/2));
+    let winEnd = winStart + maxWindow - 1;
+    if (winEnd > last) {
+      winEnd = last;
+      winStart = Math.max(1, winEnd - maxWindow + 1);
+    }
+
+    // Always show first page if not in window
+    if (winStart > 1) {
+      html += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
+      if (winStart > 2) {
+        html += `<li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>`;
+      }
+    }
+
+    // Window pages
+    for (let i = winStart; i <= winEnd; i++) {
+      html += `<li class="page-item ${i==current?'active':''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+    }
+
+    // Always show last page if not in window
+    if (winEnd < last) {
+      if (winEnd < last-1) {
+        html += `<li class="page-item ellipsis"><a class="page-link" href="#">…</a></li>`;
+      }
+      html += `<li class="page-item"><a class="page-link" href="#" data-page="${last}">${last}</a></li>`;
+    }
+
+    // Next & Last
+    html += `<li class="page-item ${current==last?'disabled':''}"><a class="page-link" href="#" data-page="${current+1}"><i class="bi bi-chevron-right"></i></a></li>`;
+    html += `<li class="page-item ${current==last?'disabled':''}"><a class="page-link" href="#" data-page="${last}"><i class="bi bi-chevron-double-right"></i></a></li>`;
+
+    pagination.innerHTML = html;
+    attachAjaxPagination();
+  }
+
+  // After AJAX fetch, re-attach handlers
+  function fetchDocuments(query, range, page = 1) {
+    const url = new URL("{{ route('vendor.analytics.list') }}", window.location.origin);
+    url.searchParams.set('search', query);
+    url.searchParams.set('range', range);
+    url.searchParams.set('page', page);
+
+    fetch(url, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const tbody = document.querySelector('tbody');
+      tbody.innerHTML = '';
+      if (data.data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty"><div class="mb-1"><i class="bi bi-inbox"></i></div>No documents in this range.</td></tr>`;
+      } else {
+        data.data.forEach(doc => {
+          tbody.innerHTML += `
+            <tr>
+              <td>
+              <div class="row-title">
+                <div class="doc-ico"><i class="bi bi-file-earmark-text"></i></div>
+                <div class="d-flex flex-column">
+                <a class="doc-name text-truncate" href="/vendor/analytics/document/${doc.id}" title="${doc.filename}">${doc.filename}</a>
+                <span class="muted small">ID: ${doc.id}</span>
+                </div>
+              </div>
+              </td>
+              <td><span class="views-pill"><i class="bi bi-eye"></i>${doc.views.toLocaleString()}</span></td>
+              <td>${doc.sessions ? doc.sessions.toLocaleString() : 0}</td>
+              <td>${doc.last_view ?? '-'}</td>
+              <td>
+              <a class="btn-neutral" href="{{ url('vendor/analytics/document') }}/${doc.id}"><i class="bi bi-box-arrow-up-right"></i> View</a>
+              </td>
+            </tr>
+          `;
+        });
+        document.getElementById('ajaxPagination').outerHTML = data.pagination;
+        document.getElementById('current-and-total-pages').innerHTML = '<i class="bi bi-list-ul"></i> Page ' + data.current_page + ' of ' + data.last_page;
+        attachAjaxPagination();
+
+      }
+    });
+  }
+  // Attach on page load
+  attachAjaxPagination();
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      fetchDocuments(searchInput.value, getRange(), 1);
+    }, 400);
+  });
+
+  // Listen for range change
+  document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      setTimeout(function() {
+        fetchDocuments(searchInput.value, getRange(), 1);
+      }, 200);
+    });
+  });
+
+});
+</script>
+@endpush

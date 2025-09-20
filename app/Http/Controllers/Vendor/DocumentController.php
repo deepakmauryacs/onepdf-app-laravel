@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
+use DB;
 
 class DocumentController extends Controller
 {
@@ -186,8 +187,8 @@ class DocumentController extends Controller
         $ids = $validated['ids'] ?? [$validated['id']];
 
         $docs = Document::whereIn('id', $ids)
-            ->where('user_id', Auth::id())
-            ->get();
+                        ->where('user_id', Auth::id())
+                        ->get();
 
         foreach ($docs as $doc) {
             $full = public_path($doc->filepath);
@@ -200,6 +201,8 @@ class DocumentController extends Controller
                 LinkAnalytics::whereIn('link_id', $linkIds)->delete();
                 Link::whereIn('id', $linkIds)->delete();
             }
+
+            DB::table("analytics_events")->where('target', $doc->id)->delete();
 
             $doc->delete();
         }

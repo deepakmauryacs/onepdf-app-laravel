@@ -29,7 +29,6 @@ class AnalyticsController extends Controller
         $vendorPdfIds = Document::where('user_id', $user->id)->pluck('id');
 
         // Total Visits (unique sessions)
-        // $totalVisits = AnalyticsSession::whereBetween('created_at', [$from, $to])->count();
         $totalVisits = AnalyticsSession::whereHas('events', function ($q) use ($from, $to, $vendorPdfIds) {
                                 $q->whereBetween('created_at', [$from, $to])
                                     ->whereIn('target', $vendorPdfIds);
@@ -38,16 +37,6 @@ class AnalyticsController extends Controller
         //
 
         // Average Reading Time per session
-        // $avgReadingTime = AnalyticsSession::with(['events' => function($q) use ($from, $to) {
-        //                         $q->whereBetween('created_at', [$from, $to]);
-        //                     }])
-        //                     ->get()
-        //                     ->map(function($session) {
-        //                         return $session->events
-        //                             ->where('event_type', 'pdf_page_view')
-        //                             ->sum('duration');
-        //                     })
-        //                     ->avg();
         $avgReadingTime = AnalyticsSession::with(['events' => function($q) use ($from, $to, $vendorPdfIds) {
                                 $q->whereBetween('created_at', [$from, $to])
                                     ->whereIn('target', $vendorPdfIds);
@@ -92,6 +81,7 @@ class AnalyticsController extends Controller
                     )
                     ->where('documents.user_id', $user->id)
                     ->whereBetween('analytics_sessions.created_at', [$from, $to])
+                    ->whereNotNull('analytics_sessions.city')
                     ->groupBy('analytics_sessions.city')
                     ->orderBy('visitors', 'desc')
                     ->get();
@@ -109,53 +99,53 @@ class AnalyticsController extends Controller
             'range'            => $range,
         ]);
     }
-    public function index_COPY(Request $request)
-    {
-        $user   = Auth::user();
-        $range  = $request->input('range', 'Last 7 days');
+    // public function index_COPY(Request $request)
+    // {
+    //     $user   = Auth::user();
+    //     $range  = $request->input('range', 'Last 7 days');
 
-        // Resolve date range (inclusive)
-        [$from, $to] = $this->resolveRange($range);
+    //     // Resolve date range (inclusive)
+    //     [$from, $to] = $this->resolveRange($range);
 
-        // Base: analytics for this user's docs in range
-        $analyticsBase = LinkAnalytics::query()
-            ->whereBetween('link_analytics.created_at', [$from, $to])
-            ->whereHas('link.document', function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            });
+    //     // Base: analytics for this user's docs in range
+    //     $analyticsBase = LinkAnalytics::query()
+    //         ->whereBetween('link_analytics.created_at', [$from, $to])
+    //         ->whereHas('link.document', function ($q) use ($user) {
+    //             $q->where('user_id', $user->id);
+    //         });
 
-        // Visits in range
-        $visits = (clone $analyticsBase)->count();
+    //     // Visits in range
+    //     $visits = (clone $analyticsBase)->count();
 
-        // Top 5 docs
-        $topDocs = DB::table('documents')
-            ->where('documents.user_id', $user->id)
-            ->leftJoin('links', 'links.document_id', '=', 'documents.id')
-            ->leftJoin('link_analytics', function ($join) use ($from, $to) {
-                $join->on('link_analytics.link_id', '=', 'links.id')
-                     ->whereBetween('link_analytics.created_at', [$from, $to]);
-            })
-            ->select(
-                'documents.id',
-                'documents.filename',
-                DB::raw('COUNT(link_analytics.id) as views')
-            )
-            ->groupBy('documents.id', 'documents.filename')
-            ->orderByDesc('views')
-            ->limit(5)
-            ->get();
+    //     // Top 5 docs
+    //     $topDocs = DB::table('documents')
+    //         ->where('documents.user_id', $user->id)
+    //         ->leftJoin('links', 'links.document_id', '=', 'documents.id')
+    //         ->leftJoin('link_analytics', function ($join) use ($from, $to) {
+    //             $join->on('link_analytics.link_id', '=', 'links.id')
+    //                  ->whereBetween('link_analytics.created_at', [$from, $to]);
+    //         })
+    //         ->select(
+    //             'documents.id',
+    //             'documents.filename',
+    //             DB::raw('COUNT(link_analytics.id) as views')
+    //         )
+    //         ->groupBy('documents.id', 'documents.filename')
+    //         ->orderByDesc('views')
+    //         ->limit(5)
+    //         ->get();
 
-        // Optional: average/total time (kept null until you add a numeric duration column)
-        $avgTime   = null;
-        $totalTime = null;
+    //     // Optional: average/total time (kept null until you add a numeric duration column)
+    //     $avgTime   = null;
+    //     $totalTime = null;
 
-        return view('vendor.analytics.index', [
-            'visits'     => $visits,
-            'topDocs'    => $topDocs,
-            'avgTime'    => $avgTime,
-            'totalTime'  => $totalTime,
-        ]);
-    }
+    //     return view('vendor.analytics.index', [
+    //         'visits'     => $visits,
+    //         'topDocs'    => $topDocs,
+    //         'avgTime'    => $avgTime,
+    //         'totalTime'  => $totalTime,
+    //     ]);
+    // }
 
     /**
      * Paginated analytics for all documents.
@@ -200,35 +190,90 @@ class AnalyticsController extends Controller
         ]);
     }
 
-    public function documents_COPY(Request $request)
+    /**
+     * AJAX: List/search documents by name and range (for analytics page search)
+     * Route: GET /vendor/analytics/documents/list
+     * Params: search (string), range (string)
+     * Returns: paginated JSON of docs with analytics summary
+     */
+    public function list(Request $request)
     {
         $user  = Auth::user();
         $range = $request->input('range', 'Last 7 days');
         [$from, $to] = $this->resolveRange($range);
+        $search = $request->input('search');
+        $perPage = 10;
+        $page = (int) $request->input('page', 1);
 
-        $allDocs = DB::table('documents')
-            ->where('documents.user_id', $user->id)
-            ->leftJoin('links', 'links.document_id', '=', 'documents.id')
-            ->leftJoin('link_analytics', function ($join) use ($from, $to) {
-                $join->on('link_analytics.link_id', '=', 'links.id')
-                     ->whereBetween('link_analytics.created_at', [$from, $to]);
+        $query = Document::where('user_id', $user->id)
+            ->when($search, function($q) use ($search) {
+                $q->where('filename', 'like', "%".$search."%");
             })
-            ->select(
-                'documents.id',
-                'documents.filename',
-                DB::raw('COUNT(link_analytics.id) as views'),
-                DB::raw('COUNT(DISTINCT link_analytics.session_id) as sessions'),
-                DB::raw('MAX(link_analytics.created_at) as last_view_at')
-            )
-            ->groupBy('documents.id', 'documents.filename')
-            ->orderByDesc('views')
-            ->paginate(10)
-            ->withQueryString();
+            ->with(['analyticsEvents' => function ($q) use ($from, $to) {
+                $q->whereBetween('created_at', [$from, $to]);
+            }]);
 
-        return view('vendor.analytics.documents', [
-            'allDocs' => $allDocs,
+        $documents = $query->paginate($perPage, ['*'], 'page', $page);
+
+        // Map analytics data for each document
+        $docs = $documents->getCollection()->map(function ($doc) use ($from, $to) {
+            $views = $doc->analyticsEvents->count();
+            $sessions = \App\Models\AnalyticsSession::whereHas('events', function ($q) use ($doc, $from, $to) {
+                    $q->where('target', $doc->id)
+                    ->whereBetween('created_at', [$from, $to]);
+                })
+                ->count();
+            $lastView = $doc->analyticsEvents->sortByDesc('created_at')->first();
+            return [
+                'id' => $doc->id,
+                'filename' => $doc->filename,
+                'views' => $views,
+                'sessions' => $sessions,
+                'last_view' => $lastView ? $lastView->created_at->format('d M Y, H:i') : null,
+            ];
+        });
+
+        $pagination = view('vendor.analytics._pagination', ['documents' => $documents])->render();
+
+        return response()->json([
+            'data' => $docs,
+            'current_page' => $documents->currentPage(),
+            'last_page' => $documents->lastPage(),
+            'per_page' => $documents->perPage(),
+            'total' => $documents->total(),
+            'pagination' => $pagination,
         ]);
     }
+
+    // public function documents_COPY(Request $request)
+    // {
+    //     $user  = Auth::user();
+    //     $range = $request->input('range', 'Last 7 days');
+    //     [$from, $to] = $this->resolveRange($range);
+
+    //     $allDocs = DB::table('documents')
+    //         ->where('documents.user_id', $user->id)
+    //         ->leftJoin('links', 'links.document_id', '=', 'documents.id')
+    //         ->leftJoin('link_analytics', function ($join) use ($from, $to) {
+    //             $join->on('link_analytics.link_id', '=', 'links.id')
+    //                  ->whereBetween('link_analytics.created_at', [$from, $to]);
+    //         })
+    //         ->select(
+    //             'documents.id',
+    //             'documents.filename',
+    //             DB::raw('COUNT(link_analytics.id) as views'),
+    //             DB::raw('COUNT(DISTINCT link_analytics.session_id) as sessions'),
+    //             DB::raw('MAX(link_analytics.created_at) as last_view_at')
+    //         )
+    //         ->groupBy('documents.id', 'documents.filename')
+    //         ->orderByDesc('views')
+    //         ->paginate(10)
+    //         ->withQueryString();
+
+    //     return view('vendor.analytics.documents', [
+    //         'allDocs' => $allDocs,
+    //     ]);
+    // }
 
     /**
      * Details page for a single document (referrers/sources).
@@ -253,17 +298,18 @@ class AnalyticsController extends Controller
         // Last view timestamp
         $lastView = (clone $events)->latest('created_at')->value('created_at');
 
-        // Traffic sources (for now direct/unknown, later you can expand with referrer)
+        // Group by platform/browser instead of referrer
         $trafficSources = (clone $events)
             ->join('analytics_sessions', 'analytics_events.session_id', '=', 'analytics_sessions.id')
             ->select(
-                DB::raw("COALESCE(analytics_sessions.referrer, 'Direct/Unknown') as source"),
+                DB::raw("COALESCE(analytics_sessions.platform, 'Unknown Platform') as platform"),
+                DB::raw("COALESCE(analytics_sessions.browser, 'Unknown Browser') as browser"),
                 DB::raw("COUNT(analytics_events.id) as views"),
                 DB::raw("COUNT(DISTINCT analytics_sessions.id) as sessions")
             )
-            ->whereBetween('analytics_events.created_at', [$from, $to]) // 👈 fixed
+            ->whereBetween('analytics_events.created_at', [$from, $to])
             ->where('analytics_events.target', $pdf->id)
-            ->groupBy('source')
+            ->groupBy('platform', 'browser')
             ->get();
 
         return view('vendor.analytics.document', [
@@ -279,45 +325,53 @@ class AnalyticsController extends Controller
         ]);
     }
 
-    public function document_COPY(Request $request, int $id)
-    {
-        $user  = Auth::user();
-        $range = $request->input('range', 'Last 7 days');
-        [$from, $to] = $this->resolveRange($range);
+    // public function document_COPY(Request $request, int $id)
+    // {
+    //     $user  = Auth::user();
+    //     $range = $request->input('range', 'Last 7 days');
+    //     [$from, $to] = $this->resolveRange($range);
 
-        // Ensure the document belongs to this user
-        $doc = DB::table('documents')
-            ->where('user_id', $user->id)
-            ->where('id', $id)
-            ->first();
+    //     // Ensure the document belongs to this user
+    //     $doc = DB::table('documents')
+    //         ->where('user_id', $user->id)
+    //         ->where('id', $id)
+    //         ->first();
 
-        abort_unless($doc, 404);
+    //     abort_unless($doc, 404);
 
-        // Aggregate referrers (adjust column if yours is different: referrer, referrer_host, etc.)
-        $sources = DB::table('links')
-            ->join('link_analytics', 'link_analytics.link_id', '=', 'links.id')
-            ->where('links.document_id', $id)
-            ->whereBetween('link_analytics.created_at', [$from, $to])
-            ->select(
-                DB::raw("COALESCE(NULLIF(link_analytics.referrer,''), 'Direct/Unknown') as source"),
-                DB::raw('COUNT(*) as views'),
-                DB::raw('COUNT(DISTINCT link_analytics.session_id) as sessions')
-            )
-            ->groupBy('source')
-            ->orderByDesc('views')
-            ->paginate(20)
-            ->withQueryString();
+    //     // Aggregate referrers (adjust column if yours is different: referrer, referrer_host, etc.)
+    //     $sources = DB::table('links')
+    //         ->join('link_analytics', 'link_analytics.link_id', '=', 'links.id')
+    //         ->where('links.document_id', $id)
+    //         ->whereBetween('link_analytics.created_at', [$from, $to])
+    //         ->select(
+    //             DB::raw("COALESCE(NULLIF(link_analytics.referrer,''), 'Direct/Unknown') as source"),
+    //             DB::raw('COUNT(*) as views'),
+    //             DB::raw('COUNT(DISTINCT link_analytics.session_id) as sessions')
+    //         )
+    //         ->groupBy('source')
+    //         ->orderByDesc('views')
+    //         ->paginate(20)
+    //         ->withQueryString();
 
-        return view('vendor.analytics.document', [
-            'doc'     => $doc,
-            'sources' => $sources,
-            'range'   => $range,
-        ]);
-    }
+    //     return view('vendor.analytics.document', [
+    //         'doc'     => $doc,
+    //         'sources' => $sources,
+    //         'range'   => $range,
+    //     ]);
+    // }
 
     private function resolveRange(string $range): array
     {
         $now = Carbon::now();
+        // If the range is a 4-digit year, return that year's range
+        if (preg_match('/^\d{4}$/', $range)) {
+            $year = (int)$range;
+            return [
+                Carbon::create($year, 1, 1, 0, 0, 0)->startOfDay(),
+                Carbon::create($year, 12, 31, 23, 59, 59)->endOfDay(),
+            ];
+        }
         return match ($range) {
             'Today' => [ (clone $now)->startOfDay(), (clone $now)->endOfDay() ],
             'Last 7 days' => [ (clone $now)->startOfDay()->subDays(6), (clone $now)->endOfDay() ],

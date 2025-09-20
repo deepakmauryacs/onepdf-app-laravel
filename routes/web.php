@@ -106,6 +106,7 @@ Route::prefix('vendor')->middleware('auth')->group(function () {
 
     // Analytics
     Route::get('analytics', [AnalyticsController::class, 'index'])->name('vendor.analytics.index');
+    Route::get('analytics/list', [AnalyticsController::class, 'list'])->name('vendor.analytics.list');
     Route::get('analytics/document/{id}', [AnalyticsController::class, 'document'])->name('vendor.analytics.document');
     Route::get('analytics/documents', [AnalyticsController::class, 'documents'])->name('vendor.analytics.documents');
 
