@@ -38,9 +38,19 @@
               <i class="bi bi-sliders"></i> Range
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              @foreach (['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'] as $option)
-                  <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
+              @php
+                $staticRanges = ['Today', 'Last 7 days', 'Last 30 days', 'This month', 'This year'];
+                $userId = auth()->id();
+                $firstDoc = \App\Models\Document::where('user_id', $userId)->orderBy('created_at')->first();
+                $firstYear = $firstDoc ? (int)($firstDoc->created_at->format('Y')) : (int)date('Y');
+                $currentYear = (int)date('Y');
+              @endphp
+              @foreach ($staticRanges as $option)
+                <li><a class="dropdown-item {{ $range === $option ? 'active' : '' }}" href="?range={{$option}}">{{$option}}</a></li>
               @endforeach
+              @for ($y = $currentYear - 1; $y >= $firstYear; $y--)
+                <li><a class="dropdown-item {{ $range == $y ? 'active' : '' }}" href="?range={{$y}}">{{$y}}</a></li>
+              @endfor
             </ul>
           </div>
         </div>
@@ -61,7 +71,7 @@
         <tbody>
           @forelse($trafficSources as $src)
           <tr>
-            <td>{{ $src->source }}</td>
+            <td>{{ $src->platform }}/{{ $src->browser }}</td>
             <td>{{ $src->views }}</td>
             <td>{{ $src->sessions }}</td>
           </tr>
